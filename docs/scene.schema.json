@@ -1,0 +1,582 @@
+{
+  "$defs": {
+    "Background": {
+      "additionalProperties": false,
+      "properties": {
+        "visual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PointsVisual"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "collider": {
+          "const": "table_plane",
+          "default": "table_plane",
+          "title": "Collider",
+          "type": "string"
+        },
+        "table_plane": {
+          "$ref": "#/$defs/TablePlane"
+        },
+        "table_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Table Color"
+        },
+        "floor_depth_m": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Floor this far below the table; null = none",
+          "title": "Floor Depth M"
+        }
+      },
+      "required": [
+        "table_plane"
+      ],
+      "title": "Background",
+      "type": "object"
+    },
+    "BoxCollider": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "box",
+          "default": "box",
+          "title": "Type",
+          "type": "string"
+        },
+        "half_extents": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Half Extents",
+          "type": "array"
+        }
+      },
+      "required": [
+        "half_extents"
+      ],
+      "title": "BoxCollider",
+      "type": "object"
+    },
+    "CylinderCollider": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "cylinder",
+          "default": "cylinder",
+          "title": "Type",
+          "type": "string"
+        },
+        "radius": {
+          "exclusiveMinimum": 0,
+          "title": "Radius",
+          "type": "number"
+        },
+        "half_height": {
+          "exclusiveMinimum": 0,
+          "title": "Half Height",
+          "type": "number"
+        }
+      },
+      "required": [
+        "radius",
+        "half_height"
+      ],
+      "title": "CylinderCollider",
+      "type": "object"
+    },
+    "HullCollider": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "convex_hull",
+          "default": "convex_hull",
+          "title": "Type",
+          "type": "string"
+        },
+        "file": {
+          "description": "Wavefront OBJ in object-local meters",
+          "title": "File",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "HullCollider",
+      "type": "object"
+    },
+    "PointsVisual": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "points",
+          "default": "points",
+          "title": "Type",
+          "type": "string"
+        },
+        "file": {
+          "description": "Binary little-endian PLY with float xyz and uchar rgb",
+          "title": "File",
+          "type": "string"
+        },
+        "count": {
+          "minimum": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "point_size_m": {
+          "exclusiveMinimum": 0,
+          "title": "Point Size M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "file",
+        "count",
+        "point_size_m"
+      ],
+      "title": "PointsVisual",
+      "type": "object"
+    },
+    "Pose": {
+      "additionalProperties": false,
+      "properties": {
+        "position": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Position",
+          "type": "array"
+        },
+        "rotation_quat": {
+          "default": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "description": "x, y, z, w",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "title": "Rotation Quat",
+          "type": "array"
+        }
+      },
+      "required": [
+        "position"
+      ],
+      "title": "Pose",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "description": "Where the input video came from",
+          "title": "Source",
+          "type": "string"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License"
+        },
+        "frames_used": {
+          "title": "Frames Used",
+          "type": "integer"
+        },
+        "models": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Models",
+          "type": "object"
+        },
+        "timings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StageTiming"
+          },
+          "title": "Timings",
+          "type": "array"
+        },
+        "scale_estimates": {
+          "default": [],
+          "items": {
+            "type": "number"
+          },
+          "title": "Scale Estimates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source",
+        "frames_used",
+        "models"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "SceneObject": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "material": {
+          "title": "Material",
+          "type": "string"
+        },
+        "dimensions_m": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Dimensions M",
+          "type": "array"
+        },
+        "volume_m3": {
+          "minimum": 0,
+          "title": "Volume M3",
+          "type": "number"
+        },
+        "hollow": {
+          "title": "Hollow",
+          "type": "boolean"
+        },
+        "fill_fraction": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Fill Fraction",
+          "type": "number"
+        },
+        "density_kg_m3": {
+          "exclusiveMinimum": 0,
+          "title": "Density Kg M3",
+          "type": "number"
+        },
+        "mass_kg": {
+          "exclusiveMinimum": 0,
+          "title": "Mass Kg",
+          "type": "number"
+        },
+        "friction": {
+          "maximum": 2,
+          "minimum": 0,
+          "title": "Friction",
+          "type": "number"
+        },
+        "restitution": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Restitution",
+          "type": "number"
+        },
+        "rigidity": {
+          "enum": [
+            "rigid",
+            "soft"
+          ],
+          "title": "Rigidity",
+          "type": "string"
+        },
+        "fragile": {
+          "title": "Fragile",
+          "type": "boolean"
+        },
+        "visual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PointsVisual"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hex color used when there is no visual",
+          "title": "Color"
+        },
+        "collider": {
+          "discriminator": {
+            "mapping": {
+              "box": "#/$defs/BoxCollider",
+              "convex_hull": "#/$defs/HullCollider",
+              "cylinder": "#/$defs/CylinderCollider",
+              "sphere": "#/$defs/SphereCollider"
+            },
+            "propertyName": "type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/BoxCollider"
+            },
+            {
+              "$ref": "#/$defs/CylinderCollider"
+            },
+            {
+              "$ref": "#/$defs/SphereCollider"
+            },
+            {
+              "$ref": "#/$defs/HullCollider"
+            }
+          ],
+          "title": "Collider"
+        },
+        "pose": {
+          "$ref": "#/$defs/Pose"
+        },
+        "physics_source": {
+          "enum": [
+            "estimated",
+            "measured",
+            "hand-authored"
+          ],
+          "title": "Physics Source",
+          "type": "string"
+        },
+        "physics_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Physics Notes"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "confidence",
+        "material",
+        "dimensions_m",
+        "volume_m3",
+        "hollow",
+        "fill_fraction",
+        "density_kg_m3",
+        "mass_kg",
+        "friction",
+        "restitution",
+        "rigidity",
+        "fragile",
+        "collider",
+        "pose",
+        "physics_source"
+      ],
+      "title": "SceneObject",
+      "type": "object"
+    },
+    "SphereCollider": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "sphere",
+          "default": "sphere",
+          "title": "Type",
+          "type": "string"
+        },
+        "radius": {
+          "exclusiveMinimum": 0,
+          "title": "Radius",
+          "type": "number"
+        }
+      },
+      "required": [
+        "radius"
+      ],
+      "title": "SphereCollider",
+      "type": "object"
+    },
+    "StageTiming": {
+      "additionalProperties": false,
+      "properties": {
+        "stage": {
+          "title": "Stage",
+          "type": "string"
+        },
+        "seconds": {
+          "title": "Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "stage",
+        "seconds"
+      ],
+      "title": "StageTiming",
+      "type": "object"
+    },
+    "TablePlane": {
+      "additionalProperties": false,
+      "properties": {
+        "point": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Point",
+          "type": "array"
+        },
+        "normal": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Normal",
+          "type": "array"
+        },
+        "size_m": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Size M",
+          "type": "array"
+        }
+      },
+      "required": [
+        "point",
+        "normal",
+        "size_m"
+      ],
+      "title": "TablePlane",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1,
+      "default": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "scene_id": {
+      "title": "Scene Id",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "units": {
+      "const": "meters",
+      "default": "meters",
+      "title": "Units",
+      "type": "string"
+    },
+    "gravity": {
+      "default": [
+        0.0,
+        -9.81,
+        0.0
+      ],
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "title": "Gravity",
+      "type": "array"
+    },
+    "scale_source": {
+      "title": "Scale Source",
+      "type": "string"
+    },
+    "background": {
+      "$ref": "#/$defs/Background"
+    },
+    "objects": {
+      "items": {
+        "$ref": "#/$defs/SceneObject"
+      },
+      "title": "Objects",
+      "type": "array"
+    },
+    "provenance": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Provenance"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "scene_id",
+    "title",
+    "scale_source",
+    "background",
+    "objects"
+  ],
+  "title": "Scene",
+  "type": "object"
+}

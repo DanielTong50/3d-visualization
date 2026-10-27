@@ -1,0 +1,18 @@
+{
+  "_comment": "Bulk properties per material. Shared by the pipeline (fallbacks, range checks) and the simulator (material editing). density in kg/m^3; friction is the Coulomb coefficient against a wooden table; restitution is the coefficient of restitution on a hard surface.",
+  "ceramic":   { "density_kg_m3": 2300, "friction": 0.55, "restitution": 0.15, "fragile": true,  "rigidity": "rigid" },
+  "glass":     { "density_kg_m3": 2500, "friction": 0.45, "restitution": 0.10, "fragile": true,  "rigidity": "rigid" },
+  "plastic":   { "density_kg_m3": 950,  "friction": 0.40, "restitution": 0.35, "fragile": false, "rigidity": "rigid" },
+  "rubber":    { "density_kg_m3": 1150, "friction": 0.90, "restitution": 0.80, "fragile": false, "rigidity": "rigid" },
+  "wood":      { "density_kg_m3": 650,  "friction": 0.50, "restitution": 0.25, "fragile": false, "rigidity": "rigid" },
+  "paper":     { "density_kg_m3": 750,  "friction": 0.50, "restitution": 0.05, "fragile": false, "rigidity": "rigid" },
+  "cardboard": { "density_kg_m3": 690,  "friction": 0.45, "restitution": 0.10, "fragile": false, "rigidity": "rigid" },
+  "metal":     { "density_kg_m3": 7800, "friction": 0.35, "restitution": 0.20, "fragile": false, "rigidity": "rigid" },
+  "aluminum":  { "density_kg_m3": 2700, "friction": 0.35, "restitution": 0.20, "fragile": false, "rigidity": "rigid" },
+  "fabric":    { "density_kg_m3": 300,  "friction": 0.70, "restitution": 0.05, "fragile": false, "rigidity": "soft" },
+  "leather":   { "density_kg_m3": 860,  "friction": 0.60, "restitution": 0.15, "fragile": false, "rigidity": "soft" },
+  "foam":      { "density_kg_m3": 50,   "friction": 0.70, "restitution": 0.30, "fragile": false, "rigidity": "soft" },
+  "organic":   { "density_kg_m3": 950,  "friction": 0.50, "restitution": 0.20, "fragile": false, "rigidity": "rigid" },
+  "stone":     { "density_kg_m3": 2600, "friction": 0.60, "restitution": 0.10, "fragile": false, "rigidity": "rigid" },
+  "unknown":   { "density_kg_m3": 800,  "friction": 0.50, "restitution": 0.20, "fragile": false, "rigidity": "rigid" }
+}
