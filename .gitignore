@@ -1,0 +1,25 @@
+# Secrets: never commit these
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Pipeline outputs (re-creatable)
+pipeline/outputs/
+
+# Frontend
+node_modules/
+dist/
+
+# Test videos are large: they stay on this computer, not in git
+test_videos/*
+!test_videos/README.md
+
+# macOS and editors
+.DS_Store
+.vscode/
+.idea/
