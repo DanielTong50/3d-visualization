@@ -1,0 +1,23 @@
+<mujoco model="d683afbd459c">
+  <compiler angle="radian" meshdir="." />
+  <option timestep="0.002" gravity="0 -0 -9.81" />
+  <asset>
+    <mesh name="obj_01_hull" file="obj_01_hull.obj" />
+    <mesh name="obj_02_hull" file="obj_02_hull.obj" />
+  </asset>
+  <worldbody>
+    <light pos="0 0 1.5" dir="0 0 -1" directional="true" />
+    <geom name="table" type="box" size="0.2645 0.238 0.02" pos="0.092421 0.041058 -0.02" friction="1 0.005 0.0001" rgba="0.6 0.45 0.3 1" />
+    <geom name="floor" type="plane" size="5 5 0.1" pos="0 0 -0.75" />
+    <body name="obj_01" pos="0.0005 -0.0015 0.0416" quat="1 0 0 0">
+      <!-- white mug: ceramic, 263 g -->
+      <freejoint />
+      <geom name="obj_01_geom" mass="0.2634" friction="0.5 0.005 0.0001" solref="0.01 0.5912" type="mesh" mesh="obj_01_hull" quat="0.70711 0.70711 0 0" />
+    </body>
+    <body name="obj_02" pos="0.0854 0.0492 0.0374" quat="1 0 0 0">
+      <!-- purple mug: ceramic, 232 g -->
+      <freejoint />
+      <geom name="obj_02_geom" mass="0.2316" friction="0.5 0.005 0.0001" solref="0.01 0.5912" type="mesh" mesh="obj_02_hull" quat="0.70711 0.70711 0 0" />
+    </body>
+  </worldbody>
+</mujoco>

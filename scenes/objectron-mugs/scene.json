@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "scene_id": "d683afbd459c",
+  "title": "Two mugs",
+  "units": "meters",
+  "gravity": [
+    0.0,
+    -9.81,
+    0.0
+  ],
+  "scale_source": "known_objects:coffee mug,coffee mug",
+  "background": {
+    "visual": {
+      "type": "points",
+      "file": "background.ply",
+      "count": 150000,
+      "point_size_m": 0.00348
+    },
+    "collider": "table_plane",
+    "table_plane": {
+      "point": [
+        0.09242121875286102,
+        0.0,
+        -0.04105761647224426
+      ],
+      "normal": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "size_m": [
+        0.5289999842643738,
+        0.47600001096725464
+      ]
+    },
+    "table_color": "#a2bee3",
+    "floor_depth_m": 0.75
+  },
+  "objects": [
+    {
+      "id": "obj_01",
+      "label": "white mug",
+      "confidence": 0.97,
+      "material": "ceramic",
+      "dimensions_m": [
+        0.1217,
+        0.0737,
+        0.095
+      ],
+      "volume_m3": 0.0004581,
+      "hollow": true,
+      "fill_fraction": 0.25,
+      "density_kg_m3": 2300.0,
+      "mass_kg": 0.2634,
+      "friction": 0.5,
+      "restitution": 0.1,
+      "rigidity": "rigid",
+      "fragile": true,
+      "visual": {
+        "type": "points",
+        "file": "obj_01.ply",
+        "count": 60000,
+        "point_size_m": 0.0031
+      },
+      "collider": {
+        "type": "convex_hull",
+        "file": "obj_01_hull.obj"
+      },
+      "pose": {
+        "position": [
+          0.0005,
+          0.0416,
+          0.0015
+        ],
+        "rotation_quat": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "physics_source": "estimated"
+    },
+    {
+      "id": "obj_02",
+      "label": "purple mug",
+      "confidence": 0.96,
+      "material": "ceramic",
+      "dimensions_m": [
+        0.1231,
+        0.0653,
+        0.0928
+      ],
+      "volume_m3": 0.0004028,
+      "hollow": true,
+      "fill_fraction": 0.25,
+      "density_kg_m3": 2300.0,
+      "mass_kg": 0.2316,
+      "friction": 0.5,
+      "restitution": 0.1,
+      "rigidity": "rigid",
+      "fragile": true,
+      "visual": {
+        "type": "points",
+        "file": "obj_02.ply",
+        "count": 60000,
+        "point_size_m": 0.0031
+      },
+      "collider": {
+        "type": "convex_hull",
+        "file": "obj_02_hull.obj"
+      },
+      "pose": {
+        "position": [
+          0.0854,
+          0.0374,
+          -0.0492
+        ],
+        "rotation_quat": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "physics_source": "estimated"
+    }
+  ],
+  "provenance": {
+    "source": "Objectron cup/batch-3/4 (Google, C-UDA-1.0)",
+    "frames_used": 26,
+    "models": {
+      "reconstruction": "facebook/VGGT-1B-Commercial",
+      "detection_and_physics": "muse-spark-1.3",
+      "segmentation": "sam-3.1"
+    },
+    "timings": [
+      {
+        "stage": "ingest",
+        "seconds": 7.7
+      },
+      {
+        "stage": "reconstruct",
+        "seconds": 69.6
+      },
+      {
+        "stage": "segment",
+        "seconds": 36.2
+      },
+      {
+        "stage": "lift",
+        "seconds": 22.5
+      },
+      {
+        "stage": "physics",
+        "seconds": 17.9
+      },
+      {
+        "stage": "package",
+        "seconds": 9.0
+      }
+    ],
+    "scale_estimates": [
+      0.51279,
+      0.52521
+    ]
+  }
+}

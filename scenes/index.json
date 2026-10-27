@@ -1,0 +1,32 @@
+[
+  {
+    "id": "objectron-mugs",
+    "title": "Two mugs",
+    "description": "Real scan of two mugs on a garden table, from a 7-second phone clip.",
+    "kind": "scanned",
+    "object_count": 2,
+    "objects": [
+      "white mug",
+      "purple mug"
+    ],
+    "thumbnail": "thumbnail.jpg",
+    "export": "export.zip",
+    "credit": "Objectron cup/batch-3/4 (Google, C-UDA-1.0)"
+  },
+  {
+    "id": "sandbox",
+    "title": "Physics sandbox",
+    "description": "Hand-authored reference scene: a heavy book, a light tissue box, a ceramic mug, a rubber ball and a convex-hull doorstop.",
+    "kind": "hand-authored",
+    "object_count": 5,
+    "objects": [
+      "hardcover book",
+      "tissue box",
+      "coffee mug",
+      "rubber ball",
+      "rubber doorstop"
+    ],
+    "thumbnail": null,
+    "export": "export.zip"
+  }
+]
