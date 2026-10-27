@@ -1,0 +1,1588 @@
+{
+  "summary": {
+    "physics.json": {
+      "clips": 24,
+      "clips_completed": 24,
+      "gt_objects": 25,
+      "detected": 24,
+      "separated": 24,
+      "label_accuracy": 1.0,
+      "median_size_ratio": 0.9937019994095015,
+      "median_abs_log2_size_ratio": 0.1792967541256657,
+      "within_25pct_size": 0.875,
+      "median_dims_rel_error": 0.18354593212195414
+    },
+    "physics_hinted.json": {
+      "clips": 24,
+      "clips_completed": 24,
+      "gt_objects": 25,
+      "detected": 24,
+      "separated": 24,
+      "label_accuracy": 1.0,
+      "median_size_ratio": 0.9855868657372897,
+      "median_abs_log2_size_ratio": 0.13945444720952155,
+      "within_25pct_size": 0.8333333333333334,
+      "median_dims_rel_error": 0.1700484599327159
+    }
+  },
+  "clips": [
+    {
+      "clip": "cup/batch-16/47",
+      "job": "16f905ff4c6d",
+      "class": "cup",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 16.6,
+        "reconstruct": 81.5,
+        "segment": 58.0,
+        "lift": 33.4,
+        "physics": 16.0,
+        "package": 9.3
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "metal cup",
+            "category": "metal tumbler",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.07,
+              0.11,
+              0.07
+            ],
+            "pred_dims_m": [
+              0.09,
+              0.099,
+              0.094
+            ],
+            "size_ratio": 1.1582587694541726,
+            "sorted_dims_rel_error": 0.24285713750120294,
+            "mass_kg": 0.15
+          }
+        ],
+        "scale": 0.2828854314002829
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "metal cup",
+            "category": "metal cup",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.07,
+              0.11,
+              0.07
+            ],
+            "pred_dims_m": [
+              0.091,
+              0.1,
+              0.096
+            ],
+            "size_ratio": 1.1746485662765473,
+            "sorted_dims_rel_error": 0.25411254867937305,
+            "mass_kg": 0.12
+          }
+        ],
+        "scale": 0.28674657337844817
+      }
+    },
+    {
+      "clip": "cup/batch-37/28",
+      "job": "ca215027dc31",
+      "class": "cup",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 12.8,
+        "reconstruct": 72.8,
+        "segment": 68.0,
+        "lift": 29.0,
+        "physics": 12.3,
+        "package": 8.5
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "plastic cup",
+            "category": "plastic party cup",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.0993,
+              0.1144,
+              0.0893
+            ],
+            "pred_dims_m": [
+              0.117,
+              0.089,
+              0.12
+            ],
+            "size_ratio": 1.0720492948383058,
+            "sorted_dims_rel_error": 0.0768415640958431,
+            "mass_kg": 0.033825523954667217
+          }
+        ],
+        "scale": 0.26767789426723176
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "plastic cup",
+            "category": "plastic party cup",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.0993,
+              0.1144,
+              0.0893
+            ],
+            "pred_dims_m": [
+              0.117,
+              0.089,
+              0.12
+            ],
+            "size_ratio": 1.0720492948383058,
+            "sorted_dims_rel_error": 0.0768415640958431,
+            "mass_kg": 0.033825523954667217
+          }
+        ],
+        "scale": 0.26767789426723176
+      }
+    },
+    {
+      "clip": "cup/batch-5/39",
+      "job": "0c564454f789",
+      "class": "cup",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 8.7,
+        "reconstruct": 73.2,
+        "segment": 64.2,
+        "lift": 38.2,
+        "physics": 10.0,
+        "package": 7.4
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "coffee mug",
+            "category": "coffee mug",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.13,
+              0.1,
+              0.09
+            ],
+            "pred_dims_m": [
+              0.12,
+              0.08,
+              0.102
+            ],
+            "size_ratio": 0.9423853188614737,
+            "sorted_dims_rel_error": 0.06934472476600412,
+            "mass_kg": 0.3554844365010366
+          }
+        ],
+        "scale": 0.3363605785401951
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "coffee mug",
+            "category": "coffee mug",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.13,
+              0.1,
+              0.09
+            ],
+            "pred_dims_m": [
+              0.12,
+              0.08,
+              0.102
+            ],
+            "size_ratio": 0.9423853188614737,
+            "sorted_dims_rel_error": 0.06934472476600412,
+            "mass_kg": 0.3554844365010366
+          }
+        ],
+        "scale": 0.3363605785401951
+      }
+    },
+    {
+      "clip": "cup/batch-10/31",
+      "job": "15f7c3c7466d",
+      "class": "cup",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 10.2,
+        "reconstruct": 54.0,
+        "segment": 97.8,
+        "lift": 33.7,
+        "physics": 15.1,
+        "package": 4.6
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "plastic mug",
+            "category": "kids plastic mug",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.11,
+              0.1,
+              0.08
+            ],
+            "pred_dims_m": [
+              0.137,
+              0.08,
+              0.09
+            ],
+            "size_ratio": 1.0387797279561433,
+            "sorted_dims_rel_error": 0.11515152932198587,
+            "mass_kg": 0.08447206164852383
+          }
+        ],
+        "scale": 0.26984079393158034
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "plastic mug",
+            "category": "kids plastic mug",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.11,
+              0.1,
+              0.08
+            ],
+            "pred_dims_m": [
+              0.12,
+              0.07,
+              0.079
+            ],
+            "size_ratio": 0.9102092336957396,
+            "sorted_dims_rel_error": 0.14196969634481263,
+            "mass_kg": 0.07491046222914853
+          }
+        ],
+        "scale": 0.23554351666470377
+      }
+    },
+    {
+      "clip": "book/batch-20/35",
+      "job": "94c86fe53b6f",
+      "class": "book",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 11.8,
+        "reconstruct": 60.8,
+        "segment": 156.0,
+        "lift": 43.0,
+        "physics": 32.4,
+        "package": 5.0
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "book",
+            "category": "paperback book",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.24,
+              0.02,
+              0.15
+            ],
+            "pred_dims_m": [
+              0.155,
+              0.029,
+              0.14
+            ],
+            "size_ratio": 0.9561112151704231,
+            "sorted_dims_rel_error": 0.2902777961317307,
+            "mass_kg": 0.311794384598281
+          }
+        ],
+        "scale": 0.20158967860845528
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "book",
+            "category": "paperback book",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.24,
+              0.02,
+              0.15
+            ],
+            "pred_dims_m": [
+              0.155,
+              0.029,
+              0.14
+            ],
+            "size_ratio": 0.9561112151704231,
+            "sorted_dims_rel_error": 0.2902777961317307,
+            "mass_kg": 0.311794384598281
+          }
+        ],
+        "scale": 0.20158967860845528
+      }
+    },
+    {
+      "clip": "book/batch-6/16",
+      "job": "052092e19410",
+      "class": "book",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 9.8,
+        "reconstruct": 62.9,
+        "segment": 106.9,
+        "lift": 55.8,
+        "physics": 15.0,
+        "package": 5.8
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "paperback book",
+            "category": "paperback book",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.18,
+              0.04,
+              0.12
+            ],
+            "pred_dims_m": [
+              0.12,
+              0.03,
+              0.105
+            ],
+            "size_ratio": 0.7591472442258242,
+            "sorted_dims_rel_error": 0.23611110783423475,
+            "mass_kg": 0.13937427462346594
+          }
+        ],
+        "scale": 0.16833397460561755
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "paperback book",
+            "category": "paperback book",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.18,
+              0.04,
+              0.12
+            ],
+            "pred_dims_m": [
+              0.17,
+              0.042,
+              0.149
+            ],
+            "size_ratio": 1.071824253044867,
+            "sorted_dims_rel_error": 0.11574077032460461,
+            "mass_kg": 0.39536340901545847
+          }
+        ],
+        "scale": 0.23829214617120592
+      }
+    },
+    {
+      "clip": "book/batch-31/44",
+      "job": "ebd2a3b67f7e",
+      "class": "book",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 7.5,
+        "reconstruct": 56.1,
+        "segment": 59.9,
+        "lift": 24.6,
+        "physics": 19.6,
+        "package": 8.6
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "book",
+            "category": "hardcover book",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.25,
+              0.06,
+              0.1771
+            ],
+            "pred_dims_m": [
+              0.323,
+              0.059,
+              0.22
+            ],
+            "size_ratio": 1.1641817109291366,
+            "sorted_dims_rel_error": 0.18353403966893075,
+            "mass_kg": 2.626391787555422
+          }
+        ],
+        "scale": 0.609047118099773
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "book",
+            "category": "hardcover grammar book",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.25,
+              0.06,
+              0.1771
+            ],
+            "pred_dims_m": [
+              0.279,
+              0.051,
+              0.19
+            ],
+            "size_ratio": 1.005783162201285,
+            "sorted_dims_rel_error": 0.11286020597105846,
+            "mass_kg": 1.6918126663075357
+          }
+        ],
+        "scale": 0.5259952383588948
+      }
+    },
+    {
+      "clip": "book/batch-12/11",
+      "job": "c148ee009dda",
+      "class": "book",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 9.0,
+        "reconstruct": 46.2,
+        "segment": 85.6,
+        "lift": 29.9,
+        "physics": 8.6,
+        "package": 4.2
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "book",
+            "category": "paperback book",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.23,
+              0.05,
+              0.21
+            ],
+            "pred_dims_m": [
+              0.208,
+              0.18,
+              0.105
+            ],
+            "size_ratio": 1.1763484947149354,
+            "sorted_dims_rel_error": 0.4461697583739465,
+            "mass_kg": 1.9352044108176014
+          }
+        ],
+        "scale": 0.3731652707521353
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "book",
+            "category": "paperback book",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.23,
+              0.05,
+              0.21
+            ],
+            "pred_dims_m": [
+              0.23,
+              0.199,
+              0.116
+            ],
+            "size_ratio": 1.3002910958533138,
+            "sorted_dims_rel_error": 0.45746030212157734,
+            "mass_kg": 2.626009101423332
+          }
+        ],
+        "scale": 0.41313407098721083
+      }
+    },
+    {
+      "clip": "bottle/batch-3/14",
+      "job": "3bb8174ebe2e",
+      "class": "bottle",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 7.9,
+        "reconstruct": 23.1,
+        "segment": 155.3,
+        "lift": 34.4,
+        "physics": 48.0,
+        "package": 10.0
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "liquor bottle",
+            "category": "liquor bottle",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.08,
+              0.26,
+              0.08
+            ],
+            "pred_dims_m": [
+              0.097,
+              0.234,
+              0.05
+            ],
+            "size_ratio": 0.8802406820602857,
+            "sorted_dims_rel_error": 0.229166660039948,
+            "mass_kg": 1.3428217681098336
+          }
+        ],
+        "scale": 0.6197514796566577
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "liquor bottle",
+            "category": "rum bottle",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.08,
+              0.26,
+              0.08
+            ],
+            "pred_dims_m": [
+              0.109,
+              0.263,
+              0.056
+            ],
+            "size_ratio": 0.9881108367186822,
+            "sorted_dims_rel_error": 0.2246795044831673,
+            "mass_kg": 1.798512392492792
+          }
+        ],
+        "scale": 0.6970954356846473
+      }
+    },
+    {
+      "clip": "bottle/batch-40/29",
+      "job": "297a18204b99",
+      "class": "bottle",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 5.1,
+        "reconstruct": 30.5,
+        "segment": 78.8,
+        "lift": 29.9,
+        "physics": 15.0,
+        "package": 4.8
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "wine bottle",
+            "category": "wine bottle",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.08,
+              0.2946,
+              0.0804
+            ],
+            "pred_dims_m": [
+              0.08,
+              0.232,
+              0.084
+            ],
+            "size_ratio": 0.9371640559691348,
+            "sorted_dims_rel_error": 0.08597981763071538,
+            "mass_kg": 1.9764593220701083
+          }
+        ],
+        "scale": 0.41841004184100417
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "wine bottle",
+            "category": "wine bottle",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.08,
+              0.2946,
+              0.0804
+            ],
+            "pred_dims_m": [
+              0.076,
+              0.221,
+              0.08
+            ],
+            "size_ratio": 0.8918568554569429,
+            "sorted_dims_rel_error": 0.10146127521308078,
+            "mass_kg": 1.6004242106343112
+          }
+        ],
+        "scale": 0.39748953974895396
+      }
+    },
+    {
+      "clip": "bottle/batch-7/24",
+      "job": "c8468c96f374",
+      "class": "bottle",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 0,
+      "timings": {
+        "ingest": 6.0,
+        "reconstruct": 27.3,
+        "segment": 99.2,
+        "lift": 37.5,
+        "physics": 10.3,
+        "package": 5.7
+      },
+      "physics.json": {
+        "separated": 0,
+        "objects": [],
+        "scale": 0.27603091546253183
+      },
+      "physics_hinted.json": {
+        "separated": 0,
+        "objects": [],
+        "scale": 0.27603091546253183
+      }
+    },
+    {
+      "clip": "bottle/batch-28/4",
+      "job": "f5dd678b612a",
+      "class": "bottle",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 13.0,
+        "reconstruct": 26.6,
+        "segment": 78.3,
+        "lift": 31.0,
+        "physics": 11.2,
+        "package": 9.1
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "syrup bottle",
+            "category": "syrup bottle",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.06,
+              0.24,
+              0.05
+            ],
+            "pred_dims_m": [
+              0.23,
+              0.06,
+              0.084
+            ],
+            "size_ratio": 1.1720387295104802,
+            "sorted_dims_rel_error": 0.21388888621909766,
+            "mass_kg": 0.5
+          }
+        ],
+        "scale": 0.2658221996209144
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "syrup bottle",
+            "category": "syrup bottle",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.06,
+              0.24,
+              0.05
+            ],
+            "pred_dims_m": [
+              0.21,
+              0.055,
+              0.077
+            ],
+            "size_ratio": 1.0729514606051869,
+            "sorted_dims_rel_error": 0.1694444420230059,
+            "mass_kg": 0.5
+          }
+        ],
+        "scale": 0.2427072257408349
+      }
+    },
+    {
+      "clip": "camera/batch-7/24",
+      "job": "b48840d0b9c1",
+      "class": "camera",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 9.7,
+        "reconstruct": 21.6,
+        "segment": 134.8,
+        "lift": 27.3,
+        "physics": 40.8,
+        "package": 13.3
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "digital camera",
+            "category": "digital camera",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.12,
+              0.06,
+              0.04
+            ],
+            "pred_dims_m": [
+              0.126,
+              0.052,
+              0.041
+            ],
+            "size_ratio": 0.977061188492537,
+            "sorted_dims_rel_error": 0.06944445344722947,
+            "mass_kg": 0.3377407550278108
+          }
+        ],
+        "scale": 0.30437694040299507
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "digital camera",
+            "category": "compact digital camera",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.12,
+              0.06,
+              0.04
+            ],
+            "pred_dims_m": [
+              0.147,
+              0.061,
+              0.048
+            ],
+            "size_ratio": 1.1433134594259278,
+            "sorted_dims_rel_error": 0.14722224786463767,
+            "mass_kg": 0.5379492463523324
+          }
+        ],
+        "scale": 0.3554656926689277
+      }
+    },
+    {
+      "clip": "camera/batch-3/11",
+      "job": "e8e61643b183",
+      "class": "camera",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 10.1,
+        "reconstruct": 25.3,
+        "segment": 141.7,
+        "lift": 30.1,
+        "physics": 26.3,
+        "package": 4.5
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "digital camera",
+            "category": "compact digital camera",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.11,
+              0.07,
+              0.03
+            ],
+            "pred_dims_m": [
+              0.183,
+              0.075,
+              0.097
+            ],
+            "size_ratio": 1.7929053888871818,
+            "sorted_dims_rel_error": 0.8497835694483161,
+            "mass_kg": 0.21
+          }
+        ],
+        "scale": 0.4372267332916927
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "digital camera",
+            "category": "compact digital camera",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.11,
+              0.07,
+              0.03
+            ],
+            "pred_dims_m": [
+              0.146,
+              0.06,
+              0.077
+            ],
+            "size_ratio": 1.4293139109654291,
+            "sorted_dims_rel_error": 0.475757591494985,
+            "mass_kg": 0.45209204078856824
+          }
+        ],
+        "scale": 0.34933480830252395
+      }
+    },
+    {
+      "clip": "camera/batch-7/44",
+      "job": "03b1fac9bfce",
+      "class": "camera",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 7.6,
+        "reconstruct": 30.3,
+        "segment": 77.0,
+        "lift": 30.6,
+        "physics": 25.1,
+        "package": 7.8
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "camera",
+            "category": "mirrorless camera",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.12,
+              0.07,
+              0.1
+            ],
+            "pred_dims_m": [
+              0.108,
+              0.055,
+              0.105
+            ],
+            "size_ratio": 0.9055216114834619,
+            "sorted_dims_rel_error": 0.12142856062269523,
+            "mass_kg": 0.6915176277387156
+          }
+        ],
+        "scale": 0.37840299919414183
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "camera",
+            "category": "digital camera",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.12,
+              0.07,
+              0.1
+            ],
+            "pred_dims_m": [
+              0.108,
+              0.055,
+              0.105
+            ],
+            "size_ratio": 0.9055216114834619,
+            "sorted_dims_rel_error": 0.12142856062269523,
+            "mass_kg": 0.5733316451354903
+          }
+        ],
+        "scale": 0.37925305208408583
+      }
+    },
+    {
+      "clip": "camera/batch-12/32",
+      "job": "c1fd9a05b5ba",
+      "class": "camera",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 9.6,
+        "reconstruct": 27.5,
+        "segment": 67.3,
+        "lift": 31.8,
+        "physics": 11.6,
+        "package": 11.5
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "dslr camera",
+            "category": "DSLR camera body",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.13,
+              0.1105,
+              0.0733
+            ],
+            "pred_dims_m": [
+              0.182,
+              0.072,
+              0.11
+            ],
+            "size_ratio": 1.1102677220789618,
+            "sorted_dims_rel_error": 0.14083071891090193,
+            "mass_kg": 0.5610615603612074
+          }
+        ],
+        "scale": 0.289962041332771
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "dslr camera",
+            "category": "DSLR camera body",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.13,
+              0.1105,
+              0.0733
+            ],
+            "pred_dims_m": [
+              0.15,
+              0.06,
+              0.091
+            ],
+            "size_ratio": 0.9195813571819211,
+            "sorted_dims_rel_error": 0.17065247784242588,
+            "mass_kg": 0.8
+          }
+        ],
+        "scale": 0.23920011481605508
+      }
+    },
+    {
+      "clip": "cereal_box/batch-26/22",
+      "job": "479911d8af47",
+      "class": "cereal_box",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 5.7,
+        "reconstruct": 28.2,
+        "segment": 348.2,
+        "lift": 20.5,
+        "physics": 8.9,
+        "package": 5.0
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "cereal box",
+            "category": "cereal box",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.15,
+              0.21,
+              0.05
+            ],
+            "pred_dims_m": [
+              0.334,
+              0.032,
+              0.14
+            ],
+            "size_ratio": 0.9830628947558973,
+            "sorted_dims_rel_error": 0.3390476511413187,
+            "mass_kg": 0.6081276578106127
+          }
+        ],
+        "scale": 0.8921175046198944
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "cereal box",
+            "category": "cereal box",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.15,
+              0.21,
+              0.05
+            ],
+            "pred_dims_m": [
+              0.334,
+              0.032,
+              0.14
+            ],
+            "size_ratio": 0.9830628947558973,
+            "sorted_dims_rel_error": 0.3390476511413187,
+            "mass_kg": 0.643899872975943
+          }
+        ],
+        "scale": 0.8921175046198944
+      }
+    },
+    {
+      "clip": "cereal_box/batch-26/12",
+      "job": "08084d30f9b2",
+      "class": "cereal_box",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 5.5,
+        "reconstruct": 31.3,
+        "segment": 171.4,
+        "lift": 18.0,
+        "physics": 10.2,
+        "package": 4.1
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "cereal box",
+            "category": "cereal box",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.14,
+              0.2,
+              0.05
+            ],
+            "pred_dims_m": [
+              0.778,
+              0.026,
+              0.16
+            ],
+            "size_ratio": 1.3222542117681169,
+            "sorted_dims_rel_error": 1.170952362591515,
+            "mass_kg": 0.44
+          }
+        ],
+        "scale": 1.350780920219502
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "cereal box",
+            "category": "cereal box",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.14,
+              0.2,
+              0.05
+            ],
+            "pred_dims_m": [
+              0.924,
+              0.03,
+              0.19
+            ],
+            "size_ratio": 1.5552716614551472,
+            "sorted_dims_rel_error": 1.459047597154063,
+            "mass_kg": 0.45
+          }
+        ],
+        "scale": 1.6040523427606586
+      }
+    },
+    {
+      "clip": "cereal_box/batch-24/3",
+      "job": "7ea040a699e2",
+      "class": "cereal_box",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 5.8,
+        "reconstruct": 27.3,
+        "segment": 209.2,
+        "lift": 45.5,
+        "physics": 13.9,
+        "package": 6.3
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "cereal box",
+            "category": "cereal box",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.2,
+              0.27,
+              0.05
+            ],
+            "pred_dims_m": [
+              0.28,
+              0.055,
+              0.272
+            ],
+            "size_ratio": 1.1576446707856174,
+            "sorted_dims_rel_error": 0.1656789863906778,
+            "mass_kg": 0.35
+          }
+        ],
+        "scale": 0.3304224687278735
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "cereal box",
+            "category": "cereal box",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.2,
+              0.27,
+              0.05
+            ],
+            "pred_dims_m": [
+              0.27,
+              0.053,
+              0.262
+            ],
+            "size_ratio": 1.1156441955496428,
+            "sorted_dims_rel_error": 0.12333333480689224,
+            "mass_kg": 0.35
+          }
+        ],
+        "scale": 0.31862166627330657
+      }
+    },
+    {
+      "clip": "cereal_box/batch-21/27",
+      "job": "37aaf8dda6c9",
+      "class": "cereal_box",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 9.0,
+        "reconstruct": 26.9,
+        "segment": 93.9,
+        "lift": 41.8,
+        "physics": 10.5,
+        "package": 9.8
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "cereal box",
+            "category": "baby cereal box",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.15,
+              0.2,
+              0.05
+            ],
+            "pred_dims_m": [
+              0.186,
+              0.043,
+              0.19
+            ],
+            "size_ratio": 1.0043411040631058,
+            "sorted_dims_rel_error": 0.14333332589931017,
+            "mass_kg": 0.4253906700866209
+          }
+        ],
+        "scale": 0.21955926366756418
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "cereal box",
+            "category": "cereal box",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.15,
+              0.2,
+              0.05
+            ],
+            "pred_dims_m": [
+              0.147,
+              0.034,
+              0.15
+            ],
+            "size_ratio": 0.7935946667387396,
+            "sorted_dims_rel_error": 0.19666668675011997,
+            "mass_kg": 0.20970271614694802
+          }
+        ],
+        "scale": 0.17344314132666305
+      }
+    },
+    {
+      "clip": "shoe/batch-14/30",
+      "job": "d63c1b40a050",
+      "class": "shoe",
+      "state": "done",
+      "error": null,
+      "gt_objects": 2,
+      "detected": 2,
+      "timings": {
+        "ingest": 10.3,
+        "reconstruct": 22.9,
+        "segment": null,
+        "lift": 58.4,
+        "physics": 10.3,
+        "package": 6.8
+      },
+      "physics.json": {
+        "separated": 2,
+        "objects": [
+          {
+            "label": "sneaker",
+            "category": "running shoe",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.12,
+              0.13,
+              0.29
+            ],
+            "pred_dims_m": [
+              0.222,
+              0.105,
+              0.135
+            ],
+            "size_ratio": 0.8860355786903613,
+            "sorted_dims_rel_error": 0.13264809786250045,
+            "mass_kg": 0.1916391984411817
+          },
+          {
+            "label": "sneaker",
+            "category": "running shoe",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.12,
+              0.13,
+              0.29
+            ],
+            "pred_dims_m": [
+              0.216,
+              0.089,
+              0.103
+            ],
+            "size_ratio": 0.7592523441633966,
+            "sorted_dims_rel_error": 0.24039932924912324,
+            "mass_kg": 0.12213124144244304
+          }
+        ],
+        "scale": 0.3002144388849178
+      },
+      "physics_hinted.json": {
+        "separated": 2,
+        "objects": [
+          {
+            "label": "sneaker",
+            "category": "running shoe",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.12,
+              0.13,
+              0.29
+            ],
+            "pred_dims_m": [
+              0.233,
+              0.11,
+              0.142
+            ],
+            "size_ratio": 0.9300467885630275,
+            "sorted_dims_rel_error": 0.12406424874550659,
+            "mass_kg": 0.22034058794964945
+          },
+          {
+            "label": "sneaker",
+            "category": "running shoe",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.12,
+              0.13,
+              0.29
+            ],
+            "pred_dims_m": [
+              0.226,
+              0.093,
+              0.108
+            ],
+            "size_ratio": 0.7946286055699797,
+            "sorted_dims_rel_error": 0.20497345139458664,
+            "mass_kg": 0.14042257411501283
+          }
+        ],
+        "scale": 0.31451036454610437
+      }
+    },
+    {
+      "clip": "shoe/batch-2/13",
+      "job": "974ff14ebb23",
+      "class": "shoe",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 14.3,
+        "reconstruct": 26.7,
+        "segment": 66.8,
+        "lift": 23.6,
+        "physics": 5.2,
+        "package": 4.4
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "high heel shoe",
+            "category": "high heel sandal",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.12,
+              0.14,
+              0.27
+            ],
+            "pred_dims_m": [
+              0.191,
+              0.08,
+              0.103
+            ],
+            "size_ratio": 0.7026879528435301,
+            "sorted_dims_rel_error": 0.29673721885086907,
+            "mass_kg": 0.21741593368640494
+          }
+        ],
+        "scale": 0.36541360252135385
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "high heel shoe",
+            "category": "high-heeled sandal",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.12,
+              0.14,
+              0.27
+            ],
+            "pred_dims_m": [
+              0.202,
+              0.085,
+              0.109
+            ],
+            "size_ratio": 0.7444597908053886,
+            "sorted_dims_rel_error": 0.2549823690526964,
+            "mass_kg": 0.2607823442874286
+          }
+        ],
+        "scale": 0.3882519526789385
+      }
+    },
+    {
+      "clip": "shoe/batch-30/39",
+      "job": "709adfd64975",
+      "class": "shoe",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 6.0,
+        "reconstruct": 25.5,
+        "segment": 39.7,
+        "lift": 18.4,
+        "physics": 4.4,
+        "package": 4.7
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "sneaker",
+            "category": "sneaker",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.1,
+              0.12,
+              0.28
+            ],
+            "pred_dims_m": [
+              0.28,
+              0.079,
+              0.134
+            ],
+            "size_ratio": 0.9590697982840459,
+            "sorted_dims_rel_error": 0.10888890255183466,
+            "mass_kg": 0.19204528245718067
+          }
+        ],
+        "scale": 0.7691462476650919
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "sneaker",
+            "category": "sneaker",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.1,
+              0.12,
+              0.28
+            ],
+            "pred_dims_m": [
+              0.282,
+              0.08,
+              0.135
+            ],
+            "size_ratio": 0.9677827182054782,
+            "sorted_dims_rel_error": 0.11071429664053695,
+            "mass_kg": 0.1963254702398916
+          }
+        ],
+        "scale": 0.7748184019370461
+      }
+    },
+    {
+      "clip": "shoe/batch-9/25",
+      "job": "93c737398bd9",
+      "class": "shoe",
+      "state": "done",
+      "error": null,
+      "gt_objects": 1,
+      "detected": 1,
+      "timings": {
+        "ingest": 5.2,
+        "reconstruct": 20.3,
+        "segment": 94.3,
+        "lift": 44.1,
+        "physics": 6.0,
+        "package": 5.5
+      },
+      "physics.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "dress shoe",
+            "category": "leather dress shoe",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.11,
+              0.08,
+              0.27
+            ],
+            "pred_dims_m": [
+              0.26,
+              0.1,
+              0.139
+            ],
+            "size_ratio": 1.1500425322247618,
+            "sorted_dims_rel_error": 0.18355782457497752,
+            "mass_kg": 0.5117487524300608
+          }
+        ],
+        "scale": 0.35531552018192153
+      },
+      "physics_hinted.json": {
+        "separated": 1,
+        "objects": [
+          {
+            "label": "dress shoe",
+            "category": "leather dress shoe",
+            "label_correct": true,
+            "gt_dims_m": [
+              0.11,
+              0.08,
+              0.27
+            ],
+            "pred_dims_m": [
+              0.273,
+              0.105,
+              0.146
+            ],
+            "size_ratio": 1.2076825378802258,
+            "sorted_dims_rel_error": 0.2169612782448405,
+            "mass_kg": 0.6911486744538239
+          }
+        ],
+        "scale": 0.3730812961910176
+      }
+    }
+  ]
+}
