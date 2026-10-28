@@ -189,7 +189,7 @@ export function VideoDemo({ furniture }: { furniture: string }) {
               </p>
             )}
             <p className="panel-note">
-              Cells: what the model said about each step on each sampled frame (brighter = done). Orange line: the most likely build history
+              Cells: what the model said about each step on each sampled frame (brighter = done). Black line: the most likely build history
               (Viterbi). Diamonds: when the tracker says each step was finished; green ticks: when its parts were really in place.
             </p>
           </div>

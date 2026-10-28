@@ -414,6 +414,7 @@ function Build({ plan, source, feed, code, onStop }: { plan: AssemblyPlan; sourc
       </aside>
 
       <section className={`ar-step glass${done ? ' is-done' : ''}`} aria-live="polite">
+        <span className="step-number">{done ? '✓' : step ? step.index : '·'}</span>
         {error && <p className="live-error">{error}</p>}
         {done ? (
           <>

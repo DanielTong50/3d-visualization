@@ -9,6 +9,7 @@ import { AssemblyGraph } from '../ui/AssemblyGraph';
 import { BeliefBars } from '../ui/BeliefBars';
 import { DetectionLayer } from '../ui/DetectionLayer';
 import { FurniturePicker } from '../ui/FurniturePicker';
+import { HardwareIcon } from '../ui/HardwareIcon';
 
 const PHASES: { phase: Moment['phase']; label: string }[] = [
   { phase: 'reorient', label: 'Turn' },
@@ -19,6 +20,12 @@ const PHASES: { phase: Moment['phase']; label: string }[] = [
 ];
 
 const HUD_MS = 60;
+
+/** The close-up of the piece going in: right column, under the belief panel (CSS pixels). */
+function closeUpRect(width: number) {
+  const w = Math.min(280, width * 0.26);
+  return { right: 16, top: 336, width: w, height: Math.round(w * 0.68) };
+}
 
 /**
  * The copilot in a simulated session: a choreographed build of a library product, seen through a
@@ -57,6 +64,9 @@ export function ArDemo({ furniture }: { furniture: string }) {
     if (!plan || !container) return;
     const stage = new Stage(container, plan, 'ar');
     stage.frame(0, 0.1);
+    const place = () => (stage.inset = container.clientWidth > 1000 ? closeUpRect(container.clientWidth) : null);
+    place();
+    window.addEventListener('resize', place);
     stageRef.current = stage;
     setTrack(simulateTrack(stage.choreography));
     timeRef.current = 0;
@@ -81,6 +91,7 @@ export function ArDemo({ furniture }: { furniture: string }) {
     raf = requestAnimationFrame(loop);
     return () => {
       cancelAnimationFrame(raf);
+      window.removeEventListener('resize', place);
       stage.dispose();
       stageRef.current = null;
     };
@@ -101,6 +112,8 @@ export function ArDemo({ furniture }: { furniture: string }) {
   const belief = track && moment ? beliefAt(track, moment.time, steps) : null;
   const done = moment?.phase === 'done';
   const tracked = frame?.detections.reduce((sum, d) => sum + d.parts, 0) ?? 0;
+  const left = choreography && moment ? choreography.inTray(moment.time) : new Map<string, number>();
+  const inset = stageRef.current?.inset ?? null;
   const joining = choreography && moment ? choreography.joining(moment).length : 0;
   const seek = (t: number) => {
     timeRef.current = t;
@@ -144,6 +157,38 @@ export function ArDemo({ furniture }: { furniture: string }) {
         </aside>
       )}
 
+      {plan && moment && choreography && (
+        <aside className="ar-hardware glass">
+          <div className="panel-head">
+            <span className="eyebrow">Hardware</span>
+            <span className="faint mono">{[...left.values()].reduce((a, b) => a + b, 0)} in the tray</span>
+          </div>
+          <ul className="fittings">
+            {plan.hardware.map((item) => {
+              const remaining = left.get(item.id) ?? 0;
+              const now = frame?.closeUp?.hardware === item.id;
+              return (
+                <li key={item.id} className={now ? 'is-now' : remaining === 0 ? 'is-empty' : ''}>
+                  <HardwareIcon kind={item.kind} size={34} />
+                  <span>{item.name}</span>
+                  <b>
+                    {remaining}/{item.count}
+                  </b>
+                </li>
+              );
+            })}
+          </ul>
+        </aside>
+      )}
+
+      {plan && frame?.closeUp && inset && (
+        <div className="ar-closeup" style={{ top: inset.top, width: inset.width, height: inset.height }}>
+          <span>
+            Close-up · {hardwareName(plan, frame.closeUp.hardware)} · {frame.closeUp.done}/{frame.closeUp.total}
+          </span>
+        </div>
+      )}
+
       {plan && belief && (
         <aside className="ar-belief glass">
           <div className="panel-head">
@@ -160,6 +205,7 @@ export function ArDemo({ furniture }: { furniture: string }) {
 
       {plan && moment && (
         <section className={`ar-step glass${done ? ' is-done' : ''}`} aria-live="polite">
+          <span className="step-number">{done ? '✓' : step ? step.index : '·'}</span>
           {done ? (
             <>
               <span className="eyebrow done">Verified</span>
@@ -214,6 +260,15 @@ export function ArDemo({ furniture }: { furniture: string }) {
                   </span>
                 ))}
               </div>
+              {frame?.closeUp && (
+                <div className="fasten-progress">
+                  <span>
+                    {frame.closeUp.done}/{frame.closeUp.total} in
+                  </span>
+                  <progress value={frame.closeUp.done} max={frame.closeUp.total} />
+                  <span>{step.tools[0] ?? 'by hand'}</span>
+                </div>
+              )}
             </>
           ) : (
             <>

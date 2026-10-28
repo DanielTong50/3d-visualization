@@ -5,7 +5,7 @@
  *   assemblies/<id>/manual/page-NN.png    every page of the generated manual, at print size
  *   assemblies/<id>/session/session.mp4   a clean session (no AR layer, no HUD), filmed handheld
  *   assemblies/<id>/session/truth.json    what is done at every instant of that video
- *   public/posters/copilot.jpg            a still of the copilot session for the home page
+ *   public/posters/copilot*.jpg           stills of the copilot session for the home page
  *
  * Usage: node scripts/capture.mjs [--manuals] [--sessions] [--posters] [--only id,id] [--fps 15]
  * (no flag: manuals and sessions). Starts its own Vite server. Needs Playwright with Chrome or
@@ -156,7 +156,11 @@ const browser = await launch();
 try {
   const library = JSON.parse(await readFile(join(LIBRARY, 'index.json'), 'utf8'));
   const only = option('only', '').split(',').filter(Boolean);
-  if (wantPosters) await poster(browser, base, 'halden-bookcase', 5.1, 'copilot');
+  if (wantPosters) {
+    await poster(browser, base, 'halden-bookcase', 5.1, 'copilot'); // parts flying to their ghosts
+    await poster(browser, base, 'halden-bookcase', 9.2, 'copilot-fasten'); // fittings going in, with the close-up
+    await poster(browser, base, 'halden-bookcase', 47.6, 'copilot-turn'); // standing the bookcase up
+  }
   for (const item of library.filter((p) => !only.length || only.includes(p.id))) {
     if (wantManuals) await manual(browser, base, item.id, 3 + item.steps);
     if (wantSessions) await session(browser, base, item.id);
