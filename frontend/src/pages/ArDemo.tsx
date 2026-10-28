@@ -35,7 +35,6 @@ export function ArDemo({ furniture }: { furniture: string }) {
   const [frame, setFrame] = useState<FrameInfo | null>(null);
   const [playing, setPlaying] = useState(true);
   const [speed, setSpeed] = useState(1);
-  const [fps, setFps] = useState(0);
   const [track, setTrack] = useState<SimulatedTrack | null>(null);
   const playingRef = useRef(playing);
   const speedRef = useRef(speed);
@@ -63,8 +62,6 @@ export function ArDemo({ furniture }: { furniture: string }) {
     timeRef.current = 0;
     let last = performance.now();
     let hudAt = 0;
-    let frames = 0;
-    let fpsAt = last;
     let raf = 0;
     const loop = (now: number) => {
       const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
@@ -75,12 +72,6 @@ export function ArDemo({ furniture }: { furniture: string }) {
       }
       const info = stage.update(timeRef.current, now / 1000);
       stage.render();
-      frames++;
-      if (now - fpsAt > 500) {
-        setFps(Math.round((frames * 1000) / (now - fpsAt)));
-        frames = 0;
-        fpsAt = now;
-      }
       if (now - hudAt > HUD_MS) {
         hudAt = now;
         setFrame(info);
@@ -132,9 +123,6 @@ export function ArDemo({ furniture }: { furniture: string }) {
         <div className="ar-status">
           <span className="chip">
             <span className="rec" /> <b>LIVE</b>
-          </span>
-          <span className="chip">
-            <b>{fps}</b> fps
           </span>
           <span className="chip">
             <b>{tracked}</b> {tracked === 1 ? 'part' : 'parts'} tracked
