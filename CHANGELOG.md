@@ -6,6 +6,22 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-28: a quieter front page, and no more crashes
+
+### Fixed
+- The site could go blank when the home page moved to the next product, or after switching products a few times:
+  each 3D stage kept its WebGL context after it was disposed, until the browser ran out of them, and for one render
+  the new product's plan was drawn with the previous product's tracker data. Stages now release their textures and
+  their context; a product's stored run is kept with that product; the belief bars never read past the plan's steps;
+  a lost context stops drawing instead of throwing; and each screen has an error boundary.
+- The copilot's step card said "Finding the parts" during the final turn of a build that ends lying down.
+
+### Changed
+- The home page puts the build in the background, full bleed, under a short statement and two quiet links, with a
+  live caption of what is on screen; below it, the numbers, the demos as captioned figures, the method, the results
+  and a numbered bibliography.
+- One typeface (Host Grotesk) at regular weights across the app.
+
 ## [1.1.0] - 2026-10-28: hardware, a light design, and the research behind it
 
 ### Added
@@ -179,7 +195,8 @@ Initial release.
 - CI: lint, tests and build for both halves, freshness of generated scene files, and a check that
   exported scenes settle in MuJoCo. GitHub Pages deployment of the simulator.
 
-[Unreleased]: https://github.com/DanielTong50/3d-visualization/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/DanielTong50/3d-visualization/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/DanielTong50/3d-visualization/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/DanielTong50/3d-visualization/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/DanielTong50/3d-visualization/compare/v0.2.0...v1.0.0
 [0.2.0]: https://github.com/DanielTong50/3d-visualization/compare/v0.1.0...v0.2.0
