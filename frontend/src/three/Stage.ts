@@ -1,29 +1,33 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { Choreography, ORIENTATIONS, type Moment, type PartState } from '../engine/choreography';
+import { Choreography, ORIENTATIONS, smooth, type Moment, type PartState } from '../engine/choreography';
 import { stepParts } from '../engine/graph';
 import type { AssemblyPlan, Part } from '../engine/plan';
+import { hardwareGeometry, hardwareMaterial, toolModel, trayModel } from './hardware';
 import { floorMaterial, partMaterial, wallMaterial } from './materials';
 
 /**
- * The 3D world of an assembly session: a room, the furniture parts, a handheld-phone camera, and
- * the AR layer drawn into the scene (ghosts at target poses, guidance arcs, a rotation arc when the
- * assembly must be turned, fastener markers). It renders one moment of a Choreography at a time and
+ * The 3D world of an assembly session: a room, the furniture parts, the hardware in its tray and
+ * the tools, a handheld-phone camera, and the AR layer drawn into the scene (ghosts at target
+ * poses, guidance arrows, a rotation ring when the assembly must be turned, fastener markers). It renders one moment of a Choreography at a time and
  * reports where every part appears on screen, so the HUD can draw detection boxes that come from
  * the real geometry.
  *
- * Modes: 'ar' (the copilot view), 'hero' (a cinematic orbit for the home page), 'clean' (no AR
- * layer, a deterministic camera: frames a vision model can be tested on).
+ * Modes: 'ar' (the copilot view), 'hero' (an orbit in a light showroom for the home page), 'clean'
+ * (no AR layer, a deterministic camera: frames a vision model can be tested on).
  */
 
 export type StageMode = 'ar' | 'hero' | 'clean';
 
+/** The AR palette: blue for the next move, green for done, yellow for what the camera sees. */
 export const AR = {
-  guide: new THREE.Color('#ff6a1a'),
-  done: new THREE.Color('#34d399'),
-  track: new THREE.Color('#5ccfff'),
+  guide: new THREE.Color('#0058a3'),
+  done: new THREE.Color('#14a44d'),
+  track: new THREE.Color('#ffdb00'),
 } as const;
+
+const TOOLS: Record<string, string> = { screwdriver: 'screwdriver', hammer: 'hammer', 'allen key': 'allen key' };
 
 export interface Detection {
   id: string;
@@ -42,6 +46,16 @@ export interface FrameInfo {
   detections: Detection[];
   /** Screen position (0..1) of the current step's target, for the HUD's callout line. */
   focus: { x: number; y: number } | null;
+  /** While a step is fastened: the piece in the close-up and the step's progress. */
+  closeUp: { hardware: string; kind: string; done: number; total: number } | null;
+}
+
+/** Where the close-up goes, in CSS pixels from the view's top right corner. */
+export interface InsetRect {
+  right: number;
+  top: number;
+  width: number;
+  height: number;
 }
 
 const MM = 0.001;
@@ -79,8 +93,11 @@ function markerTexture(): THREE.CanvasTexture {
   return texture;
 }
 
-/** A tube along a curve whose dashes run toward the target (the guidance arc). */
-function flowMaterial(color: THREE.Color): THREE.ShaderMaterial {
+/**
+ * The shaft of a guidance arrow, solid like the arrows in a manual: it fades in from the part and a
+ * highlight sweeps along it toward the target.
+ */
+function arrowMaterial(color: THREE.Color): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
@@ -89,12 +106,15 @@ function flowMaterial(color: THREE.Color): THREE.ShaderMaterial {
     fragmentShader: `
       uniform float uTime; uniform vec3 uColor; uniform float uOpacity; varying vec2 vUv;
       void main() {
-        float dash = step(0.45, fract(vUv.x * 14.0 - uTime * 1.6));
-        float fade = smoothstep(0.0, 0.08, vUv.x) * (0.55 + 0.45 * vUv.x);
-        gl_FragColor = vec4(uColor * 1.15, (0.25 + 0.75 * dash) * fade * uOpacity);
+        float d = vUv.x - fract(uTime * 0.6);
+        float pulse = exp(-d * d * 220.0);
+        float tail = smoothstep(0.0, 0.16, vUv.x);
+        gl_FragColor = vec4(mix(uColor, vec3(1.0), pulse * 0.7), (0.9 + 0.1 * pulse) * tail * uOpacity);
       }`,
   });
 }
+
+const ARROW_HEAD_M = 0.055;
 
 interface PartView {
   part: Part;
@@ -111,11 +131,18 @@ export class Stage {
   private readonly scene = new THREE.Scene();
   private readonly views = new Map<string, PartView>();
   private readonly ar = new THREE.Group();
-  private readonly arcs: THREE.Mesh[] = [];
+  private readonly arcs: { shaft: THREE.Mesh; head: THREE.Mesh }[] = [];
   private readonly flow: THREE.ShaderMaterial;
+  private readonly arrowHead = new THREE.MeshBasicMaterial({ color: AR.guide, transparent: true, depthWrite: false });
+  private readonly hardware: { mesh: THREE.InstancedMesh; pieces: number[] }[] = [];
+  private readonly tools = new Map<string, { model: THREE.Group; rest: THREE.Matrix4 }>();
   private readonly rotation: THREE.Group;
   private readonly fastenerPool: THREE.Group[] = [];
   private readonly markers: Record<'guide' | 'done', THREE.SpriteMaterial>;
+  /** A close-up of the piece going in, drawn into this corner of the view (none when null). */
+  inset: InsetRect | null = null;
+  private readonly closeUp = new THREE.PerspectiveCamera(30, 1.4, 0.004, 12);
+  private showCloseUp = false;
   /** Where the look-at point sits on screen, as a fraction of the viewport from its center (+x right, +y up). */
   private framing = { x: 0, y: 0 };
   private readonly resizeObserver: ResizeObserver;
@@ -142,18 +169,19 @@ export class Stage {
     this.scene.environmentIntensity = 0.55;
     environment.dispose();
     if (mode === 'hero') {
-      this.scene.background = new THREE.Color('#07080a');
-      this.scene.fog = new THREE.Fog('#07080a', 4.5, 11);
-      this.scene.environmentIntensity = 0.35;
-      this.buildStudio();
+      this.scene.background = new THREE.Color('#f3f2ee');
+      this.scene.fog = new THREE.Fog('#f3f2ee', 5, 12);
+      this.scene.environmentIntensity = 0.7;
+      this.buildShowroom();
     } else {
       this.scene.background = new THREE.Color('#d9d4cc');
       this.scene.fog = new THREE.Fog('#d9d4cc', 7, 16);
       this.buildRoom();
     }
     for (const part of plan.parts) this.addPart(part);
+    this.buildHardware();
 
-    this.flow = flowMaterial(AR.guide);
+    this.flow = arrowMaterial(AR.guide);
     const marker = markerTexture();
     this.markers = {
       guide: new THREE.SpriteMaterial({ map: marker, color: AR.guide, depthTest: false, transparent: true, sizeAttenuation: false }),
@@ -202,29 +230,117 @@ export class Stage {
     this.scene.add(sun);
   }
 
-  /** The hero's dark studio: a floor and a fine grid that fade into the page, a warm key and a cool rim. */
-  private buildStudio(): void {
-    const floor = new THREE.Mesh(new THREE.CircleGeometry(9, 96), new THREE.MeshStandardMaterial({ color: '#16181d', roughness: 0.9 }));
+  /** The home page's showroom: a pale floor and a fine grid that fade into the page, soft daylight. */
+  private buildShowroom(): void {
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(9, 96), new THREE.MeshStandardMaterial({ color: '#ecebe6', roughness: 0.95 }));
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;
-    const grid = new THREE.GridHelper(18, 90, '#2b3039', '#1c1f25');
+    const grid = new THREE.GridHelper(18, 72, '#d5d2ca', '#e2dfd8');
     grid.position.y = 0.001;
-    const lines = grid.material as THREE.LineBasicMaterial;
-    lines.transparent = true;
-    lines.opacity = 0.7;
     this.scene.add(floor, grid);
 
-    this.scene.add(new THREE.HemisphereLight('#d6deff', '#050506', 0.4));
-    const key = new THREE.DirectionalLight('#ffe8d2', 2.6);
-    key.position.set(2.2, 4.4, 2.6);
+    this.scene.add(new THREE.HemisphereLight('#ffffff', '#d8d0c2', 0.95));
+    const key = new THREE.DirectionalLight('#fff3e3', 2.1);
+    key.position.set(2.2, 4.6, 2.8);
     key.castShadow = true;
     key.shadow.mapSize.set(2048, 2048);
     Object.assign(key.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, near: 0.5, far: 12 });
     key.shadow.bias = -0.0004;
     key.shadow.normalBias = 0.02;
-    const rim = new THREE.DirectionalLight('#7fd8ff', 1.4);
-    rim.position.set(-3, 2.4, -3.5);
-    this.scene.add(key, rim);
+    key.shadow.radius = 4;
+    const fill = new THREE.DirectionalLight('#eaf1ff', 0.6);
+    fill.position.set(-3, 2.4, -1.5);
+    this.scene.add(key, fill);
+  }
+
+  /** The hardware in its tray, one instanced mesh per item, and the tools the plan calls for beside it. */
+  private buildHardware(): void {
+    const c = this.choreography;
+    const byItem = new Map<string, number[]>();
+    c.pieces.forEach((piece, i) => byItem.set(piece.hardware, [...(byItem.get(piece.hardware) ?? []), i]));
+    for (const pieces of byItem.values()) {
+      const first = c.pieces[pieces[0]];
+      const mesh = new THREE.InstancedMesh(
+        hardwareGeometry(first.kind, first.length, first.radius),
+        hardwareMaterial(first.kind),
+        pieces.length,
+      );
+      mesh.castShadow = true;
+      mesh.frustumCulled = false; // pieces fly all over the room
+      pieces.forEach((index, i) => mesh.setMatrixAt(i, c.pieces[index].rest));
+      this.scene.add(mesh);
+      this.hardware.push({ mesh, pieces });
+    }
+    if (c.pieces.length) {
+      const tray = trayModel(c.tray.size.x, c.tray.size.y);
+      tray.position.copy(c.tray.center);
+      this.scene.add(tray);
+    }
+    const used = [
+      ...new Set(
+        this.plan.steps
+          .flatMap((s) => s.tools)
+          .map((t) => TOOLS[t])
+          .filter(Boolean),
+      ),
+    ];
+    used.forEach((tool, i) => {
+      const model = toolModel(tool);
+      model.matrixAutoUpdate = false;
+      // Lying on the floor beside the tray, handles toward the camera.
+      const rest = new THREE.Matrix4().compose(
+        new THREE.Vector3(c.tray.center.x + c.tray.size.x / 2 + 0.07 + i * 0.1, 0.016, c.tray.center.z),
+        new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2),
+        new THREE.Vector3(1, 1, 1),
+      );
+      model.matrix.copy(rest);
+      this.scene.add(model);
+      this.tools.set(tool, { model, rest });
+    });
+  }
+
+  /**
+   * Hardware at this moment (tray, flying to its hole, or seated in its part) and the step's tool
+   * at work on the piece going in: a screwdriver or allen key turns with it, a hammer taps it home.
+   */
+  private layoutHardware(moment: Moment, states: Map<string, PartState>): void {
+    const c = this.choreography;
+    const poses = c.hardwarePoses(moment, states);
+    for (const { mesh, pieces } of this.hardware) {
+      pieces.forEach((index, i) => mesh.setMatrixAt(i, poses[index].matrix));
+      mesh.instanceMatrix.needsUpdate = true;
+    }
+    const step = this.plan.steps[moment.step - 1];
+    const working = moment.phase === 'fasten' && step ? TOOLS[step.tools[0]] : undefined;
+    for (const [name, tool] of this.tools) {
+      tool.model.matrix.copy(tool.rest);
+      if (name !== working) continue;
+      const { current } = c.fastening(moment);
+      const piece = current ?? [...c.pieces].reverse().find((p) => p.step === moment.step && moment.time >= p.end);
+      if (!piece) continue;
+      const pose = poses[c.pieces.indexOf(piece)];
+      const driving = pose.state !== 'moving' || pose.u >= 0.55;
+      // While the piece flies in, the tool waits at its hole; then it drives the piece home.
+      const at = driving ? pose.matrix : c.seated(piece, states)!;
+      const rotation = new THREE.Quaternion().setFromRotationMatrix(at);
+      const head = new THREE.Vector3(0, -piece.length / 2, 0).applyMatrix4(at);
+      const along = new THREE.Vector3(0, 1, 0).applyQuaternion(rotation);
+      if (!driving) head.addScaledVector(along, -(piece.length + 0.035));
+      const frame = new THREE.Matrix4().compose(head, rotation, new THREE.Vector3(1, 1, 1));
+      const turn = driving ? (moment.time - piece.start) * 14 : 0;
+      if (name === 'hammer') {
+        // Swing about the hand at the end of the handle; the face strikes the nail's head.
+        const pivot = new THREE.Vector3(0.24, -0.05, 0);
+        const swing = driving ? 0.55 * Math.max(0, Math.sin(moment.time * 18)) : 0.5;
+        frame
+          .multiply(new THREE.Matrix4().makeTranslation(pivot.x, pivot.y, pivot.z))
+          .multiply(new THREE.Matrix4().makeRotationZ(-swing))
+          .multiply(new THREE.Matrix4().makeTranslation(-pivot.x, -pivot.y, -pivot.z));
+      } else {
+        frame.multiply(new THREE.Matrix4().makeRotationY(turn));
+      }
+      tool.model.matrix.copy(frame);
+    }
   }
 
   private addPart(part: Part): void {
@@ -300,12 +416,14 @@ export class Stage {
     return this.fastenerPool[index];
   }
 
+  /** A guidance arrow from a part to where it goes: a solid curved shaft and a cone head at the target. */
   private arc(index: number, from: THREE.Vector3, to: THREE.Vector3): void {
     while (this.arcs.length <= index) {
-      const mesh = new THREE.Mesh(new THREE.BufferGeometry(), this.flow);
-      mesh.renderOrder = 6;
-      this.ar.add(mesh);
-      this.arcs.push(mesh);
+      const shaft = new THREE.Mesh(new THREE.BufferGeometry(), this.flow);
+      const head = new THREE.Mesh(new THREE.ConeGeometry(0.026, ARROW_HEAD_M, 20), this.arrowHead);
+      shaft.renderOrder = head.renderOrder = 6;
+      this.ar.add(shaft, head);
+      this.arcs.push({ shaft, head });
     }
     const lift = 0.25 + from.distanceTo(to) * 0.25;
     const middle = from
@@ -313,10 +431,16 @@ export class Stage {
       .lerp(to, 0.5)
       .setY(Math.max(from.y, to.y) + lift);
     const curve = new THREE.QuadraticBezierCurve3(from, middle, to);
-    const mesh = this.arcs[index];
-    mesh.geometry.dispose();
-    mesh.geometry = new THREE.TubeGeometry(curve, 48, 0.006, 6, false);
-    mesh.visible = true;
+    // The shaft stops where the head begins, so the head's tip lands on the target.
+    const stop = Math.max(0.5, 1 - ARROW_HEAD_M / Math.max(curve.getLength(), 1e-3));
+    const shaftCurve = new THREE.CatmullRomCurve3(Array.from({ length: 33 }, (_, i) => curve.getPoint((i / 32) * stop)));
+    const { shaft, head } = this.arcs[index];
+    shaft.geometry.dispose();
+    shaft.geometry = new THREE.TubeGeometry(shaftCurve, 48, 0.009, 10, false);
+    const tangent = curve.getTangent(1).normalize();
+    head.position.copy(to).addScaledVector(tangent, -ARROW_HEAD_M / 2);
+    head.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tangent);
+    shaft.visible = head.visible = true;
   }
 
   /** Lay out the scene for time t; returns what the HUD needs about this moment. */
@@ -339,14 +463,48 @@ export class Stage {
         ((view.ghost.children[0] as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = 0.08 + 0.1 * pulse;
       }
     }
+    this.layoutHardware(moment, states);
     this.layoutAr(moment, states, clock);
     this.moveCamera(moment, states, clock);
-    return { moment, detections: ar ? this.detect(moment, states) : [], focus: this.screenOf(this.focusPoint) };
+    return {
+      moment,
+      detections: ar ? this.detect(moment, states) : [],
+      focus: this.screenOf(this.focusPoint),
+      closeUp: ar ? this.aimCloseUp(moment, states) : null,
+    };
+  }
+
+  /** Point the close-up camera at the piece going in, from the side the phone sees it from. */
+  private aimCloseUp(moment: Moment, states: Map<string, PartState>): FrameInfo['closeUp'] {
+    this.showCloseUp = false;
+    if (moment.phase !== 'fasten') return null;
+    const c = this.choreography;
+    const progress = c.fastening(moment);
+    const piece = progress.current ?? [...c.pieces].reverse().find((p) => p.step === moment.step && moment.time >= p.end);
+    const seated = piece && c.seated(piece, states);
+    if (!piece || !seated) return null;
+    const rotation = new THREE.Quaternion().setFromRotationMatrix(seated);
+    const axis = new THREE.Vector3(0, 1, 0).applyQuaternion(rotation);
+    const target = new THREE.Vector3().setFromMatrixPosition(seated).addScaledVector(axis, -piece.length * 0.6);
+    // Look across the insertion axis, from the phone's side of it, slightly from above.
+    const toPhone = this.camera.position.clone().sub(target);
+    const side = toPhone.sub(axis.clone().multiplyScalar(toPhone.dot(axis)));
+    if (side.lengthSq() < 1e-8) side.set(1, 0, 0);
+    side.normalize();
+    const distance = 0.12 + piece.length * 2.2;
+    this.closeUp.position
+      .copy(target)
+      .addScaledVector(side, distance)
+      .add(new THREE.Vector3(0, distance * 0.35, 0));
+    this.closeUp.up.set(0, 1, 0);
+    this.closeUp.lookAt(target);
+    this.showCloseUp = true;
+    return { hardware: piece.hardware, kind: piece.kind, done: progress.done, total: progress.total };
   }
 
   private layoutAr(moment: Moment, states: Map<string, PartState>, clock: number): void {
     this.flow.uniforms.uTime.value = clock;
-    this.arcs.forEach((a) => (a.visible = false));
+    this.arcs.forEach((a) => (a.shaft.visible = a.head.visible = false));
     this.fastenerPool.forEach((m) => (m.visible = false));
     this.rotation.visible = false;
     if (this.mode === 'clean') return;
@@ -376,6 +534,7 @@ export class Stage {
         if (k === 1) this.focusPoint.copy(to);
       }
       this.flow.uniforms.uOpacity.value = moment.phase === 'locate' ? Math.min(1, moment.u * 2.5) : 1 - Math.max(0, moment.u - 0.75) * 4;
+      this.arrowHead.opacity = this.flow.uniforms.uOpacity.value;
     }
     if (moment.phase === 'reorient') {
       // A ring around the axis the assembly turns about, centered on it.
@@ -394,21 +553,20 @@ export class Stage {
       this.focusPoint.copy(this.rotation.position);
     }
     if (step && ['fasten', 'verify'].includes(moment.phase)) {
+      // A ring on every hole of the step: blue while it waits for its piece, green once verified.
       const fasteners = c.fasteners(moment);
+      const pending = c.pieces.filter((p) => p.step === moment.step && moment.time < p.end).map((p) => p.joint);
+      const done = moment.phase === 'verify';
       fasteners.forEach((f, i) => {
-        const appear = moment.phase === 'verify' ? 1 : Math.min(1, Math.max(0, moment.u * (fasteners.length + 2) - i));
-        if (appear <= 0) return;
+        const waiting = pending.includes(f.joint);
+        if (!done && !waiting) return;
         const marker = this.fastenerMarker(i);
         marker.visible = true;
         marker.position.copy(f.position);
-        marker.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), f.axis.clone().negate());
-        const done = moment.phase === 'verify';
         const [ring, pin] = marker.children as [THREE.Sprite, THREE.Mesh];
         ring.material = done ? this.markers.done : this.markers.guide;
-        (pin.material as THREE.MeshBasicMaterial).color.copy(done ? AR.done : AR.guide);
-        const pulse = done ? 1 : 1 + 0.22 * Math.sin(clock * 6 + i);
-        ring.scale.setScalar(0.03 * pulse * appear);
-        pin.visible = !done;
+        ring.scale.setScalar(done ? 0.022 : 0.024 * (1 + 0.15 * Math.sin(clock * 6 + i)));
+        pin.visible = false;
       });
       if (fasteners.length) this.focusPoint.copy(fasteners[Math.floor(fasteners.length / 2)].position);
     }
@@ -419,7 +577,11 @@ export class Stage {
     const c = this.choreography;
     const size = c.size();
     const reach = Math.max(size.x, size.y, size.z);
-    const radius = 1.45 + reach * 1.45;
+    // While a step is fastened, lean in toward its holes (and back out before the next step).
+    const step = this.plan.steps[moment.step - 1];
+    const fastening = step && moment.phase === 'fasten';
+    const lean = fastening ? (this.mode === 'hero' ? 0.22 : 0.42) * smooth(moment.u / 0.18) * smooth((1 - moment.u) / 0.18) : 0;
+    const radius = (1.45 + reach * 1.45) * (this.mode === 'hero' ? 1.22 : 1) * (1 - lean);
     let azimuth: number;
     let height: number;
     if (this.mode === 'hero') {
@@ -430,7 +592,11 @@ export class Stage {
       height = 1.5 + reach * 0.62 + 0.05 * Math.sin(clock * 0.53);
     }
     const shake = this.mode === 'ar' ? 0.006 : this.mode === 'clean' ? 0.003 : 0;
+    const holes = fastening ? c.fasteners(moment).map((f) => f.position) : [];
+    const work = holes.length ? holes.reduce((a, b) => a.add(b), new THREE.Vector3()).divideScalar(holes.length) : null;
     const center = c.workCenter.clone().lerp(c.layoutCenter, 0.3);
+    if (work) center.lerp(work.clone().setY(0), lean * 1.6);
+    height = height * (1 - lean * 0.9) + (work ? work.y * lean : 0);
     const position = new THREE.Vector3(
       center.x + Math.sin(azimuth) * radius + shake * Math.sin(clock * 7.3),
       height + shake * Math.sin(clock * 5.1 + 1),
@@ -440,12 +606,12 @@ export class Stage {
       .clone()
       .lerp(c.layoutCenter, 0.3)
       .setY(size.y * 0.3);
-    const step = this.plan.steps[moment.step - 1];
+    if (work) attention.lerp(work, Math.min(1, lean * 2.4));
     if (step && moment.phase === 'locate') {
       const loose = step.parts.map((id) => new THREE.Vector3().setFromMatrixPosition(states.get(id)!.matrix));
       if (loose.length) attention = attention.lerp(loose.reduce((a, b) => a.add(b), new THREE.Vector3()).divideScalar(loose.length), 0.55);
     }
-    this.lookAt.lerp(attention, this.mode === 'clean' ? 1 : 0.04);
+    this.lookAt.lerp(attention, this.mode === 'clean' || work ? 1 : 0.04);
     this.camera.position.copy(position);
     this.camera.lookAt(this.lookAt);
   }
@@ -537,7 +703,24 @@ export class Stage {
   }
 
   render(): void {
-    if (!this.disposed) this.renderer.render(this.scene, this.camera);
+    if (this.disposed) return;
+    this.renderer.render(this.scene, this.camera);
+    if (!this.inset || !this.showCloseUp) return;
+    const width = this.container.clientWidth;
+    const height = this.container.clientHeight;
+    const { right, top, width: w, height: h } = this.inset;
+    const x = width - right - w;
+    const y = height - top - h; // the viewport counts from the bottom
+    this.closeUp.aspect = w / h;
+    this.closeUp.updateProjectionMatrix();
+    this.renderer.shadowMap.autoUpdate = false; // the main view just rendered them
+    this.renderer.setScissorTest(true);
+    this.renderer.setScissor(x, y, w, h);
+    this.renderer.setViewport(x, y, w, h);
+    this.renderer.render(this.scene, this.closeUp);
+    this.renderer.setScissorTest(false);
+    this.renderer.setViewport(0, 0, width, height);
+    this.renderer.shadowMap.autoUpdate = true;
   }
 
   /** Move the look-at point on screen (fractions of the viewport from its center), e.g. to clear the HUD. */
@@ -567,6 +750,7 @@ export class Stage {
         (Array.isArray(material) ? material : [material]).forEach((m) => m.dispose());
       }
     });
+    this.arrowHead.dispose();
     this.markers.guide.map?.dispose();
     Object.values(this.markers).forEach((m) => m.dispose());
     this.scene.environment?.dispose();
