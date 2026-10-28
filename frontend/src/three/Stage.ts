@@ -141,9 +141,16 @@ export class Stage {
     this.scene.environment = environment.fromScene(new RoomEnvironment(), 0.04).texture;
     this.scene.environmentIntensity = 0.55;
     environment.dispose();
-    this.scene.background = new THREE.Color('#d9d4cc');
-    this.scene.fog = new THREE.Fog('#d9d4cc', 7, 16);
-    this.buildRoom();
+    if (mode === 'hero') {
+      this.scene.background = new THREE.Color('#07080a');
+      this.scene.fog = new THREE.Fog('#07080a', 4.5, 11);
+      this.scene.environmentIntensity = 0.35;
+      this.buildStudio();
+    } else {
+      this.scene.background = new THREE.Color('#d9d4cc');
+      this.scene.fog = new THREE.Fog('#d9d4cc', 7, 16);
+      this.buildRoom();
+    }
     for (const part of plan.parts) this.addPart(part);
 
     this.flow = flowMaterial(AR.guide);
@@ -193,6 +200,31 @@ export class Stage {
     sun.shadow.bias = -0.0004;
     sun.shadow.normalBias = 0.02;
     this.scene.add(sun);
+  }
+
+  /** The hero's dark studio: a floor and a fine grid that fade into the page, a warm key and a cool rim. */
+  private buildStudio(): void {
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(9, 96), new THREE.MeshStandardMaterial({ color: '#16181d', roughness: 0.9 }));
+    floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = true;
+    const grid = new THREE.GridHelper(18, 90, '#2b3039', '#1c1f25');
+    grid.position.y = 0.001;
+    const lines = grid.material as THREE.LineBasicMaterial;
+    lines.transparent = true;
+    lines.opacity = 0.7;
+    this.scene.add(floor, grid);
+
+    this.scene.add(new THREE.HemisphereLight('#d6deff', '#050506', 0.4));
+    const key = new THREE.DirectionalLight('#ffe8d2', 2.6);
+    key.position.set(2.2, 4.4, 2.6);
+    key.castShadow = true;
+    key.shadow.mapSize.set(2048, 2048);
+    Object.assign(key.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, near: 0.5, far: 12 });
+    key.shadow.bias = -0.0004;
+    key.shadow.normalBias = 0.02;
+    const rim = new THREE.DirectionalLight('#7fd8ff', 1.4);
+    rim.position.set(-3, 2.4, -3.5);
+    this.scene.add(key, rim);
   }
 
   private addPart(part: Part): void {
