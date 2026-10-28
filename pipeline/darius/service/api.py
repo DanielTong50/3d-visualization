@@ -3,7 +3,7 @@
 Served by Modal in production (modal_app.py::api). For local development of the
 "what if" box only:
 
-    uv run uvicorn scan2sim.api:local_app --port 8787
+    uv run uvicorn darius.service.api:local_app --port 8787
 """
 
 from __future__ import annotations
@@ -21,13 +21,29 @@ from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadF
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
+from .. import __version__
+from ..pipeline.jobs import Status
 from . import whatif
-from .jobs import Status
 
 ALLOWED_SUFFIXES = {".mp4", ".mov", ".m4v"}
 MAX_UPLOAD_BYTES = 500 * 2**20
 JOB_ID = re.compile(r"^[0-9a-f]{12}$")
-SCENE_FILE = re.compile(r"^[A-Za-z0-9_.-]+\.(json|ply|obj|jpg|xml|zip)$")
+SCENE_FILE = re.compile(r"^(pipeline/)?[A-Za-z0-9_.-]+\.(json|ply|obj|jpg|xml|zip|spz|splat|bin)$")
+# Intermediate results the processing screen draws while a job runs, written by each stage.
+ARTIFACTS = {
+    "frames.json",
+    "recon.json",
+    "detections.json",
+    "lift.json",
+    "physics.json",
+    "splats.json",
+    "package.json",
+    "segmentation.jpg",
+    "splat_test_view.jpg",
+    "preview/keyframes.jpg",
+    "preview/points.bin",
+    "preview/cameras.json",
+}
 
 
 def create_app(
@@ -35,8 +51,8 @@ def create_app(
     start_job: Callable[[str], None] | None = None,
     reload: Callable[[], None] = lambda: None,
 ) -> FastAPI:
-    app = FastAPI(title="Scan2Sim API", version="0.1.0")
-    access_code = os.environ.get("SCAN2SIM_ACCESS_CODE", "")
+    app = FastAPI(title="Darius API", version=__version__)
+    access_code = os.environ.get("DARIUS_ACCESS_CODE", "")
 
     def require_access(x_access_code: str = Header("")) -> None:
         """Endpoints that spend GPU time or API credits can be gated behind a shared code."""
@@ -86,7 +102,7 @@ def create_app(
     def job_status(job_id: str) -> dict:
         return Status(job_dir(job_id)).data
 
-    @app.get("/jobs/{job_id}/scene/{name}")
+    @app.get("/jobs/{job_id}/scene/{name:path}")
     def scene_file(job_id: str, name: str) -> FileResponse:
         if not SCENE_FILE.match(name):
             raise HTTPException(404, "not found")
@@ -94,6 +110,17 @@ def create_app(
         if not path.is_file():
             raise HTTPException(404, "not found")
         return FileResponse(path, headers={"Cache-Control": "public, max-age=300"})
+
+    @app.get("/jobs/{job_id}/artifacts/{name:path}")
+    def artifact(job_id: str, name: str) -> FileResponse:
+        """A stage's intermediate output; 404 until that stage has written it."""
+        if name not in ARTIFACTS:
+            raise HTTPException(404, "not found")
+        path = job_dir(job_id) / name
+        if not path.is_file():
+            raise HTTPException(404, "not ready")
+        # Artifacts are rewritten as stages finish (points.bin twice), so never cache them for long.
+        return FileResponse(path, headers={"Cache-Control": "no-cache"})
 
     @app.post("/what-if", dependencies=[Depends(require_access)])
     def what_if(request: whatif.WhatIfRequest) -> whatif.WhatIfResponse:
@@ -108,7 +135,7 @@ def create_app(
 def _local_app() -> FastAPI:
     from dotenv import load_dotenv
 
-    repo = Path(__file__).resolve().parents[2]
+    repo = Path(__file__).resolve().parents[3]
     load_dotenv(repo / ".env")
     jobs = repo / "pipeline" / "outputs" / "jobs"
     jobs.mkdir(parents=True, exist_ok=True)
