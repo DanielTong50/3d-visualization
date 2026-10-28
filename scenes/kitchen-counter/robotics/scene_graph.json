@@ -1,0 +1,1971 @@
+{
+ "format": "darius.scene_graph/1",
+ "scene_id": "3bb8174ebe2e",
+ "title": "Kitchen counter",
+ "frame": "world: +z up, meters, the table top is z = 0",
+ "counts": {
+  "nodes": {
+   "frame": 1,
+   "surface": 1,
+   "object": 5,
+   "part": 39,
+   "grasp": 33,
+   "camera": 8
+  },
+  "edges": 105
+ },
+ "nodes": [
+  {
+   "id": "world",
+   "type": "frame",
+   "position": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "label": "world frame"
+  },
+  {
+   "id": "table",
+   "type": "surface",
+   "position": [
+    0.17661,
+    0.00354,
+    0.0
+   ],
+   "label": "table top",
+   "area_m2": 0.2444
+  },
+  {
+   "id": "obj_01",
+   "type": "object",
+   "position": [
+    0.22617,
+    0.02914,
+    0.1316
+   ],
+   "label": "toaster oven",
+   "material": "metal",
+   "mass_kg": 23.0059,
+   "dimensions_m": [
+    0.408,
+    0.1695,
+    0.2948
+   ],
+   "friction": 0.5,
+   "restitution": 0.1,
+   "mesh": "meshes/obj_01_visual.obj",
+   "pose": {
+    "position": [
+     0.2499,
+     0.0316,
+     0.1525
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "obj_01/part_0",
+   "type": "part",
+   "position": [
+    0.22671,
+    0.01073,
+    0.26119
+   ],
+   "label": "convex part 0",
+   "mesh": "meshes/obj_01_part0.obj"
+  },
+  {
+   "id": "obj_01/part_1",
+   "type": "part",
+   "position": [
+    0.15228,
+    0.07636,
+    0.09136
+   ],
+   "label": "convex part 1",
+   "mesh": "meshes/obj_01_part1.obj"
+  },
+  {
+   "id": "obj_01/part_2",
+   "type": "part",
+   "position": [
+    0.26361,
+    -0.00214,
+    0.02865
+   ],
+   "label": "convex part 2",
+   "mesh": "meshes/obj_01_part2.obj"
+  },
+  {
+   "id": "obj_01/part_3",
+   "type": "part",
+   "position": [
+    0.20289,
+    0.00945,
+    0.19558
+   ],
+   "label": "convex part 3",
+   "mesh": "meshes/obj_01_part3.obj"
+  },
+  {
+   "id": "obj_01/part_4",
+   "type": "part",
+   "position": [
+    0.09472,
+    0.08604,
+    0.21893
+   ],
+   "label": "convex part 4",
+   "mesh": "meshes/obj_01_part4.obj"
+  },
+  {
+   "id": "obj_01/part_5",
+   "type": "part",
+   "position": [
+    0.18903,
+    0.12085,
+    0.08214
+   ],
+   "label": "convex part 5",
+   "mesh": "meshes/obj_01_part5.obj"
+  },
+  {
+   "id": "obj_01/part_6",
+   "type": "part",
+   "position": [
+    0.28411,
+    -0.02196,
+    0.06672
+   ],
+   "label": "convex part 6",
+   "mesh": "meshes/obj_01_part6.obj"
+  },
+  {
+   "id": "obj_01/part_7",
+   "type": "part",
+   "position": [
+    0.28766,
+    -0.01882,
+    0.1312
+   ],
+   "label": "convex part 7",
+   "mesh": "meshes/obj_01_part7.obj"
+  },
+  {
+   "id": "obj_01/grasp_0",
+   "type": "grasp",
+   "position": [
+    0.24008,
+    0.02612,
+    0.15875
+   ],
+   "label": "grasp 0",
+   "width_m": 0.1213,
+   "score": 0.626,
+   "approach": [
+    0.0701,
+    0.1259,
+    -0.9896
+   ],
+   "closing": [
+    0.4817,
+    0.8644,
+    0.1441
+   ]
+  },
+  {
+   "id": "obj_01/grasp_1",
+   "type": "grasp",
+   "position": [
+    0.24153,
+    0.03379,
+    0.11868
+   ],
+   "label": "grasp 1",
+   "width_m": 0.1244,
+   "score": 0.552,
+   "approach": [
+    0.0701,
+    0.1259,
+    -0.9896
+   ],
+   "closing": [
+    0.4817,
+    0.8644,
+    0.1441
+   ]
+  },
+  {
+   "id": "obj_01/grasp_2",
+   "type": "grasp",
+   "position": [
+    0.21052,
+    0.05188,
+    0.13597
+   ],
+   "label": "grasp 2",
+   "width_m": 0.1308,
+   "score": 0.492,
+   "approach": [
+    0.0701,
+    0.1259,
+    -0.9896
+   ],
+   "closing": [
+    0.4817,
+    0.8644,
+    0.1441
+   ]
+  },
+  {
+   "id": "obj_01/grasp_3",
+   "type": "grasp",
+   "position": [
+    0.26724,
+    0.00962,
+    0.12415
+   ],
+   "label": "grasp 3",
+   "width_m": 0.1139,
+   "score": 0.474,
+   "approach": [
+    0.115,
+    0.1105,
+    -0.9872
+   ],
+   "closing": [
+    -0.7116,
+    -0.6842,
+    -0.1595
+   ]
+  },
+  {
+   "id": "obj_01/grasp_4",
+   "type": "grasp",
+   "position": [
+    0.20979,
+    0.04344,
+    0.17316
+   ],
+   "label": "grasp 4",
+   "width_m": 0.1262,
+   "score": 0.471,
+   "approach": [
+    0.0701,
+    0.1259,
+    -0.9896
+   ],
+   "closing": [
+    0.4817,
+    0.8644,
+    0.1441
+   ]
+  },
+  {
+   "id": "obj_01/grasp_5",
+   "type": "grasp",
+   "position": [
+    0.22696,
+    0.02335,
+    0.20105
+   ],
+   "label": "grasp 5",
+   "width_m": 0.1186,
+   "score": 0.407,
+   "approach": [
+    0.1548,
+    0.186,
+    -0.9703
+   ],
+   "closing": [
+    -0.6208,
+    -0.7457,
+    -0.242
+   ]
+  },
+  {
+   "id": "obj_01/grasp_6",
+   "type": "grasp",
+   "position": [
+    0.26382,
+    0.01927,
+    0.08816
+   ],
+   "label": "grasp 6",
+   "width_m": 0.117,
+   "score": 0.401,
+   "approach": [
+    0.115,
+    0.1105,
+    -0.9872
+   ],
+   "closing": [
+    -0.7116,
+    -0.6842,
+    -0.1595
+   ]
+  },
+  {
+   "id": "obj_01/grasp_7",
+   "type": "grasp",
+   "position": [
+    0.26344,
+    0.00151,
+    0.18116
+   ],
+   "label": "grasp 7",
+   "width_m": 0.1115,
+   "score": 0.38,
+   "approach": [
+    0.1366,
+    0.1419,
+    -0.9804
+   ],
+   "closing": [
+    -0.6799,
+    -0.7064,
+    -0.197
+   ]
+  },
+  {
+   "id": "obj_02",
+   "type": "object",
+   "position": [
+    -0.09383,
+    0.17079,
+    0.18163
+   ],
+   "label": "woven basket",
+   "material": "plastic",
+   "mass_kg": 0.6772,
+   "dimensions_m": [
+    0.3947,
+    0.1213,
+    0.1476
+   ],
+   "friction": 0.5,
+   "restitution": 0.15,
+   "mesh": "meshes/obj_02_visual.obj",
+   "pose": {
+    "position": [
+     -0.0969,
+     0.1737,
+     0.1337
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "obj_02/part_0",
+   "type": "part",
+   "position": [
+    0.00169,
+    0.17995,
+    0.00582
+   ],
+   "label": "convex part 0",
+   "mesh": "meshes/obj_02_part0.obj"
+  },
+  {
+   "id": "obj_02/part_1",
+   "type": "part",
+   "position": [
+    -0.16297,
+    0.14534,
+    0.19807
+   ],
+   "label": "convex part 1",
+   "mesh": "meshes/obj_02_part1.obj"
+  },
+  {
+   "id": "obj_02/part_2",
+   "type": "part",
+   "position": [
+    -0.2422,
+    0.17957,
+    0.00618
+   ],
+   "label": "convex part 2",
+   "mesh": "meshes/obj_02_part2.obj"
+  },
+  {
+   "id": "obj_02/part_3",
+   "type": "part",
+   "position": [
+    -0.23986,
+    0.16895,
+    0.13769
+   ],
+   "label": "convex part 3",
+   "mesh": "meshes/obj_02_part3.obj"
+  },
+  {
+   "id": "obj_02/part_4",
+   "type": "part",
+   "position": [
+    0.0047,
+    0.17608,
+    0.23432
+   ],
+   "label": "convex part 4",
+   "mesh": "meshes/obj_02_part4.obj"
+  },
+  {
+   "id": "obj_02/part_5",
+   "type": "part",
+   "position": [
+    -0.24419,
+    0.17274,
+    0.23174
+   ],
+   "label": "convex part 5",
+   "mesh": "meshes/obj_02_part5.obj"
+  },
+  {
+   "id": "obj_02/part_6",
+   "type": "part",
+   "position": [
+    -0.0128,
+    0.17208,
+    0.14923
+   ],
+   "label": "convex part 6",
+   "mesh": "meshes/obj_02_part6.obj"
+  },
+  {
+   "id": "obj_02/part_7",
+   "type": "part",
+   "position": [
+    -0.25177,
+    0.17958,
+    0.17962
+   ],
+   "label": "convex part 7",
+   "mesh": "meshes/obj_02_part7.obj"
+  },
+  {
+   "id": "obj_02/grasp_0",
+   "type": "grasp",
+   "position": [
+    -0.12685,
+    0.17536,
+    0.16179
+   ],
+   "label": "grasp 0",
+   "width_m": 0.0882,
+   "score": 0.672,
+   "approach": [
+    0.0011,
+    0.0223,
+    -0.9997
+   ],
+   "closing": [
+    -0.0471,
+    -0.9986,
+    -0.0224
+   ]
+  },
+  {
+   "id": "obj_02/grasp_1",
+   "type": "grasp",
+   "position": [
+    -0.12054,
+    0.17502,
+    0.20256
+   ],
+   "label": "grasp 1",
+   "width_m": 0.0865,
+   "score": 0.588,
+   "approach": [
+    0.0011,
+    0.0223,
+    -0.9997
+   ],
+   "closing": [
+    -0.0471,
+    -0.9986,
+    -0.0224
+   ]
+  },
+  {
+   "id": "obj_02/grasp_2",
+   "type": "grasp",
+   "position": [
+    -0.08187,
+    0.1795,
+    0.18133
+   ],
+   "label": "grasp 2",
+   "width_m": 0.0748,
+   "score": 0.573,
+   "approach": [
+    0.0011,
+    0.0223,
+    -0.9997
+   ],
+   "closing": [
+    -0.0471,
+    -0.9986,
+    -0.0224
+   ]
+  },
+  {
+   "id": "obj_02/grasp_3",
+   "type": "grasp",
+   "position": [
+    -0.16402,
+    0.17424,
+    0.17864
+   ],
+   "label": "grasp 3",
+   "width_m": 0.0932,
+   "score": 0.551,
+   "approach": [
+    0.0011,
+    0.0223,
+    -0.9997
+   ],
+   "closing": [
+    -0.0471,
+    -0.9986,
+    -0.0224
+   ]
+  },
+  {
+   "id": "obj_02/grasp_4",
+   "type": "grasp",
+   "position": [
+    -0.15584,
+    0.17155,
+    0.22409
+   ],
+   "label": "grasp 4",
+   "width_m": 0.0961,
+   "score": 0.513,
+   "approach": [
+    0.0082,
+    0.0735,
+    -0.9973
+   ],
+   "closing": [
+    0.11,
+    0.9912,
+    0.074
+   ]
+  },
+  {
+   "id": "obj_02/grasp_5",
+   "type": "grasp",
+   "position": [
+    -0.09448,
+    0.17877,
+    0.13633
+   ],
+   "label": "grasp 5",
+   "width_m": 0.0795,
+   "score": 0.507,
+   "approach": [
+    0.0011,
+    0.0223,
+    -0.9997
+   ],
+   "closing": [
+    -0.0471,
+    -0.9986,
+    -0.0224
+   ]
+  },
+  {
+   "id": "obj_02/grasp_6",
+   "type": "grasp",
+   "position": [
+    -0.05897,
+    0.18176,
+    0.21503
+   ],
+   "label": "grasp 6",
+   "width_m": 0.0667,
+   "score": 0.448,
+   "approach": [
+    0.0011,
+    0.0223,
+    -0.9997
+   ],
+   "closing": [
+    -0.0471,
+    -0.9986,
+    -0.0224
+   ]
+  },
+  {
+   "id": "obj_02/grasp_7",
+   "type": "grasp",
+   "position": [
+    -0.13764,
+    0.17618,
+    0.11739
+   ],
+   "label": "grasp 7",
+   "width_m": 0.0878,
+   "score": 0.436,
+   "approach": [
+    -0.0002,
+    -0.0474,
+    -0.9989
+   ],
+   "closing": [
+    -0.0036,
+    -0.9989,
+    0.0474
+   ]
+  },
+  {
+   "id": "obj_03",
+   "type": "object",
+   "position": [
+    -0.02715,
+    -0.01457,
+    0.11058
+   ],
+   "label": "liquor bottle",
+   "material": "glass",
+   "mass_kg": 1.3428,
+   "dimensions_m": [
+    0.0967,
+    0.0496,
+    0.234
+   ],
+   "friction": 0.35,
+   "restitution": 0.15,
+   "mesh": "meshes/obj_03_visual.obj",
+   "pose": {
+    "position": [
+     -0.0316,
+     -0.0122,
+     0.121
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "obj_03/part_0",
+   "type": "part",
+   "position": [
+    -0.00932,
+    -0.00209,
+    0.16917
+   ],
+   "label": "convex part 0",
+   "mesh": "meshes/obj_03_part0.obj"
+  },
+  {
+   "id": "obj_03/part_1",
+   "type": "part",
+   "position": [
+    0.00213,
+    -0.00988,
+    0.03538
+   ],
+   "label": "convex part 1",
+   "mesh": "meshes/obj_03_part1.obj"
+  },
+  {
+   "id": "obj_03/part_2",
+   "type": "part",
+   "position": [
+    0.00354,
+    -0.01219,
+    0.1176
+   ],
+   "label": "convex part 2",
+   "mesh": "meshes/obj_03_part2.obj"
+  },
+  {
+   "id": "obj_03/part_3",
+   "type": "part",
+   "position": [
+    -0.03487,
+    -0.02659,
+    0.06234
+   ],
+   "label": "convex part 3",
+   "mesh": "meshes/obj_03_part3.obj"
+  },
+  {
+   "id": "obj_03/part_4",
+   "type": "part",
+   "position": [
+    -0.04108,
+    -0.00745,
+    0.20775
+   ],
+   "label": "convex part 4",
+   "mesh": "meshes/obj_03_part4.obj"
+  },
+  {
+   "id": "obj_03/part_5",
+   "type": "part",
+   "position": [
+    -0.0077,
+    -0.01063,
+    0.01538
+   ],
+   "label": "convex part 5",
+   "mesh": "meshes/obj_03_part5.obj"
+  },
+  {
+   "id": "obj_03/part_6",
+   "type": "part",
+   "position": [
+    -0.0579,
+    -0.01755,
+    0.14824
+   ],
+   "label": "convex part 6",
+   "mesh": "meshes/obj_03_part6.obj"
+  },
+  {
+   "id": "obj_03/part_7",
+   "type": "part",
+   "position": [
+    -0.07135,
+    -0.01664,
+    0.06202
+   ],
+   "label": "convex part 7",
+   "mesh": "meshes/obj_03_part7.obj"
+  },
+  {
+   "id": "obj_03/grasp_0",
+   "type": "grasp",
+   "position": [
+    -0.03124,
+    -0.00532,
+    0.10876
+   ],
+   "label": "grasp 0",
+   "width_m": 0.0951,
+   "score": 0.869,
+   "approach": [
+    0.0028,
+    0.0002,
+    -1.0
+   ],
+   "closing": [
+    -0.9968,
+    -0.0798,
+    -0.0029
+   ]
+  },
+  {
+   "id": "obj_03/grasp_1",
+   "type": "grasp",
+   "position": [
+    -0.02958,
+    -0.0144,
+    0.10522
+   ],
+   "label": "grasp 1",
+   "width_m": 0.0435,
+   "score": 0.856,
+   "approach": [
+    0.0038,
+    -0.0267,
+    -0.9996
+   ],
+   "closing": [
+    0.14,
+    -0.9898,
+    0.0269
+   ]
+  },
+  {
+   "id": "obj_03/grasp_2",
+   "type": "grasp",
+   "position": [
+    -0.02958,
+    -0.00648,
+    0.1263
+   ],
+   "label": "grasp 2",
+   "width_m": 0.0916,
+   "score": 0.812,
+   "approach": [
+    -0.0158,
+    -0.0072,
+    -0.9998
+   ],
+   "closing": [
+    0.9092,
+    0.4161,
+    -0.0173
+   ]
+  },
+  {
+   "id": "obj_03/grasp_3",
+   "type": "grasp",
+   "position": [
+    -0.03117,
+    -0.01429,
+    0.12932
+   ],
+   "label": "grasp 3",
+   "width_m": 0.0442,
+   "score": 0.779,
+   "approach": [
+    0.0038,
+    -0.0267,
+    -0.9996
+   ],
+   "closing": [
+    0.14,
+    -0.9898,
+    0.0269
+   ]
+  },
+  {
+   "id": "obj_03/grasp_4",
+   "type": "grasp",
+   "position": [
+    -0.04023,
+    -0.01689,
+    0.08314
+   ],
+   "label": "grasp 4",
+   "width_m": 0.0435,
+   "score": 0.696,
+   "approach": [
+    0.0013,
+    -0.0057,
+    -1.0
+   ],
+   "closing": [
+    -0.2212,
+    0.9752,
+    -0.0059
+   ]
+  },
+  {
+   "id": "obj_03/grasp_5",
+   "type": "grasp",
+   "position": [
+    -0.03172,
+    -0.0035,
+    0.072
+   ],
+   "label": "grasp 5",
+   "width_m": 0.096,
+   "score": 0.565,
+   "approach": [
+    0.0028,
+    0.0002,
+    -1.0
+   ],
+   "closing": [
+    -0.9968,
+    -0.0798,
+    -0.0029
+   ]
+  },
+  {
+   "id": "obj_03/grasp_6",
+   "type": "grasp",
+   "position": [
+    -0.0137,
+    -0.01127,
+    0.08411
+   ],
+   "label": "grasp 6",
+   "width_m": 0.0407,
+   "score": 0.497,
+   "approach": [
+    0.0038,
+    -0.0267,
+    -0.9996
+   ],
+   "closing": [
+    0.14,
+    -0.9898,
+    0.0269
+   ]
+  },
+  {
+   "id": "obj_03/grasp_7",
+   "type": "grasp",
+   "position": [
+    -0.02755,
+    -0.01477,
+    0.06251
+   ],
+   "label": "grasp 7",
+   "width_m": 0.0417,
+   "score": 0.429,
+   "approach": [
+    0.0098,
+    -0.0525,
+    -0.9986
+   ],
+   "closing": [
+    0.1841,
+    -0.9815,
+    0.0534
+   ]
+  },
+  {
+   "id": "obj_04",
+   "type": "object",
+   "position": [
+    0.27121,
+    -0.18516,
+    0.01593
+   ],
+   "label": "scissors",
+   "material": "metal",
+   "mass_kg": 0.06,
+   "dimensions_m": [
+    0.1867,
+    0.0903,
+    0.0217
+   ],
+   "friction": 0.4,
+   "restitution": 0.2,
+   "mesh": "meshes/obj_04_visual.obj",
+   "pose": {
+    "position": [
+     0.2769,
+     -0.1625,
+     0.0158
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "obj_04/part_0",
+   "type": "part",
+   "position": [
+    0.26063,
+    -0.20858,
+    0.00669
+   ],
+   "label": "convex part 0",
+   "mesh": "meshes/obj_04_part0.obj"
+  },
+  {
+   "id": "obj_04/part_1",
+   "type": "part",
+   "position": [
+    0.2784,
+    -0.15845,
+    0.02178
+   ],
+   "label": "convex part 1",
+   "mesh": "meshes/obj_04_part1.obj"
+  },
+  {
+   "id": "obj_04/part_2",
+   "type": "part",
+   "position": [
+    0.2976,
+    -0.21993,
+    0.02078
+   ],
+   "label": "convex part 2",
+   "mesh": "meshes/obj_04_part2.obj"
+  },
+  {
+   "id": "obj_04/part_3",
+   "type": "part",
+   "position": [
+    0.27084,
+    -0.11748,
+    0.01507
+   ],
+   "label": "convex part 3",
+   "mesh": "meshes/obj_04_part3.obj"
+  },
+  {
+   "id": "obj_04/part_4",
+   "type": "part",
+   "position": [
+    0.26602,
+    -0.08325,
+    0.01209
+   ],
+   "label": "convex part 4",
+   "mesh": "meshes/obj_04_part4.obj"
+  },
+  {
+   "id": "obj_04/part_5",
+   "type": "part",
+   "position": [
+    0.24323,
+    -0.21948,
+    0.02
+   ],
+   "label": "convex part 5",
+   "mesh": "meshes/obj_04_part5.obj"
+  },
+  {
+   "id": "obj_04/part_6",
+   "type": "part",
+   "position": [
+    0.26475,
+    -0.21616,
+    0.01833
+   ],
+   "label": "convex part 6",
+   "mesh": "meshes/obj_04_part6.obj"
+  },
+  {
+   "id": "obj_04/grasp_0",
+   "type": "grasp",
+   "position": [
+    0.27478,
+    -0.21818,
+    0.01863
+   ],
+   "label": "grasp 0",
+   "width_m": 0.0867,
+   "score": 0.479,
+   "approach": [
+    0.0728,
+    0.027,
+    -0.997
+   ],
+   "closing": [
+    -0.9349,
+    -0.3464,
+    -0.0776
+   ]
+  },
+  {
+   "id": "obj_05",
+   "type": "object",
+   "position": [
+    -0.27065,
+    0.12674,
+    0.04915
+   ],
+   "label": "folded towel",
+   "material": "fabric",
+   "mass_kg": 0.2717,
+   "dimensions_m": [
+    0.2171,
+    0.2,
+    0.0632
+   ],
+   "friction": 0.7,
+   "restitution": 0.05,
+   "mesh": "meshes/obj_05_visual.obj",
+   "pose": {
+    "position": [
+     -0.3025,
+     0.1398,
+     0.0364
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "obj_05/part_0",
+   "type": "part",
+   "position": [
+    -0.34849,
+    0.1478,
+    0.06779
+   ],
+   "label": "convex part 0",
+   "mesh": "meshes/obj_05_part0.obj"
+  },
+  {
+   "id": "obj_05/part_1",
+   "type": "part",
+   "position": [
+    -0.23393,
+    0.17351,
+    0.05064
+   ],
+   "label": "convex part 1",
+   "mesh": "meshes/obj_05_part1.obj"
+  },
+  {
+   "id": "obj_05/part_2",
+   "type": "part",
+   "position": [
+    -0.2019,
+    0.0958,
+    0.03221
+   ],
+   "label": "convex part 2",
+   "mesh": "meshes/obj_05_part2.obj"
+  },
+  {
+   "id": "obj_05/part_3",
+   "type": "part",
+   "position": [
+    -0.27289,
+    0.0713,
+    0.02971
+   ],
+   "label": "convex part 3",
+   "mesh": "meshes/obj_05_part3.obj"
+  },
+  {
+   "id": "obj_05/part_4",
+   "type": "part",
+   "position": [
+    -0.27225,
+    0.08005,
+    0.01552
+   ],
+   "label": "convex part 4",
+   "mesh": "meshes/obj_05_part4.obj"
+  },
+  {
+   "id": "obj_05/part_5",
+   "type": "part",
+   "position": [
+    -0.26163,
+    0.14241,
+    0.0654
+   ],
+   "label": "convex part 5",
+   "mesh": "meshes/obj_05_part5.obj"
+  },
+  {
+   "id": "obj_05/part_6",
+   "type": "part",
+   "position": [
+    -0.25655,
+    0.08317,
+    0.05214
+   ],
+   "label": "convex part 6",
+   "mesh": "meshes/obj_05_part6.obj"
+  },
+  {
+   "id": "obj_05/part_7",
+   "type": "part",
+   "position": [
+    -0.26085,
+    0.07916,
+    0.00606
+   ],
+   "label": "convex part 7",
+   "mesh": "meshes/obj_05_part7.obj"
+  },
+  {
+   "id": "obj_05/grasp_0",
+   "type": "grasp",
+   "position": [
+    -0.27111,
+    0.13694,
+    0.04363
+   ],
+   "label": "grasp 0",
+   "width_m": 0.0468,
+   "score": 0.47,
+   "approach": [
+    0.1902,
+    -0.8872,
+    -0.4203
+   ],
+   "closing": [
+    0.0881,
+    -0.411,
+    0.9074
+   ]
+  },
+  {
+   "id": "obj_05/grasp_1",
+   "type": "grasp",
+   "position": [
+    -0.29333,
+    0.14718,
+    0.04795
+   ],
+   "label": "grasp 1",
+   "width_m": 0.0418,
+   "score": 0.403,
+   "approach": [
+    0.5015,
+    -0.7537,
+    -0.4247
+   ],
+   "closing": [
+    0.2353,
+    -0.3536,
+    0.9053
+   ]
+  },
+  {
+   "id": "obj_05/grasp_2",
+   "type": "grasp",
+   "position": [
+    -0.24496,
+    0.13759,
+    0.04148
+   ],
+   "label": "grasp 2",
+   "width_m": 0.047,
+   "score": 0.393,
+   "approach": [
+    0.1902,
+    -0.8872,
+    -0.4203
+   ],
+   "closing": [
+    0.0881,
+    -0.411,
+    0.9074
+   ]
+  },
+  {
+   "id": "obj_05/grasp_3",
+   "type": "grasp",
+   "position": [
+    -0.3048,
+    0.12451,
+    0.04508
+   ],
+   "label": "grasp 3",
+   "width_m": 0.0473,
+   "score": 0.376,
+   "approach": [
+    0.5015,
+    -0.7537,
+    -0.4247
+   ],
+   "closing": [
+    0.2353,
+    -0.3536,
+    0.9053
+   ]
+  },
+  {
+   "id": "obj_05/grasp_4",
+   "type": "grasp",
+   "position": [
+    -0.27138,
+    0.14257,
+    0.04333
+   ],
+   "label": "grasp 4",
+   "width_m": 0.0447,
+   "score": 0.368,
+   "approach": [
+    0.8312,
+    -0.5491,
+    -0.0871
+   ],
+   "closing": [
+    -0.0726,
+    0.048,
+    -0.9962
+   ]
+  },
+  {
+   "id": "obj_05/grasp_5",
+   "type": "grasp",
+   "position": [
+    -0.26096,
+    0.16335,
+    0.04895
+   ],
+   "label": "grasp 5",
+   "width_m": 0.0365,
+   "score": 0.341,
+   "approach": [
+    0.1902,
+    -0.8872,
+    -0.4203
+   ],
+   "closing": [
+    0.0881,
+    -0.411,
+    0.9074
+   ]
+  },
+  {
+   "id": "obj_05/grasp_6",
+   "type": "grasp",
+   "position": [
+    -0.3039,
+    0.12744,
+    0.044
+   ],
+   "label": "grasp 6",
+   "width_m": 0.0466,
+   "score": 0.304,
+   "approach": [
+    0.8312,
+    -0.5491,
+    -0.0871
+   ],
+   "closing": [
+    -0.0726,
+    0.048,
+    -0.9962
+   ]
+  },
+  {
+   "id": "obj_05/grasp_7",
+   "type": "grasp",
+   "position": [
+    -0.24769,
+    0.1535,
+    0.04404
+   ],
+   "label": "grasp 7",
+   "width_m": 0.0408,
+   "score": 0.286,
+   "approach": [
+    0.8515,
+    -0.5144,
+    -0.102
+   ],
+   "closing": [
+    -0.0873,
+    0.0528,
+    -0.9948
+   ]
+  },
+  {
+   "id": "view",
+   "type": "camera",
+   "position": [
+    -0.0163,
+    -0.4151,
+    0.3362
+   ],
+   "label": "view"
+  },
+  {
+   "id": "capture_00",
+   "type": "camera",
+   "position": [
+    -0.04861,
+    -0.46405,
+    0.36622
+   ],
+   "label": "capture 00"
+  },
+  {
+   "id": "capture_08",
+   "type": "camera",
+   "position": [
+    -0.02716,
+    -0.45139,
+    0.35399
+   ],
+   "label": "capture 08"
+  },
+  {
+   "id": "capture_16",
+   "type": "camera",
+   "position": [
+    0.00662,
+    -0.3716,
+    0.32601
+   ],
+   "label": "capture 16"
+  },
+  {
+   "id": "capture_24",
+   "type": "camera",
+   "position": [
+    0.03734,
+    -0.31826,
+    0.30292
+   ],
+   "label": "capture 24"
+  },
+  {
+   "id": "capture_31",
+   "type": "camera",
+   "position": [
+    0.07016,
+    -0.29092,
+    0.29105
+   ],
+   "label": "capture 31"
+  },
+  {
+   "id": "capture_39",
+   "type": "camera",
+   "position": [
+    0.09256,
+    -0.26571,
+    0.28433
+   ],
+   "label": "capture 39"
+  },
+  {
+   "id": "capture_47",
+   "type": "camera",
+   "position": [
+    0.10536,
+    -0.2603,
+    0.288
+   ],
+   "label": "capture 47"
+  }
+ ],
+ "edges": [
+  {
+   "source": "world",
+   "target": "table",
+   "relation": "contains"
+  },
+  {
+   "source": "obj_01/part_0",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_1",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_2",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_3",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_4",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_5",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_6",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_7",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/grasp_0",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_1",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_2",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_3",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_4",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_5",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_6",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_7",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/part_0",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_1",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_2",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_3",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_4",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_5",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_6",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_7",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/grasp_0",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_1",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_2",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_3",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_4",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_5",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_6",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_7",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/part_0",
+   "target": "obj_03",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_03/part_1",
+   "target": "obj_03",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_03/part_2",
+   "target": "obj_03",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_03/part_3",
+   "target": "obj_03",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_03/part_4",
+   "target": "obj_03",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_03/part_5",
+   "target": "obj_03",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_03/part_6",
+   "target": "obj_03",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_03/part_7",
+   "target": "obj_03",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_03/grasp_0",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_1",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_2",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_3",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_4",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_5",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_6",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_7",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_04/part_0",
+   "target": "obj_04",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_04/part_1",
+   "target": "obj_04",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_04/part_2",
+   "target": "obj_04",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_04/part_3",
+   "target": "obj_04",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_04/part_4",
+   "target": "obj_04",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_04/part_5",
+   "target": "obj_04",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_04/part_6",
+   "target": "obj_04",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_04/grasp_0",
+   "target": "obj_04",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/part_0",
+   "target": "obj_05",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_05/part_1",
+   "target": "obj_05",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_05/part_2",
+   "target": "obj_05",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_05/part_3",
+   "target": "obj_05",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_05/part_4",
+   "target": "obj_05",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_05/part_5",
+   "target": "obj_05",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_05/part_6",
+   "target": "obj_05",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_05/part_7",
+   "target": "obj_05",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_05/grasp_0",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_1",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_2",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_3",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_4",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_5",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_6",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_7",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "table",
+   "target": "obj_01",
+   "relation": "supports"
+  },
+  {
+   "source": "table",
+   "target": "obj_02",
+   "relation": "supports"
+  },
+  {
+   "source": "table",
+   "target": "obj_03",
+   "relation": "supports"
+  },
+  {
+   "source": "table",
+   "target": "obj_04",
+   "relation": "supports"
+  },
+  {
+   "source": "table",
+   "target": "obj_05",
+   "relation": "supports"
+  },
+  {
+   "source": "obj_01",
+   "target": "obj_02",
+   "relation": "near",
+   "distance_m": 0.0506
+  },
+  {
+   "source": "obj_01",
+   "target": "obj_03",
+   "relation": "near",
+   "distance_m": 0.0696
+  },
+  {
+   "source": "obj_01",
+   "target": "obj_04",
+   "relation": "near",
+   "distance_m": 0.0231
+  },
+  {
+   "source": "obj_02",
+   "target": "obj_05",
+   "relation": "near",
+   "distance_m": 0.0
+  },
+  {
+   "source": "view",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "view",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "view",
+   "target": "obj_03",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_00",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_00",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_00",
+   "target": "obj_03",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_00",
+   "target": "obj_04",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_08",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_08",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_08",
+   "target": "obj_03",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_16",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_16",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_16",
+   "target": "obj_03",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_24",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_24",
+   "target": "obj_03",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_31",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_31",
+   "target": "obj_03",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_39",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_39",
+   "target": "obj_03",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_39",
+   "target": "obj_05",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_47",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_47",
+   "target": "obj_03",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_47",
+   "target": "obj_05",
+   "relation": "observes"
+  }
+ ]
+}
