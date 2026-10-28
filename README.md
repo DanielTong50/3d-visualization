@@ -86,7 +86,8 @@ video.
 }
 ```
 
-Graph scores (`assembly/graph.py::compare`) count parts and joints **by letter**: which of two identical side panels
+The algorithms, with their numbers, are in [docs/architecture.md](docs/architecture.md). Graph scores
+(`assembly/graph.py::compare`) count parts and joints **by letter**: which of two identical side panels
 is `A1` is arbitrary, so edges are compared as multisets of letter pairs.
 
 ## The furniture library: ground truth from geometry
@@ -133,7 +134,7 @@ frontend/                   React 19 + three.js, TypeScript
   scripts/capture.mjs       renders manual pages, session videos and posters with Playwright
 assemblies/                 the library: plan.json, manual pages, session.mp4 + truth.json,
                             stored model outputs (reading.json, analysis.json), benchmarks.json
-docs/                       plan.schema.json · API notes
+docs/                       architecture.md · plan.schema.json · API notes
 ```
 
 ## Run it
