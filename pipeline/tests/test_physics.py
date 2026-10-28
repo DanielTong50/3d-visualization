@@ -1,8 +1,10 @@
 import numpy as np
 import pytest
 
-from scan2sim import materials, physics, reality_check
-from scan2sim.physics import Estimate, ObjectProperties
+from darius.calibration import reality_check
+from darius.core import materials
+from darius.pipeline import physics
+from darius.pipeline.physics import Estimate, ObjectProperties
 
 
 def props(**overrides):

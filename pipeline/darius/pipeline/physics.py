@@ -22,7 +22,8 @@ import numpy as np
 from PIL import Image
 from pydantic import BaseModel, Field
 
-from . import geometry, materials, meta_api
+from ..core import geometry, materials
+from ..models import meta_api
 from .jobs import load_arrays
 
 MASS_TOLERANCE = 2.5
@@ -169,11 +170,12 @@ def object_crops(job_dir: Path, index: int, count: int = 3) -> list[Image.Image]
 
 
 def run(job_dir: Path, hint_proportions: bool = False, output: str = "physics.json") -> dict:
+    from concurrent.futures import ThreadPoolExecutor
+
     lift = json.loads((job_dir / "lift.json").read_text())
     arrays = load_arrays(job_dir / "lift.npz")
-    estimates: list[Estimate] = []
-    usage_total = {"prompt_tokens": 0, "completion_tokens": 0}
-    for obj in lift["objects"]:
+
+    def estimate(obj: dict) -> tuple[Estimate, dict]:
         points = arrays[f"obj{obj['index']}_points"]
         dims_raw = np.array(obj["dims_raw"])
         hull = geometry.convex_hull(geometry.complete_bottom(points, geometry.SUPPORT_BAND * dims_raw[1]))
@@ -181,10 +183,16 @@ def run(job_dir: Path, hint_proportions: bool = False, output: str = "physics.js
         hint = PROPORTION_HINT.format(proportions) if hint_proportions else ""
         prompt = PROPERTIES_PROMPT.format(n=3, hint=hint, materials=", ".join(materials.MATERIAL_NAMES))
         props, usage = meta_api.ask_structured(prompt, object_crops(job_dir, obj["index"]), ObjectProperties)
-        for key in usage_total:
-            usage_total[key] += usage.get(key, 0)
         props, material = sanitize(props)
-        estimates.append(Estimate(obj["index"], obj["label"], props, material, dims_raw, hull.volume))
+        return Estimate(obj["index"], obj["label"], props, material, dims_raw, hull.volume), usage
+
+    # One Muse Spark call per object, all at once: they are independent and network-bound.
+    with ThreadPoolExecutor(max_workers=max(1, min(6, len(lift["objects"])))) as pool:
+        results = list(pool.map(estimate, lift["objects"]))
+    estimates = [e for e, _ in results]
+    usage_total = {
+        key: sum(usage.get(key, 0) for _, usage in results) for key in ("prompt_tokens", "completion_tokens")
+    }
 
     if not estimates:
         raise RuntimeError("no objects survived 3D separation")
