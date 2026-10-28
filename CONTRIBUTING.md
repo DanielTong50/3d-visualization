@@ -3,14 +3,14 @@
 ## Layout
 
 ```
-pipeline/            Python 3.11 processing pipeline (Modal) and HTTP API
-  scan2sim/          the package: one module per stage + shared geometry/schema
-  modal_app.py       Modal functions, GPU class, web API, CLI entrypoint
+pipeline/            Python 3.11: the darius package, the Modal deployment and the HTTP API
+  darius/            layered package: core, scene, models, robotics, pipeline, calibration, service, eval, tools
+  modal_app.py       Modal functions, GPU classes, concurrent stage graph, web API, CLI entrypoint
   scripts/           evaluation, figures, API smoke checks
-  tests/             pytest
-frontend/            React + three.js + Rapier simulator (Vite, TypeScript)
+  tests/             pytest (MuJoCo and OpenUSD round trips included)
+frontend/            React + three.js + Spark + Rapier: simulator, pipeline replay, scene graph (Vite, TypeScript)
 scenes/              scene packages; scenes/sandbox is hand-authored and must always load
-docs/                architecture, scene format, results, verified API notes
+docs/                architecture, robotics, scene format, results, design, verified API notes
 ```
 
 ## Setup
@@ -21,8 +21,8 @@ cd pipeline && uv sync          # Python 3.11, exact pins from uv.lock
 cd ../frontend && npm ci
 ```
 
-Cloud runs need a Modal account (`uv run modal token new`) and the `scan2sim` secret:
-`uv run modal secret create scan2sim --from-dotenv ../.env`.
+Cloud runs need a Modal account (`uv run modal token new`) and the `darius` secret:
+`uv run modal secret create darius --from-dotenv ../.env`.
 
 ## Checks
 
@@ -31,16 +31,21 @@ Cloud runs need a Modal account (`uv run modal token new`) and the `scan2sim` se
 | Pipeline format, lint | `uv run ruff format --check . && uv run ruff check .` |
 | Pipeline tests | `uv run pytest` (no network, no GPU) |
 | Frontend types, tests, build | `npm run typecheck && npm test && npm run build` |
-| Schema in sync | `uv run python -m scan2sim.schema > ../docs/scene.schema.json` (a test fails if it drifts) |
-| MuJoCo export | `uv run python -m scan2sim.export ../scenes/<id>` |
+| Schema in sync | `uv run darius schema > ../docs/scene.schema.json` (a test fails if it drifts) |
+| Scenes satisfy the contract | `uv run darius validate ../scenes/*/` |
+| Derived files are current | `uv run darius gallery --check` (rebuild with `uv run darius gallery`) |
+| Scenes settle in MuJoCo | `uv run darius sim ../scenes/<id>` |
+| Robotics bundle | `uv run darius export ../scenes/<id>` |
 
 CI runs all of these on every push and pull request.
 
 ## Conventions
 
-- **The scene format is a contract.** Change `pipeline/scan2sim/schema.py` first, then regenerate
+- **The scene format is a contract.** Change `pipeline/darius/scene/schema.py` first, then regenerate
   `docs/scene.schema.json`, update `docs/scene-format.md`, the TypeScript mirror
   (`frontend/src/sim/scene.ts`) and `scenes/sandbox`, all in the same change.
+- **Respect the layers.** `core` and `scene` import nothing else from Darius; `robotics` reads scene packages only,
+  never pipeline internals. Keep `__init__` modules import-free: cloud images install only what their stages need.
 - **Stages stay pure functions of a job folder.** A stage may read any earlier stage's outputs and must
   finish by writing its marker file (`jobs.STAGES`). Don't keep state anywhere else.
 - **Verify external APIs from documentation.** Meta Model API and VGGT details live in

@@ -6,12 +6,83 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-27: Darius
+
+The project is renamed **Darius** and becomes a real-to-sim scene compiler for robotics.
+
+### Added
+- Robotics layer (`darius.robotics`): exact mass properties from the collision meshes with a closed-form shell
+  model for hollow objects; antipodal parallel-jaw grasp synthesis; a 3D scene graph (`supports`, `near`,
+  `part_of`, `grasp_of`, `observes`); writers for MuJoCo MJCF, URDF and OpenUSD with UsdPhysics; `world.json` with
+  poses, mass properties, grasps and camera intrinsics; a Gymnasium-style MuJoCo pushing environment (`PushEnv`).
+- Scene format: optional `inertial` and `grasps` per object, `capture.image_size`, `background.backdrop`.
+- `darius` command line: `info`, `validate`, `export`, `graph`, `sim`, `gallery [--check]`, `schema`.
+- Ten real demo scenes from Objectron clips (kitchen counter with five objects, mugs, cups, shoes, books, a camera,
+  a cereal box), each with its robotics bundle and a replay of how it was built.
+- Web app: rotating live hero across the scans, an interactive pipeline replay (stage graph, keyframes, VGGT point
+  cloud with the camera path, masks, separated objects, physics table, held-out render), an interactive 3D scene
+  graph, a Robot view (centers of mass, inertia ellipsoids, grasps), a live stage graph on the processing screen.
+- Simulator: carry upright with Q / E (or the wheel) to turn, throws at the hand's velocity, a landing marker.
+- Pipeline: preview artifacts after each stage and an API endpoint that serves them while a job runs.
+
+### Changed
+- The Python package is layered: `core`, `scene`, `models`, `robotics`, `pipeline`, `calibration`, `service`,
+  `eval`, `tools`. Modal app, volumes and secret are `darius`; the access code is `DARIUS_ACCESS_CODE`.
+- Splat training uses MCMC densification (450k Gaussian budget) with anti-aliased rasterization: held-out PSNR
+  rose on every retrained clip, by 0.4–3.8 dB (median +2.2 dB).
+- The orchestrator runs the stage graph concurrently (reconstruct ∥ segment, physics ∥ splat).
+- The browser renders splats straight to the canvas, only when something changes, at an adaptive pixel ratio; physics
+  stays real-time down to 5 fps (up to 24 steps per frame).
+- The grab spring's stiffness scales with mass, so heavy objects no longer hang far below the pointer.
+- MJCF contacts use geom priority so table contacts take each object's own friction, and a time constant derived
+  from a fixed natural period, so bouncy objects no longer gain energy.
+- The default grasp gripper opens to 140 mm.
+
+### Fixed
+- Close-up scans gave every initial Gaussian to the object, leaving the table without splats.
+- Object splats over 5 mm were dropped, which made MCMC-trained objects see-through (now 1 cm).
+- The table outline now reaches under every object; objects at the edge of a sparsely seen counter fell off.
+- With Rapier's 0.1 length unit, the table's internal-edge fix let a thin book fall through the table.
+
+### Added
+- Photo-real appearance: a GPU splat stage trains 3D Gaussian splats with gsplat and keeps each
+  Gaussian's object label through densification, so every object's splats move with its rigid body.
+  VGGT's cameras are refined jointly (per-view rigid correction, and a focal scale learned through a
+  differentiable zoom). Held-out views are scored after test-time pose alignment.
+- Export-side splat cleanup, so nothing is left behind when an object moves: drifted, needle-shaped and
+  oversized object splats are dropped; the background is cut out around each object; and each
+  footprint is cleared and re-covered with table-colored splats.
+- Scene format: `splats` visuals (SPZ v3), `fallback_visual`, `convex_parts` colliders, `pick_hull`,
+  `table_plane.polygon_m` (the outline of the visible table top), and a capture `view`.
+- Compound colliders from approximate convex decomposition (CoACD), used only when they remove at
+  least 15% of the single hull's empty volume.
+- Dark redesign of the web app: home page with a live 3D preview, how it works, demos and a filming
+  guide; processing screen with a progress bar; simulator with Move, Lift and Push tools, a "What if"
+  bar (Cmd-K) with suggestions, an object inspector, a physics settings sheet and keyboard shortcuts.
+- Splat rendering in the browser (Spark) with table-only backdrop, ghost and needle clean-up, footprint
+  patches, and scans opening from the filmed side.
+- Gallery thumbnails are clean keyframes, and the sandbox scene has one.
+- Scenes open from the camera they were filmed from (`view`), backed off to fit every object on narrow
+  screens.
+- Hand-authored scenes get a soft dark floor, and the camera frames the whole table.
+
+### Changed
+- Grabbing uses a spring joint.
+- The 3D engine is lazy-loaded: the home page ships 250 KB of JavaScript instead of 7.9 MB.
+
+### Fixed
+- The table collider was smaller than the visible table (0.52 × 0.47 m vs. 0.76 × 0.68 m on the mugs
+  scene), so objects could fall through what looked like solid table. The simulator now builds it from
+  the outline as a closed triangle-mesh slab, which also fixes sinking and drift on scanned tables.
+- Jobs created before a stage was added now pick it up instead of failing, and a rerun clears a
+  previous failure from the job status.
+
 ## [0.1.0] - 2026-10-27
 
 Initial release.
 
 ### Pipeline
-- Staged processing pipeline on Modal (`pipeline/scan2sim`): sharp-keyframe ingest, VGGT
+- Staged processing pipeline on Modal (`pipeline/scan2sim`, now `pipeline/darius`): sharp-keyframe ingest, VGGT
   reconstruction in a warm GPU worker, Muse Spark detection handed to SAM 3.1 as box prompts for
   video tracking, multi-view voxel voting with gravity alignment, Muse Spark physical priors with
   object-voted metric scale and volume-based mass, and scene packaging.
@@ -48,5 +119,6 @@ Initial release.
 - CI: lint, tests and build for both halves, freshness of generated scene files, and a check that
   exported scenes settle in MuJoCo. GitHub Pages deployment of the simulator.
 
-[Unreleased]: https://github.com/DanielTong50/3d-visualization/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/DanielTong50/3d-visualization/releases/tag/v0.1.0
+[Unreleased]: https://github.com/DanielTong50/darius/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/DanielTong50/darius/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/DanielTong50/darius/releases/tag/v0.1.0
