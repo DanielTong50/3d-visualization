@@ -1,0 +1,1705 @@
+{
+ "version": 1,
+ "id": "halden-bookcase",
+ "title": "Halden bookcase",
+ "category": "bookcase",
+ "source": "procedural",
+ "units": "mm",
+ "dimensions_mm": [
+  800.0,
+  1060.0,
+  283.0
+ ],
+ "parts": [
+  {
+   "id": "A1",
+   "label": "A",
+   "name": "side panel",
+   "kind": "side",
+   "size_mm": [
+    18.0,
+    1060.0,
+    280.0
+   ],
+   "material": "particleboard, white foil",
+   "color": "#efece6",
+   "assembled": {
+    "position": [
+     -391.0,
+     530.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     -417.0,
+     9.0,
+     730.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.7071067811865476,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "A2",
+   "label": "A",
+   "name": "side panel",
+   "kind": "side",
+   "size_mm": [
+    18.0,
+    1060.0,
+    280.0
+   ],
+   "material": "particleboard, white foil",
+   "color": "#efece6",
+   "assembled": {
+    "position": [
+     391.0,
+     530.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     417.0,
+     9.0,
+     1430.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.7071067811865476,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "B",
+   "label": "B",
+   "name": "top panel",
+   "kind": "top",
+   "size_mm": [
+    764.0,
+    18.0,
+    280.0
+   ],
+   "material": "particleboard, white foil",
+   "color": "#efece6",
+   "assembled": {
+    "position": [
+     0.0,
+     1051.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     565.0,
+     9.0,
+     730.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "C",
+   "label": "C",
+   "name": "bottom panel",
+   "kind": "bottom",
+   "size_mm": [
+    764.0,
+    18.0,
+    280.0
+   ],
+   "material": "particleboard, white foil",
+   "color": "#efece6",
+   "assembled": {
+    "position": [
+     0.0,
+     69.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     -417.0,
+     9.0,
+     1080.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "D",
+   "label": "D",
+   "name": "fixed shelf",
+   "kind": "shelf",
+   "size_mm": [
+    764.0,
+    18.0,
+    260.0
+   ],
+   "material": "particleboard, white foil",
+   "color": "#efece6",
+   "assembled": {
+    "position": [
+     0.0,
+     560.0,
+     -10.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     417.0,
+     9.0,
+     1070.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "E",
+   "label": "E",
+   "name": "plinth",
+   "kind": "plinth",
+   "size_mm": [
+    764.0,
+    60.0,
+    18.0
+   ],
+   "material": "particleboard, white foil",
+   "color": "#efece6",
+   "assembled": {
+    "position": [
+     0.0,
+     30.0,
+     111.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     -565.0,
+     9.0,
+     1320.0
+    ],
+    "rotation": [
+     -0.7071067811865476,
+     0.0,
+     0.0,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "F",
+   "label": "F",
+   "name": "back panel",
+   "kind": "back",
+   "size_mm": [
+    796.0,
+    996.0,
+    3.0
+   ],
+   "material": "hardboard",
+   "color": "#ddd8ce",
+   "assembled": {
+    "position": [
+     0.0,
+     560.0,
+     -141.5
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     -417.0,
+     1.5,
+     2138.0
+    ],
+    "rotation": [
+     -0.7071067811865476,
+     0.0,
+     0.0,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "G1",
+   "label": "G",
+   "name": "shelf",
+   "kind": "shelf",
+   "size_mm": [
+    764.0,
+    18.0,
+    260.0
+   ],
+   "material": "particleboard, white foil",
+   "color": "#efece6",
+   "assembled": {
+    "position": [
+     0.0,
+     319.0,
+     -10.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     433.0,
+     9.0,
+     1770.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "G2",
+   "label": "G",
+   "name": "shelf",
+   "kind": "shelf",
+   "size_mm": [
+    764.0,
+    18.0,
+    260.0
+   ],
+   "material": "particleboard, white foil",
+   "color": "#efece6",
+   "assembled": {
+    "position": [
+     0.0,
+     801.0,
+     -10.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     0.0,
+     9.0,
+     2836.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  }
+ ],
+ "hardware": [
+  {
+   "id": "101350",
+   "name": "wooden dowel 8 x 30 mm",
+   "kind": "dowel",
+   "count": 16,
+   "size_mm": [
+    8.0,
+    30.0
+   ]
+  },
+  {
+   "id": "118331",
+   "name": "cam bolt 34 mm",
+   "kind": "cam_bolt",
+   "count": 12,
+   "size_mm": [
+    6.0,
+    34.0
+   ]
+  },
+  {
+   "id": "116952",
+   "name": "cam lock 15 mm",
+   "kind": "cam_lock",
+   "count": 12,
+   "size_mm": [
+    15.0,
+    12.0
+   ]
+  },
+  {
+   "id": "101351",
+   "name": "nail 1.5 x 20 mm",
+   "kind": "nail",
+   "count": 24,
+   "size_mm": [
+    1.5,
+    20.0
+   ]
+  },
+  {
+   "id": "115753",
+   "name": "shelf pin 5 mm",
+   "kind": "shelf_pin",
+   "count": 8,
+   "size_mm": [
+    5.0,
+    16.0
+   ]
+  }
+ ],
+ "joints": [
+  {
+   "id": "J1",
+   "parts": [
+    "B",
+    "A1"
+   ],
+   "kind": "cam_lock",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    },
+    {
+     "id": "118331",
+     "count": 2
+    },
+    {
+     "id": "116952",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      -382.0,
+      1051.0,
+      -105.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      -382.0,
+      1051.0,
+      -35.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      -382.0,
+      1051.0,
+      35.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      -382.0,
+      1051.0,
+      105.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J2",
+   "parts": [
+    "C",
+    "A1"
+   ],
+   "kind": "cam_lock",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    },
+    {
+     "id": "118331",
+     "count": 2
+    },
+    {
+     "id": "116952",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      -382.0,
+      69.0,
+      -105.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      -382.0,
+      69.0,
+      -35.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      -382.0,
+      69.0,
+      35.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      -382.0,
+      69.0,
+      105.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J3",
+   "parts": [
+    "D",
+    "A1"
+   ],
+   "kind": "cam_lock",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    },
+    {
+     "id": "118331",
+     "count": 2
+    },
+    {
+     "id": "116952",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      -382.0,
+      560.0,
+      -107.5
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      -382.0,
+      560.0,
+      -42.5
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      -382.0,
+      560.0,
+      22.5
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      -382.0,
+      560.0,
+      87.5
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J4",
+   "parts": [
+    "E",
+    "A1"
+   ],
+   "kind": "dowel",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      -382.0,
+      15.0,
+      111.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      -382.0,
+      45.0,
+      111.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J5",
+   "parts": [
+    "B",
+    "A2"
+   ],
+   "kind": "cam_lock",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    },
+    {
+     "id": "118331",
+     "count": 2
+    },
+    {
+     "id": "116952",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      382.0,
+      1051.0,
+      -105.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      382.0,
+      1051.0,
+      -35.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      382.0,
+      1051.0,
+      35.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      382.0,
+      1051.0,
+      105.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J6",
+   "parts": [
+    "C",
+    "A2"
+   ],
+   "kind": "cam_lock",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    },
+    {
+     "id": "118331",
+     "count": 2
+    },
+    {
+     "id": "116952",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      382.0,
+      69.0,
+      -105.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      382.0,
+      69.0,
+      -35.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      382.0,
+      69.0,
+      35.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      382.0,
+      69.0,
+      105.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J7",
+   "parts": [
+    "D",
+    "A2"
+   ],
+   "kind": "cam_lock",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    },
+    {
+     "id": "118331",
+     "count": 2
+    },
+    {
+     "id": "116952",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      382.0,
+      560.0,
+      -107.5
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      382.0,
+      560.0,
+      -42.5
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      382.0,
+      560.0,
+      22.5
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      382.0,
+      560.0,
+      87.5
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J8",
+   "parts": [
+    "E",
+    "A2"
+   ],
+   "kind": "dowel",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      382.0,
+      15.0,
+      111.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      382.0,
+      45.0,
+      111.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J9",
+   "parts": [
+    "F",
+    "A1"
+   ],
+   "kind": "nail",
+   "hardware": [
+    {
+     "id": "101351",
+     "count": 7
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101351",
+     "position": [
+      -390.0,
+      92.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      -390.0,
+      248.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      -390.0,
+      404.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      -390.0,
+      560.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      -390.0,
+      716.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      -390.0,
+      872.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      -390.0,
+      1028.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J10",
+   "parts": [
+    "F",
+    "A2"
+   ],
+   "kind": "nail",
+   "hardware": [
+    {
+     "id": "101351",
+     "count": 7
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101351",
+     "position": [
+      390.0,
+      92.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      390.0,
+      248.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      390.0,
+      404.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      390.0,
+      560.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      390.0,
+      716.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      390.0,
+      872.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      390.0,
+      1028.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J11",
+   "parts": [
+    "F",
+    "B"
+   ],
+   "kind": "nail",
+   "hardware": [
+    {
+     "id": "101351",
+     "count": 5
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101351",
+     "position": [
+      -352.0,
+      1050.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      -176.0,
+      1050.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      0.0,
+      1050.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      176.0,
+      1050.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      352.0,
+      1050.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J12",
+   "parts": [
+    "F",
+    "C"
+   ],
+   "kind": "nail",
+   "hardware": [
+    {
+     "id": "101351",
+     "count": 5
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101351",
+     "position": [
+      -352.0,
+      70.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      -176.0,
+      70.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      0.0,
+      70.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      176.0,
+      70.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "hardware": "101351",
+     "position": [
+      352.0,
+      70.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J13",
+   "parts": [
+    "G1",
+    "A1"
+   ],
+   "kind": "pin",
+   "hardware": [
+    {
+     "id": "115753",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "115753",
+     "position": [
+      -382.0,
+      319.0,
+      -100.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "115753",
+     "position": [
+      -382.0,
+      319.0,
+      80.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J14",
+   "parts": [
+    "G1",
+    "A2"
+   ],
+   "kind": "pin",
+   "hardware": [
+    {
+     "id": "115753",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "115753",
+     "position": [
+      382.0,
+      319.0,
+      -100.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "115753",
+     "position": [
+      382.0,
+      319.0,
+      80.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J15",
+   "parts": [
+    "G2",
+    "A1"
+   ],
+   "kind": "pin",
+   "hardware": [
+    {
+     "id": "115753",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "115753",
+     "position": [
+      -382.0,
+      801.0,
+      -100.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "115753",
+     "position": [
+      -382.0,
+      801.0,
+      80.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J16",
+   "parts": [
+    "G2",
+    "A2"
+   ],
+   "kind": "pin",
+   "hardware": [
+    {
+     "id": "115753",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "115753",
+     "position": [
+      382.0,
+      801.0,
+      -100.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "115753",
+     "position": [
+      382.0,
+      801.0,
+      80.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "index": 1,
+   "title": "Top and bottom onto the left side",
+   "instruction": "Lay side panel A flat, inside face up. Push dowels and cam bolts into it, set top B and bottom C on them, and turn the cam locks clockwise until tight.",
+   "parts": [
+    "A1",
+    "B",
+    "C"
+   ],
+   "joints": [
+    "J1",
+    "J2"
+   ],
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 4
+    },
+    {
+     "id": "116952",
+     "count": 4
+    },
+    {
+     "id": "118331",
+     "count": 4
+    }
+   ],
+   "actions": [
+    {
+     "kind": "lay_down",
+     "target": "A1",
+     "text": "Lay side panel A flat, inside face up"
+    },
+    {
+     "kind": "insert",
+     "target": "A1",
+     "text": "Push 4 dowels and 4 cam bolts into side A"
+    },
+    {
+     "kind": "tighten",
+     "target": "assembly",
+     "text": "Turn the cam locks clockwise, a half turn"
+    }
+   ],
+   "orientation": "on_side",
+   "tools": [
+    "screwdriver"
+   ]
+  },
+  {
+   "index": 2,
+   "title": "Fixed shelf and plinth",
+   "instruction": "Fit fixed shelf D at mid-height and plinth E at the front, under bottom C.",
+   "parts": [
+    "D",
+    "E"
+   ],
+   "joints": [
+    "J3",
+    "J4"
+   ],
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 4
+    },
+    {
+     "id": "116952",
+     "count": 2
+    },
+    {
+     "id": "118331",
+     "count": 2
+    }
+   ],
+   "actions": [
+    {
+     "kind": "align",
+     "target": "E",
+     "text": "Plinth E goes at the front, its face flush with the sides"
+    }
+   ],
+   "orientation": "on_side",
+   "tools": [
+    "screwdriver"
+   ]
+  },
+  {
+   "index": 3,
+   "title": "Close with the right side",
+   "instruction": "Lower side panel A onto the dowels and cam bolts, then tighten all eight cam locks.",
+   "parts": [
+    "A2"
+   ],
+   "joints": [
+    "J5",
+    "J6",
+    "J7",
+    "J8"
+   ],
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 8
+    },
+    {
+     "id": "116952",
+     "count": 6
+    },
+    {
+     "id": "118331",
+     "count": 6
+    }
+   ],
+   "actions": [
+    {
+     "kind": "tighten",
+     "target": "assembly",
+     "text": "Tighten all cam locks clockwise"
+    }
+   ],
+   "orientation": "on_side",
+   "tools": [
+    "screwdriver"
+   ]
+  },
+  {
+   "index": 4,
+   "title": "Face down, nail on the back",
+   "instruction": "Turn the bookcase face down. Check it is square, lay back panel F on it and nail it to the sides, the top and the bottom.",
+   "parts": [
+    "F"
+   ],
+   "joints": [
+    "J9",
+    "J10",
+    "J11",
+    "J12"
+   ],
+   "hardware": [
+    {
+     "id": "101351",
+     "count": 24
+    }
+   ],
+   "actions": [
+    {
+     "kind": "flip",
+     "target": "assembly",
+     "axis": "x",
+     "degrees": 90.0,
+     "text": "Turn the bookcase face down"
+    },
+    {
+     "kind": "align",
+     "target": "F",
+     "text": "Measure both diagonals: equal means square"
+    }
+   ],
+   "orientation": "on_front",
+   "tools": [
+    "hammer"
+   ]
+  },
+  {
+   "index": 5,
+   "title": "Stand it up, add the shelves",
+   "instruction": "Stand the bookcase upright. Push shelf pins into the holes at the heights you want and rest shelves G on them.",
+   "parts": [
+    "G1",
+    "G2"
+   ],
+   "joints": [
+    "J13",
+    "J14",
+    "J15",
+    "J16"
+   ],
+   "hardware": [
+    {
+     "id": "115753",
+     "count": 8
+    }
+   ],
+   "actions": [
+    {
+     "kind": "stand_up",
+     "target": "assembly",
+     "axis": "x",
+     "degrees": -90.0,
+     "text": "Stand the bookcase upright"
+    }
+   ],
+   "orientation": "upright",
+   "tools": []
+  }
+ ],
+ "notes": [
+  "Two people make steps 4 and 5 easier."
+ ]
+}
