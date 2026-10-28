@@ -9,31 +9,32 @@ permissions:
   contents: read
 
 jobs:
-  pipeline:
-    name: Python (lint, tests, scene contract, MuJoCo)
+  engine:
+    name: Engine (lint, tests, library, stored results)
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: pipeline
+        working-directory: engine
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - run: uv sync --locked
       - run: uv run ruff format --check .
       - run: uv run ruff check .
-      - run: uv run pytest -q   # includes MuJoCo and OpenUSD round trips of every exported scene
-      - name: Shipped scenes satisfy the contract
-        run: uv run darius validate ../scenes/*/
-      - name: Robotics annotations, bundles and the gallery index are current
-        run: uv run darius gallery --check
-      - name: Every shipped scene comes to rest in MuJoCo
-        run: for scene in ../scenes/*/; do uv run darius sim "$scene" || exit 1; done
+      - run: uv run pytest -q
+      - name: Every library plan is valid
+        run: uv run darius validate ../assemblies/*/plan.json
+      - name: The exported library matches the catalog
+        run: |
+          uv run darius export
+          git diff --exit-code -- ../assemblies/index.json ../assemblies/*/plan.json
+      - name: Stored model results re-score to the published numbers (no API calls)
+        run: uv run darius eval --check
 
-  frontend:
-    name: Frontend (typecheck, tests, build)
+  web:
+    name: Web (format, typecheck, tests, build)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -46,6 +47,7 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      - run: npm run format:check
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
