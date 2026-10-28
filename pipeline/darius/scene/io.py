@@ -177,12 +177,17 @@ class ScenePackage:
         return [self._mesh(file) for file in collider.files]
 
     def hull(self, obj: SceneObject) -> Mesh:
-        """One convex hull of the whole object: the pick hull if the package has one."""
+        """One convex hull of the whole object: the pick hull if the package has one, else the
+        collider itself when it is a single convex shape. Only compound colliders without a pick
+        hull go through Qhull, whose triangulation of flat faces differs between platforms."""
         if obj.pick_hull:
             return self._mesh(obj.pick_hull)
+        meshes = self.collision_meshes(obj)
+        if len(meshes) == 1:
+            return meshes[0]
         from ..core import geometry
 
-        points = np.concatenate([m.vertices for m in self.collision_meshes(obj)])
+        points = np.concatenate([m.vertices for m in meshes])
         hull = geometry.convex_hull(points, max_vertices=256)
         return Mesh(hull.vertices, hull.faces)
 
