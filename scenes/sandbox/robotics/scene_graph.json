@@ -1,0 +1,1112 @@
+{
+ "format": "darius.scene_graph/1",
+ "scene_id": "sandbox",
+ "title": "Physics sandbox",
+ "frame": "world: +z up, meters, the table top is z = 0",
+ "counts": {
+  "nodes": {
+   "frame": 1,
+   "surface": 1,
+   "object": 5,
+   "grasp": 32
+  },
+  "edges": 40
+ },
+ "nodes": [
+  {
+   "id": "world",
+   "type": "frame",
+   "position": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "label": "world frame"
+  },
+  {
+   "id": "table",
+   "type": "surface",
+   "position": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "label": "table top",
+   "area_m2": 0.9
+  },
+  {
+   "id": "obj_01",
+   "type": "object",
+   "position": [
+    -0.22,
+    -0.05,
+    0.04
+   ],
+   "label": "hardcover book",
+   "material": "paper",
+   "mass_kg": 1.2,
+   "dimensions_m": [
+    0.24,
+    0.17,
+    0.04
+   ],
+   "friction": 0.5,
+   "restitution": 0.05,
+   "mesh": null,
+   "pose": {
+    "position": [
+     -0.22,
+     -0.05,
+     0.04
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.130526,
+     0.991445
+    ]
+   }
+  },
+  {
+   "id": "obj_02",
+   "type": "object",
+   "position": [
+    0.2,
+    0.12,
+    0.065
+   ],
+   "label": "tissue box",
+   "material": "cardboard",
+   "mass_kg": 0.15,
+   "dimensions_m": [
+    0.24,
+    0.12,
+    0.09
+   ],
+   "friction": 0.45,
+   "restitution": 0.1,
+   "mesh": null,
+   "pose": {
+    "position": [
+     0.2,
+     0.12,
+     0.065
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     -0.087156,
+     0.996195
+    ]
+   }
+  },
+  {
+   "id": "obj_02/grasp_0",
+   "type": "grasp",
+   "position": [
+    0.20276,
+    0.11951,
+    0.06183
+   ],
+   "label": "grasp 0",
+   "width_m": 0.12,
+   "score": 0.971,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    -0.1736,
+    -0.9848,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_02/grasp_1",
+   "type": "grasp",
+   "position": [
+    0.17918,
+    0.12367,
+    0.06558
+   ],
+   "label": "grasp 1",
+   "width_m": 0.12,
+   "score": 0.862,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    -0.1736,
+    -0.9848,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_02/grasp_2",
+   "type": "grasp",
+   "position": [
+    0.21634,
+    0.11712,
+    0.08336
+   ],
+   "label": "grasp 2",
+   "width_m": 0.12,
+   "score": 0.824,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.1736,
+    0.9848,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_02/grasp_3",
+   "type": "grasp",
+   "position": [
+    0.2114,
+    0.11799,
+    0.03859
+   ],
+   "label": "grasp 3",
+   "width_m": 0.12,
+   "score": 0.775,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    -0.1736,
+    -0.9848,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_02/grasp_4",
+   "type": "grasp",
+   "position": [
+    0.18975,
+    0.12181,
+    0.09454
+   ],
+   "label": "grasp 4",
+   "width_m": 0.12,
+   "score": 0.743,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.1736,
+    0.9848,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_02/grasp_5",
+   "type": "grasp",
+   "position": [
+    0.17729,
+    0.124,
+    0.04044
+   ],
+   "label": "grasp 5",
+   "width_m": 0.12,
+   "score": 0.712,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    -0.1736,
+    -0.9848,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_02/grasp_6",
+   "type": "grasp",
+   "position": [
+    0.23727,
+    0.11343,
+    0.06962
+   ],
+   "label": "grasp 6",
+   "width_m": 0.12,
+   "score": 0.652,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.1736,
+    0.9848,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_02/grasp_7",
+   "type": "grasp",
+   "position": [
+    0.23495,
+    0.11384,
+    0.04394
+   ],
+   "label": "grasp 7",
+   "width_m": 0.12,
+   "score": 0.608,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.1736,
+    0.9848,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_03",
+   "type": "object",
+   "position": [
+    0.02,
+    -0.13,
+    0.07
+   ],
+   "label": "coffee mug",
+   "material": "ceramic",
+   "mass_kg": 0.33,
+   "dimensions_m": [
+    0.084,
+    0.084,
+    0.1
+   ],
+   "friction": 0.55,
+   "restitution": 0.15,
+   "mesh": null,
+   "pose": {
+    "position": [
+     0.02,
+     -0.13,
+     0.07
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "obj_03/grasp_0",
+   "type": "grasp",
+   "position": [
+    0.02019,
+    -0.13007,
+    0.0702
+   ],
+   "label": "grasp 0",
+   "width_m": 0.0839,
+   "score": 1.0,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.3369,
+    0.9415,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_03/grasp_1",
+   "type": "grasp",
+   "position": [
+    0.02017,
+    -0.13036,
+    0.06997
+   ],
+   "label": "grasp 1",
+   "width_m": 0.0839,
+   "score": 1.0,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.904,
+    0.4276,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_03/grasp_2",
+   "type": "grasp",
+   "position": [
+    0.02002,
+    -0.12997,
+    0.06951
+   ],
+   "label": "grasp 2",
+   "width_m": 0.0839,
+   "score": 1.0,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.8577,
+    -0.5141,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_03/grasp_3",
+   "type": "grasp",
+   "position": [
+    0.01996,
+    -0.13076,
+    0.06996
+   ],
+   "label": "grasp 3",
+   "width_m": 0.0839,
+   "score": 0.999,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    -0.9988,
+    0.0491,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_03/grasp_4",
+   "type": "grasp",
+   "position": [
+    0.01946,
+    -0.13026,
+    0.06912
+   ],
+   "label": "grasp 4",
+   "width_m": 0.0839,
+   "score": 0.998,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    -0.4276,
+    0.904,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_03/grasp_5",
+   "type": "grasp",
+   "position": [
+    0.02163,
+    -0.12992,
+    0.07019
+   ],
+   "label": "grasp 5",
+   "width_m": 0.0839,
+   "score": 0.996,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.0491,
+    -0.9988,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_03/grasp_6",
+   "type": "grasp",
+   "position": [
+    0.02126,
+    -0.13114,
+    0.07014
+   ],
+   "label": "grasp 6",
+   "width_m": 0.0839,
+   "score": 0.995,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.6716,
+    0.741,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_03/grasp_7",
+   "type": "grasp",
+   "position": [
+    0.02102,
+    -0.12924,
+    0.07912
+   ],
+   "label": "grasp 7",
+   "width_m": 0.0839,
+   "score": 0.873,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    -0.5957,
+    0.8032,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_04",
+   "type": "object",
+   "position": [
+    -0.02,
+    0.02,
+    0.25
+   ],
+   "label": "rubber ball",
+   "material": "rubber",
+   "mass_kg": 0.06,
+   "dimensions_m": [
+    0.07,
+    0.07,
+    0.07
+   ],
+   "friction": 0.8,
+   "restitution": 0.85,
+   "mesh": null,
+   "pose": {
+    "position": [
+     -0.02,
+     0.02,
+     0.25
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "obj_04/grasp_0",
+   "type": "grasp",
+   "position": [
+    -0.02,
+    0.02,
+    0.2495
+   ],
+   "label": "grasp 0",
+   "width_m": 0.0697,
+   "score": 0.999,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.3568,
+    -0.9342,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_04/grasp_1",
+   "type": "grasp",
+   "position": [
+    -0.02042,
+    0.02,
+    0.25039
+   ],
+   "label": "grasp 1",
+   "width_m": 0.0692,
+   "score": 0.999,
+   "approach": [
+    0.0,
+    -0.0125,
+    -0.9999
+   ],
+   "closing": [
+    0.0,
+    0.9999,
+    -0.0125
+   ]
+  },
+  {
+   "id": "obj_04/grasp_2",
+   "type": "grasp",
+   "position": [
+    -0.02003,
+    0.01999,
+    0.25029
+   ],
+   "label": "grasp 2",
+   "width_m": 0.0697,
+   "score": 0.998,
+   "approach": [
+    0.0379,
+    0.0686,
+    -0.9969
+   ],
+   "closing": [
+    0.4823,
+    0.8725,
+    0.0784
+   ]
+  },
+  {
+   "id": "obj_04/grasp_3",
+   "type": "grasp",
+   "position": [
+    -0.02009,
+    0.01989,
+    0.25048
+   ],
+   "label": "grasp 3",
+   "width_m": 0.0688,
+   "score": 0.996,
+   "approach": [
+    0.1133,
+    -0.0322,
+    -0.993
+   ],
+   "closing": [
+    0.9552,
+    -0.2714,
+    0.1178
+   ]
+  },
+  {
+   "id": "obj_04/grasp_4",
+   "type": "grasp",
+   "position": [
+    -0.02009,
+    0.02001,
+    0.25075
+   ],
+   "label": "grasp 4",
+   "width_m": 0.0688,
+   "score": 0.996,
+   "approach": [
+    0.0979,
+    0.042,
+    -0.9943
+   ],
+   "closing": [
+    -0.9136,
+    -0.3923,
+    -0.1065
+   ]
+  },
+  {
+   "id": "obj_04/grasp_5",
+   "type": "grasp",
+   "position": [
+    -0.01989,
+    0.02109,
+    0.25107
+   ],
+   "label": "grasp 5",
+   "width_m": 0.069,
+   "score": 0.99,
+   "approach": [
+    -0.0993,
+    0.0,
+    -0.9951
+   ],
+   "closing": [
+    0.9951,
+    0.0,
+    -0.0993
+   ]
+  },
+  {
+   "id": "obj_04/grasp_6",
+   "type": "grasp",
+   "position": [
+    -0.01891,
+    0.02121,
+    0.25059
+   ],
+   "label": "grasp 6",
+   "width_m": 0.069,
+   "score": 0.986,
+   "approach": [
+    -0.1089,
+    0.0886,
+    -0.9901
+   ],
+   "closing": [
+    -0.7682,
+    0.6246,
+    0.1404
+   ]
+  },
+  {
+   "id": "obj_04/grasp_7",
+   "type": "grasp",
+   "position": [
+    -0.02037,
+    0.02003,
+    0.25102
+   ],
+   "label": "grasp 7",
+   "width_m": 0.0693,
+   "score": 0.985,
+   "approach": [
+    0.1489,
+    -0.1876,
+    -0.9709
+   ],
+   "closing": [
+    -0.6036,
+    0.7605,
+    -0.2395
+   ]
+  },
+  {
+   "id": "obj_05",
+   "type": "object",
+   "position": [
+    -0.06964,
+    0.15084,
+    0.03333
+   ],
+   "label": "rubber doorstop",
+   "material": "rubber",
+   "mass_kg": 0.15,
+   "dimensions_m": [
+    0.13,
+    0.05,
+    0.04
+   ],
+   "friction": 0.9,
+   "restitution": 0.3,
+   "mesh": "meshes/obj_05_visual.obj",
+   "pose": {
+    "position": [
+     -0.05,
+     0.16,
+     0.04
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.21644,
+     0.976296
+    ]
+   }
+  },
+  {
+   "id": "obj_05/grasp_0",
+   "type": "grasp",
+   "position": [
+    -0.07039,
+    0.15049,
+    0.03345
+   ],
+   "label": "grasp 0",
+   "width_m": 0.05,
+   "score": 0.999,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.4226,
+    -0.9063,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_05/grasp_1",
+   "type": "grasp",
+   "position": [
+    -0.05826,
+    0.15615,
+    0.03531
+   ],
+   "label": "grasp 1",
+   "width_m": 0.05,
+   "score": 0.858,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    -0.4226,
+    0.9063,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_05/grasp_2",
+   "type": "grasp",
+   "position": [
+    -0.08168,
+    0.14523,
+    0.02926
+   ],
+   "label": "grasp 2",
+   "width_m": 0.05,
+   "score": 0.833,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    -0.4226,
+    0.9063,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_05/grasp_3",
+   "type": "grasp",
+   "position": [
+    -0.08015,
+    0.14594,
+    0.04314
+   ],
+   "label": "grasp 3",
+   "width_m": 0.05,
+   "score": 0.804,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    -0.4226,
+    0.9063,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_05/grasp_4",
+   "type": "grasp",
+   "position": [
+    -0.09135,
+    0.14072,
+    0.03746
+   ],
+   "label": "grasp 4",
+   "width_m": 0.05,
+   "score": 0.572,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.4226,
+    -0.9063,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_05/grasp_5",
+   "type": "grasp",
+   "position": [
+    -0.04618,
+    0.16178,
+    0.03185
+   ],
+   "label": "grasp 5",
+   "width_m": 0.05,
+   "score": 0.529,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.4226,
+    -0.9063,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_05/grasp_6",
+   "type": "grasp",
+   "position": [
+    -0.09202,
+    0.14041,
+    0.0518
+   ],
+   "label": "grasp 6",
+   "width_m": 0.05,
+   "score": 0.406,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    0.4226,
+    -0.9063,
+    0.0
+   ]
+  },
+  {
+   "id": "obj_05/grasp_7",
+   "type": "grasp",
+   "position": [
+    -0.10321,
+    0.13519,
+    0.03427
+   ],
+   "label": "grasp 7",
+   "width_m": 0.05,
+   "score": 0.273,
+   "approach": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "closing": [
+    -0.4226,
+    0.9063,
+    0.0
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "source": "world",
+   "target": "table",
+   "relation": "contains"
+  },
+  {
+   "source": "obj_02/grasp_0",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_1",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_2",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_3",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_4",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_5",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_6",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_7",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_0",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_1",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_2",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_3",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_4",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_5",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_6",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_03/grasp_7",
+   "target": "obj_03",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_04/grasp_0",
+   "target": "obj_04",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_04/grasp_1",
+   "target": "obj_04",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_04/grasp_2",
+   "target": "obj_04",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_04/grasp_3",
+   "target": "obj_04",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_04/grasp_4",
+   "target": "obj_04",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_04/grasp_5",
+   "target": "obj_04",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_04/grasp_6",
+   "target": "obj_04",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_04/grasp_7",
+   "target": "obj_04",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_0",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_1",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_2",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_3",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_4",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_5",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_6",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_05/grasp_7",
+   "target": "obj_05",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "table",
+   "target": "obj_01",
+   "relation": "supports"
+  },
+  {
+   "source": "table",
+   "target": "obj_02",
+   "relation": "supports"
+  },
+  {
+   "source": "table",
+   "target": "obj_03",
+   "relation": "supports"
+  },
+  {
+   "source": "table",
+   "target": "obj_05",
+   "relation": "supports"
+  },
+  {
+   "source": "obj_01",
+   "target": "obj_03",
+   "relation": "near",
+   "distance_m": 0.0646
+  },
+  {
+   "source": "obj_01",
+   "target": "obj_05",
+   "relation": "near",
+   "distance_m": 0.0543
+  },
+  {
+   "source": "obj_02",
+   "target": "obj_05",
+   "relation": "near",
+   "distance_m": 0.0808
+  }
+ ]
+}

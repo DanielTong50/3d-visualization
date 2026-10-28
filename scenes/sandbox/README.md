@@ -6,4 +6,4 @@ same kind of collider file the pipeline writes).
 
 It is the simulator's reference scene and covers every collider type, so it must keep loading whenever the
 format in [`docs/scene-format.md`](../../docs/scene-format.md) changes. Frontend and pipeline tests both
-load it. Rebuild its MuJoCo export and bundle with `cd pipeline && uv run python -m scan2sim.gallery`.
+load it. Rebuild its MuJoCo export and bundle with `cd pipeline && uv run darius gallery`.

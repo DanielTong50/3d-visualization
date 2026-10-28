@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="obj_04">
+  <!-- rubber ball: rubber, 60 g. Written by Darius 0.2.0. Link frame: +z up, origin at the capture-time bounding-box center; place it at the pose in world.json -->
+  <mujoco>
+    <compiler meshdir="../meshes/" discardvisual="true" balanceinertia="true" fusestatic="false" />
+  </mujoco>
+  <link name="obj_04">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.06" />
+      <inertia ixx="4.36654e-05" ixy="0" ixz="0" iyy="4.36654e-05" iyz="0" izz="4.36654e-05" />
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.035" />
+      </geometry>
+      <material name="obj_04_color">
+        <color rgba="0.953 0.776 0.137 1" />
+      </material>
+    </visual>
+    <collision name="obj_04">
+      <geometry>
+        <sphere radius="0.035" />
+      </geometry>
+    </collision>
+    <contact>
+      <lateral_friction value="0.8" />
+      <restitution value="0.85" />
+    </contact>
+  </link>
+</robot>

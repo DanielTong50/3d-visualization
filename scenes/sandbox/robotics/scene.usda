@@ -1,0 +1,244 @@
+#usda 1.0
+(
+    doc = "Physics sandbox. Written by Darius 0.2.0 from hand-authored. +z up, meters, table top at z = 0."
+    defaultPrim = "World"
+    metersPerUnit = 1
+    kilogramsPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "World"
+{
+    def PhysicsScene "PhysicsScene"
+    {
+        vector3f physics:gravityDirection = (0, 0, -1)
+        float physics:gravityMagnitude = 9.81
+    }
+
+    def Scope "PhysicsMaterials"
+    {
+        def Material "table" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0
+            float physics:staticFriction = 0
+            float physics:restitution = 0
+            uniform token physxMaterial:frictionCombineMode = "max"
+            uniform token physxMaterial:restitutionCombineMode = "max"
+        }
+        def Material "obj_01" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.5
+            float physics:staticFriction = 0.5
+            float physics:restitution = 0.05
+            uniform token physxMaterial:frictionCombineMode = "max"
+            uniform token physxMaterial:restitutionCombineMode = "max"
+        }
+        def Material "obj_02" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.45
+            float physics:staticFriction = 0.45
+            float physics:restitution = 0.1
+            uniform token physxMaterial:frictionCombineMode = "max"
+            uniform token physxMaterial:restitutionCombineMode = "max"
+        }
+        def Material "obj_03" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.55
+            float physics:staticFriction = 0.55
+            float physics:restitution = 0.15
+            uniform token physxMaterial:frictionCombineMode = "max"
+            uniform token physxMaterial:restitutionCombineMode = "max"
+        }
+        def Material "obj_04" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.8
+            float physics:staticFriction = 0.8
+            float physics:restitution = 0.85
+            uniform token physxMaterial:frictionCombineMode = "max"
+            uniform token physxMaterial:restitutionCombineMode = "max"
+        }
+        def Material "obj_05" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.9
+            float physics:staticFriction = 0.9
+            float physics:restitution = 0.3
+            uniform token physxMaterial:frictionCombineMode = "max"
+            uniform token physxMaterial:restitutionCombineMode = "max"
+        }
+    }
+
+    def Mesh "Table" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI", "PhysicsMeshCollisionAPI"]
+    )
+    {
+        uniform token physics:approximation = "convexHull"
+        int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+        int[] faceVertexIndices = [0, 1, 2, 0, 2, 3, 4, 6, 5, 4, 7, 6, 0, 4, 5, 0, 5, 1, 1, 5, 6, 1, 6, 2, 2, 6, 7, 2, 7, 3, 3, 7, 4, 3, 4, 0]
+        point3f[] points = [(-0.6, -0.375, 0), (0.6, -0.375, 0), (0.6, 0.375, 0), (-0.6, 0.375, 0), (-0.6, -0.375, -0.04), (0.6, -0.375, -0.04), (0.6, 0.375, -0.04), (-0.6, 0.375, -0.04)]
+        uniform token subdivisionScheme = "none"
+        color3f[] primvars:displayColor = [(0.659, 0.467, 0.31)]
+        rel material:binding:physics = </World/PhysicsMaterials/table>
+    }
+
+    def Cube "Floor" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        double size = 1
+        double3 xformOp:translate = (0, 0, -0.79)
+        float3 xformOp:scale = (10, 10, 0.1)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        color3f[] primvars:displayColor = [(0.2, 0.21, 0.23)]
+        rel material:binding:physics = </World/PhysicsMaterials/table>
+    }
+
+    def Scope "Objects"
+    {
+        def Xform "obj_01" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+            doc = "hardcover book: paper, 1200 g, hand-authored"
+        )
+        {
+            double3 xformOp:translate = (-0.22, -0.05, 0.04)
+            quatf xformOp:orient = (0.991445, 0, 0, 0.130526)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float physics:mass = 1.2
+            point3f physics:centerOfMass = (0, 0, 0)
+            float3 physics:diagonalInertia = (0.00305, 0.00592, 0.00865)
+            quatf physics:principalAxes = (1, 0, 0, 0)
+            string darius:label = "hardcover book"
+            string darius:material = "paper"
+
+            def Cube "collision" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI"]
+            )
+            {
+                double size = 1
+                float3 xformOp:scale = (0.24, 0.17, 0.04)
+                uniform token[] xformOpOrder = ["xformOp:scale"]
+                color3f[] primvars:displayColor = [(0.184, 0.365, 0.541)]
+                rel material:binding:physics = </World/PhysicsMaterials/obj_01>
+            }
+        }
+
+        def Xform "obj_02" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+            doc = "tissue box: cardboard, 150 g, hand-authored"
+        )
+        {
+            double3 xformOp:translate = (0.2, 0.12, 0.065)
+            quatf xformOp:orient = (0.996195, 0, 0, -0.087156)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float physics:mass = 0.15
+            point3f physics:centerOfMass = (0, 0, 0)
+            float3 physics:diagonalInertia = (0.000455499, 0.00133006, 0.0014576)
+            quatf physics:principalAxes = (1, 0, 0, 0)
+            string darius:label = "tissue box"
+            string darius:material = "cardboard"
+
+            def Cube "collision" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI"]
+            )
+            {
+                double size = 1
+                float3 xformOp:scale = (0.24, 0.12, 0.09)
+                uniform token[] xformOpOrder = ["xformOp:scale"]
+                color3f[] primvars:displayColor = [(0.424, 0.765, 0.725)]
+                rel material:binding:physics = </World/PhysicsMaterials/obj_02>
+            }
+        }
+
+        def Xform "obj_03" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+            doc = "coffee mug: ceramic, 330 g, hand-authored"
+        )
+        {
+            double3 xformOp:translate = (0.02, -0.13, 0.07)
+            quatf xformOp:orient = (1, 0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float physics:mass = 0.33
+            point3f physics:centerOfMass = (0, 0, 0)
+            float3 physics:diagonalInertia = (0.000638106, 0.000638106, 0.000441186)
+            quatf physics:principalAxes = (1, 0, 0, 0)
+            string darius:label = "coffee mug"
+            string darius:material = "ceramic"
+
+            def Cylinder "collision" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                double radius = 0.042
+                double height = 0.1
+                color3f[] primvars:displayColor = [(0.894, 0.341, 0.18)]
+                rel material:binding:physics = </World/PhysicsMaterials/obj_03>
+            }
+        }
+
+        def Xform "obj_04" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+            doc = "rubber ball: rubber, 60 g, hand-authored"
+        )
+        {
+            double3 xformOp:translate = (-0.02, 0.02, 0.25)
+            quatf xformOp:orient = (1, 0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float physics:mass = 0.06
+            point3f physics:centerOfMass = (0, 0, 0)
+            float3 physics:diagonalInertia = (4.36654e-05, 4.36654e-05, 4.36654e-05)
+            quatf physics:principalAxes = (1, 0, 0, 0)
+            string darius:label = "rubber ball"
+            string darius:material = "rubber"
+
+            def Sphere "collision" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI"]
+            )
+            {
+                double radius = 0.035
+                color3f[] primvars:displayColor = [(0.953, 0.776, 0.137)]
+                rel material:binding:physics = </World/PhysicsMaterials/obj_04>
+            }
+        }
+
+        def Xform "obj_05" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+            doc = "rubber doorstop: rubber, 150 g, hand-authored"
+        )
+        {
+            double3 xformOp:translate = (-0.05, 0.16, 0.04)
+            quatf xformOp:orient = (0.976296, 0, 0, 0.21644)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float physics:mass = 0.15
+            point3f physics:centerOfMass = (-0.02167, 0, -0.00667)
+            float3 physics:diagonalInertia = (4.1002e-05, 0.000154167, 0.000175664)
+            quatf physics:principalAxes = (0.996648, -6.18451e-16, 0.0818141, 6.75165e-17)
+            string darius:label = "rubber doorstop"
+            string darius:material = "rubber"
+
+            def Mesh "collision" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI", "PhysicsMeshCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "convexHull"
+                int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3]
+                int[] faceVertexIndices = [0, 2, 1, 3, 4, 5, 0, 1, 4, 0, 4, 3, 0, 3, 5, 0, 5, 2, 1, 2, 5, 1, 5, 4]
+                point3f[] points = [(-0.065, 0.025, -0.02), (0.065, 0.025, -0.02), (-0.065, 0.025, 0.02), (-0.065, -0.025, -0.02), (0.065, -0.025, -0.02), (-0.065, -0.025, 0.02)]
+                uniform token subdivisionScheme = "none"
+                color3f[] primvars:displayColor = [(0.29, 0.29, 0.29)]
+                rel material:binding:physics = </World/PhysicsMaterials/obj_05>
+            }
+        }
+    }
+}

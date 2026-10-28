@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="obj_03">
+  <!-- coffee mug: ceramic, 330 g. Written by Darius 0.2.0. Link frame: +z up, origin at the capture-time bounding-box center; place it at the pose in world.json -->
+  <mujoco>
+    <compiler meshdir="../meshes/" discardvisual="true" balanceinertia="true" fusestatic="false" />
+  </mujoco>
+  <link name="obj_03">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.33" />
+      <inertia ixx="0.000638106" ixy="0" ixz="0" iyy="0.000638106" iyz="0" izz="0.000441186" />
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.042" length="0.1" />
+      </geometry>
+      <material name="obj_03_color">
+        <color rgba="0.894 0.341 0.18 1" />
+      </material>
+    </visual>
+    <collision name="obj_03">
+      <geometry>
+        <cylinder radius="0.042" length="0.1" />
+      </geometry>
+    </collision>
+    <contact>
+      <lateral_friction value="0.55" />
+      <restitution value="0.15" />
+    </contact>
+  </link>
+</robot>
