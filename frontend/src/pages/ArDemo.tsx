@@ -67,7 +67,7 @@ export function ArDemo({ furniture }: { furniture: string }) {
     let fpsAt = last;
     let raf = 0;
     const loop = (now: number) => {
-      const dt = Math.min(0.1, (now - last) / 1000);
+      const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
       last = now;
       if (playingRef.current) {
         timeRef.current += dt * speedRef.current;
