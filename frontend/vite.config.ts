@@ -31,11 +31,25 @@ function assembliesFolder(): Plugin {
           next();
           return;
         }
-        if (!file.startsWith(ASSEMBLIES_DIR + path.sep) || !fs.statSync(file, { throwIfNoEntry: false })?.isFile()) {
+        const stat = file.startsWith(ASSEMBLIES_DIR + path.sep) ? fs.statSync(file, { throwIfNoEntry: false }) : undefined;
+        if (!stat?.isFile()) {
           next();
           return;
         }
         res.setHeader('Content-Type', CONTENT_TYPES[path.extname(file).toLowerCase()] ?? 'application/octet-stream');
+        res.setHeader('Accept-Ranges', 'bytes');
+        // Videos seek with range requests (the video analyzer's timeline does).
+        const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range ?? '');
+        if (range && (range[1] || range[2])) {
+          const start = range[1] ? Number(range[1]) : Math.max(0, stat.size - Number(range[2]));
+          const end = range[1] && range[2] ? Math.min(Number(range[2]), stat.size - 1) : stat.size - 1;
+          res.statusCode = 206;
+          res.setHeader('Content-Range', `bytes ${start}-${end}/${stat.size}`);
+          res.setHeader('Content-Length', String(end - start + 1));
+          fs.createReadStream(file, { start, end }).pipe(res);
+          return;
+        }
+        res.setHeader('Content-Length', String(stat.size));
         fs.createReadStream(file).pipe(res);
       });
     },
@@ -47,4 +61,6 @@ function assembliesFolder(): Plugin {
 
 export default defineConfig({
   plugins: [react(), assembliesFolder()],
+  // three.js is one ~575 kB chunk, shared by every 3D page and loaded only with them.
+  build: { chunkSizeWarningLimit: 650 },
 });
