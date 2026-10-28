@@ -6,6 +6,7 @@ license = "MIT"
 requires-python = "==3.11.*"
 dependencies = [
     "fastapi==0.162.0",
+    "meta-sam-parser==0.1.0",
     "modal==1.6.2",
     "numpy==2.4.6",
     "openai==3.39.0",

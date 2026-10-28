@@ -1,19 +1,37 @@
-"""A thin client for the Meta Model API: Muse Spark with structured (schema-constrained) JSON output.
+"""Thin clients for the Meta Model API: Muse Spark (schema-constrained JSON) and SAM 3.1 (streamed masks).
 
-Request formats are documented in docs/api-notes.md.
+Request formats are documented in docs/api-notes.md; nothing here relies on undocumented behavior
+except the stream-lane workaround noted in `finish_text_lanes`.
 """
 
 from __future__ import annotations
 
+import asyncio
 import base64
 import io
 import os
 import random
 import time
-from collections.abc import Sequence
+from collections.abc import AsyncIterable, AsyncIterator, Sequence
+from contextlib import aclosing
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, TypeVar
 
+import numpy as np
 import openai
+from meta_sam_parser import (
+    FramePrompt,
+    PromptBox,
+    PromptObject,
+    PromptPoint,
+    ResponsesStreamSourceError,
+    build_object_prompt,
+    decode_mask_to_raster,
+    image_segmentation_format,
+    parse_responses_stream,
+    video_segmentation_format,
+)
 from PIL import Image
 from pydantic import BaseModel
 
@@ -21,6 +39,8 @@ from ..core.errors import describe
 
 BASE_URL = "https://api.meta.ai/v1"
 MUSE_SPARK_MODEL = "muse-spark-1.3"
+SAM_MODEL = "sam-3.1"
+SAM_MAX_OBJECTS = 16
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -85,3 +105,205 @@ def ask_structured(
             # 404 bursts cluster under concurrency, so back off long enough to outlast one.
             time.sleep(min(30.0, 3.0 * 2**attempt) * random.uniform(0.75, 1.25))
     raise RuntimeError(f"Muse Spark failed after {retries + 1} attempts: {describe(last_error)}")
+
+
+# ---------- SAM 3.1 ----------
+
+
+async def finish_text_lanes(stream: AsyncIterable[Any]) -> AsyncIterator[dict[str, Any]]:
+    """Pass SDK events to the SAM parser as dicts, closing each text lane.
+
+    The API sends `response.content_part.done` but not `response.output_text.done`,
+    which the parser needs to close a lane, so this synthesizes it. Adapted from
+    Meta's cookbook (07_sam/01_api_basics/python/sam_api.py).
+    """
+    finished: set[tuple[Any, Any, Any]] = set()
+    async for event in stream:
+        data = event.model_dump() if hasattr(event, "model_dump") else dict(event)
+        lane = (data.get("item_id"), data.get("output_index"), data.get("content_index"))
+        if data.get("type") == "response.output_text.done":
+            if lane not in finished:
+                finished.add(lane)
+                yield data
+            continue
+        yield data
+        part = data.get("part")
+        if (
+            data.get("type") == "response.content_part.done"
+            and lane not in finished
+            and isinstance(part, dict)
+            and part.get("type") == "output_text"
+            and isinstance(part.get("text"), str)
+        ):
+            finished.add(lane)
+            yield {
+                "type": "response.output_text.done",
+                "item_id": data.get("item_id"),
+                "output_index": data.get("output_index"),
+                "content_index": data.get("content_index"),
+                "text": part["text"],
+            }
+
+
+@dataclass(frozen=True)
+class FrameMask:
+    """One object's mask on one frame: a boolean raster of its box, whose top-left corner is at
+    (left, top) in the frame. Box-local, as SAM sends it: a video of full-frame rasters would not
+    fit in memory."""
+
+    frame: int
+    object_id: int
+    mask: np.ndarray
+    left: int
+    top: int
+    confidence: float | None
+
+    def full(self, frame_size: tuple[int, int]) -> np.ndarray:
+        width, height = frame_size
+        out = np.zeros((height, width), dtype=bool)
+        h, w = self.mask.shape
+        out[self.top : self.top + h, self.left : self.left + w] = self.mask
+        return out
+
+
+def local_raster(record: Any, frame_size: tuple[int, int]) -> tuple[np.ndarray, int, int]:
+    """A SAM mask record as a boolean raster of its box clipped to the frame, and the box's corner."""
+    width, height = frame_size
+    pixels = np.frombuffer(decode_mask_to_raster(record.mask), dtype=np.uint8)
+    pixels = pixels.reshape(record.mask.height, record.mask.width).astype(bool)
+    left, top = int(record.bounds.left), int(record.bounds.top)
+    right, bottom = int(record.bounds.right), int(record.bounds.bottom)
+    if pixels.shape != (bottom - top, right - left):
+        resized = Image.fromarray(pixels.astype(np.uint8) * 255).resize(
+            (right - left, bottom - top), Image.Resampling.NEAREST
+        )
+        pixels = np.asarray(resized) > 127
+    x0, y0 = max(left, 0), max(top, 0)
+    x1, y1 = min(right, width), min(bottom, height)
+    return pixels[y0 - top : y1 - top, x0 - left : x1 - left], x0, y0
+
+
+def latest_masks(records: Sequence[Any]) -> list[Any]:
+    """Keep only the highest revision of each (frame, object) mask."""
+    best: dict[tuple[int | None, str], Any] = {}
+    for record in records:
+        if record.kind != "mask":
+            continue
+        frame = record.frame.frame_index if record.frame is not None else 0
+        key = (frame, record.object_id)
+        if key not in best or record.revision > best[key].revision:
+            best[key] = record
+    return list(best.values())
+
+
+async def _stream_sam(content: list[dict[str, Any]], metadata: dict[str, str], video: bool, retries: int = 2) -> Any:
+    """One streamed SAM 3.1 request, parsed. A stream that drops mid-way is sent again: the request
+    has no side effects, and long video streams occasionally drop."""
+    for attempt in range(retries + 1):
+        try:
+            return await _stream_sam_once(content, metadata, video)
+        except (ResponsesStreamSourceError, openai.APIConnectionError, openai.InternalServerError):
+            if attempt == retries:
+                raise
+            await asyncio.sleep(5.0 * (attempt + 1))
+    raise AssertionError("unreachable")
+
+
+async def _stream_sam_once(content: list[dict[str, Any]], metadata: dict[str, str], video: bool) -> Any:
+    async with openai.AsyncOpenAI(base_url=BASE_URL, api_key=api_key(), max_retries=3) as client:
+        stream = await client.responses.create(
+            model=SAM_MODEL,
+            stream=True,
+            input=[{"type": "message", "role": "user", "content": content}],
+            metadata=metadata,
+        )
+        response_format = video_segmentation_format() if video else image_segmentation_format()
+        async with stream, aclosing(finish_text_lanes(stream)) as events:
+            result = await parse_responses_stream(events, response_format).final_result()
+    if result.outcome.status != "completed":
+        raise RuntimeError(f"SAM 3.1 stopped early: {result.outcome}")
+    errors = [d for d in result.diagnostics if d.severity == "error"]
+    if errors:
+        raise RuntimeError("unreadable SAM 3.1 output: " + "; ".join(d.message for d in errors))
+    return result
+
+
+def upload_video(path: Path) -> str:
+    client = openai.OpenAI(base_url=BASE_URL, api_key=api_key(), max_retries=3)
+    with path.open("rb") as handle:
+        uploaded = client.files.create(file=handle, purpose="user_data")
+    return uploaded.id
+
+
+def delete_file(file_id: str) -> None:
+    try:
+        openai.OpenAI(base_url=BASE_URL, api_key=api_key()).files.delete(file_id)
+    except openai.APIError:
+        pass  # best effort; uploads are housekeeping, not correctness
+
+
+@dataclass(frozen=True)
+class BoxPrompt:
+    """One object's prompt on one frame: a box (left, top, right, bottom; half-open, video pixels)
+    and an optional positive point on the object. A thin bar lying diagonally fills little of its
+    box, and the point says which thing in the box is meant."""
+
+    frame: int
+    box: tuple[int, int, int, int]
+    point: tuple[int, int] | None = None
+
+
+async def track_objects_in_video(
+    video_file_id: str,
+    frame_size: tuple[int, int],
+    objects: Sequence[Sequence[BoxPrompt]],
+) -> list[FrameMask]:
+    """Track each object through the video from its prompts, on one frame or several: a prompt on a
+    later frame picks the object up again where it was lost.
+
+    Object i comes back as object_id i + 1. Box prompts make SAM independent of how an object is
+    named, which matters because SAM's concept prompts are very sensitive to wording (see
+    docs/api-notes.md).
+    """
+    if not objects:
+        return []
+    if len(objects) > SAM_MAX_OBJECTS:
+        raise ValueError(f"SAM 3.1 tracks at most {SAM_MAX_OBJECTS} objects per video")
+    prompt = build_object_prompt(
+        size=frame_size,
+        objects=[
+            PromptObject(
+                id=i + 1,
+                prompts=[
+                    FramePrompt(frame=p.frame, box=PromptBox(*p.box), points=[PromptPoint(*p.point)] if p.point else ())
+                    for p in sorted(prompts, key=lambda p: p.frame)
+                ],
+            )
+            for i, prompts in enumerate(objects)
+        ],
+    )
+    result = await _stream_sam(
+        [{"type": "input_text", "text": prompt}, {"type": "input_video", "file_id": video_file_id}],
+        {"mask_encoding": "one_bit", "include_confidence": "true", "propagation_direction": "both"},
+        video=True,
+    )
+    masks = []
+    for record in latest_masks(result.records):
+        frame = record.frame.frame_index if record.frame is not None else 0
+        pixels, left, top = local_raster(record, frame_size)
+        masks.append(FrameMask(frame, int(record.object_id), pixels, left, top, record.confidence))
+    return masks
+
+
+async def segment_concept_in_image(image: Image.Image, concept: str) -> list[FrameMask]:
+    """All instances of a short noun phrase in one image."""
+    result = await _stream_sam(
+        [{"type": "input_text", "text": concept}, {"type": "input_image", "image_url": image_data_url(image, 4096)}],
+        {"mask_encoding": "one_bit", "include_confidence": "true"},
+        video=False,
+    )
+    masks = []
+    for record in latest_masks(result.records):
+        pixels, left, top = local_raster(record, image.size)
+        masks.append(FrameMask(0, int(record.object_id), pixels, left, top, record.confidence))
+    return masks
