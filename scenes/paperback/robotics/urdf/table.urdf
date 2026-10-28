@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<robot name="table">
+  <!-- The table top of Paperback on a quilt: a static convex slab, top face at z = 0. Load with a fixed base -->
+  <mujoco>
+    <compiler meshdir="../meshes/" discardvisual="true" balanceinertia="true" fusestatic="false" />
+  </mujoco>
+  <link name="table">
+    <inertial>
+      <mass value="20" />
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/table.obj" />
+      </geometry>
+      <material name="table_color">
+        <color rgba="0.761 0.682 0.647 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="../meshes/table.obj" />
+      </geometry>
+    </collision>
+    <contact>
+      <lateral_friction value="1" />
+    </contact>
+  </link>
+</robot>
