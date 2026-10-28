@@ -136,10 +136,9 @@ def test_decoding_readings_dates_every_joint() -> None:
     assert [round(analysis.finished_at[k]) for k in range(1, steps + 1)] == [10, 20, 30]
     assert all(j.made_at_s is not None for j in analysis.joints)
 
+    # Ground truth: step k's parts are in place at t = 10 k (the end of its place phase).
     truth = {
-        "fps": 1,
-        "completed": [min(steps, t // 10) for t in range(0, 42)],
-        "steps": [{"index": k, "done_at": 10.0 * k} for k in range(1, steps + 1)],
+        "segments": [{"step": k, "phase": "place", "start": 10.0 * k - 3, "duration": 3.0} for k in range(1, steps + 1)]
     }
     score = score_session(analysis, plan, truth)
     assert score.frame_accuracy == 1.0

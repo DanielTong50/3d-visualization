@@ -90,6 +90,9 @@ def eval_manual(plan_id: str, replay: bool = False) -> dict[str, Any]:
 
 
 class SessionScore(BaseModel):
+    """How a decoded session compares with the truth. In a rendered session nothing visible happens
+    while a step is fastened, so a step counts as done once its parts are in place."""
+
     frames: int
     frame_accuracy: float
     raw_frame_accuracy: float
@@ -105,23 +108,28 @@ def frame_estimate(observation: Observation, steps: int) -> int:
     return int(np.argmax(log_emission(observation, steps)))
 
 
+def placed_at(truth: dict[str, Any]) -> dict[int, float]:
+    """When each step's parts are in place: the end of its place phase."""
+    return {s["step"]: s["start"] + s["duration"] for s in truth["segments"] if s["phase"] == "place"}
+
+
 def score_session(analysis: VideoAnalysis, plan: AssemblyPlan, truth: dict[str, Any]) -> SessionScore:
     steps = len(plan.steps)
-    completed = truth["completed"]
+    placed = placed_at(truth)
 
     def truth_at(t: float) -> int:
-        return completed[min(len(completed) - 1, round(t * truth["fps"]))]
+        return sum(1 for k in range(1, steps + 1) if placed.get(k, float("inf")) <= t + 1e-6)
 
     times = [f.time_s for f in analysis.frames]
     expected = [truth_at(t) for t in times]
     raw = [frame_estimate(Observation(time_s=f.time_s, step_done=f.step_done), steps) for f in analysis.frames]
     errors = []
     offsets = []
-    for step in truth["steps"]:
-        found = analysis.finished_at.get(step["index"])
+    for k, at in placed.items():
+        found = analysis.finished_at.get(k)
         if found is not None:
-            errors.append(abs(found - step["done_at"]))
-            offsets.append(found - step["done_at"])
+            errors.append(abs(found - at))
+            offsets.append(found - at)
     final = analysis.path[-1] if analysis.path else 0
     made = sum(len(s.joints) for s in plan.steps[:final])
     return SessionScore(
@@ -165,7 +173,8 @@ def eval_session(plan_id: str, every_s: float = 1.0, replay: bool = False) -> di
         analysis = analyze_readings(plan, frames, readings, previous.model, previous.every_s, previous.duration_s)
         analysis.seconds = previous.seconds
     else:
-        analysis = analyze(video, plan, every_s=every_s)
+        step_pages = manual_pages(plan_id)[3:]  # cover, parts and hardware come first
+        analysis = analyze(video, plan, references=step_pages, every_s=every_s)
     score = score_session(analysis, plan, truth)
     record = {"score": score.model_dump(), **analysis.model_dump()}
     write_json(folder / "analysis.json", record)
