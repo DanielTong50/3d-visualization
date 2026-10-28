@@ -4,7 +4,9 @@ export type Route =
   | { page: 'ar'; furniture: string }
   | { page: 'manual'; furniture: string }
   | { page: 'video'; furniture: string }
-  | { page: 'live' };
+  | { page: 'live' }
+  /** Bare views for scripts/capture.mjs: one manual page, or the clean session renderer. */
+  | { page: 'render'; furniture: string; target: 'page' | 'session'; index: number };
 
 export const DEFAULT_FURNITURE = 'halden-bookcase';
 const SAFE_ID = /^[\w-]+$/;
@@ -16,6 +18,10 @@ export function routeFromUrl(): Route {
   const id = furniture && SAFE_ID.test(furniture) ? furniture : DEFAULT_FURNITURE;
   if (view === 'ar' || view === 'manual' || view === 'video') return { page: view, furniture: id };
   if (view === 'live') return { page: 'live' };
+  if (view === 'render') {
+    const index = Number(params.get('page') ?? 0);
+    return { page: 'render', furniture: id, target: index > 0 ? 'page' : 'session', index: Number.isInteger(index) ? index : 0 };
+  }
   return { page: 'home' };
 }
 

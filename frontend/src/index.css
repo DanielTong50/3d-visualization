@@ -783,3 +783,233 @@ p {
     font-size: 15px;
   }
 }
+
+/* ---------- Manual pages (print size, scaled) ---------- */
+
+.mp-frame {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+}
+
+.mp {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1240px;
+  height: 1754px;
+  padding: 90px 96px;
+  transform-origin: 0 0;
+  background: #fff;
+  color: #141414;
+  font-family: var(--font);
+  display: flex;
+  flex-direction: column;
+}
+
+.mp-picture {
+  position: relative;
+  flex: none;
+}
+
+.mp-picture img {
+  display: block;
+}
+
+.mp-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.mp-letter {
+  font: 700 30px var(--font);
+  fill: #141414;
+}
+
+.mp-folio {
+  position: absolute;
+  bottom: 56px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font: 600 26px var(--font);
+}
+
+.mp-cover-head h1 {
+  font-size: 150px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.mp-cover-head p {
+  margin-top: 18px;
+  font-size: 34px;
+  color: #555;
+}
+
+.mp-cover-art {
+  margin: auto;
+}
+
+.mp-cover-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.mp-tools {
+  display: flex;
+  gap: 18px;
+}
+
+.mp-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  font-size: 24px;
+  color: #555;
+}
+
+.mp-brand b {
+  font-size: 40px;
+  font-weight: 700;
+  color: #141414;
+  letter-spacing: -0.02em;
+}
+
+.mp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 34px 26px;
+  align-content: start;
+  margin-top: 30px;
+}
+
+.mp-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0 22px;
+  border: 3px solid #141414;
+  border-radius: 22px;
+}
+
+.mp-cell-foot {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 34px;
+}
+
+.mp-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border: 3px solid #141414;
+  border-radius: 50%;
+  font-weight: 700;
+}
+
+.mp-dim {
+  font: 500 20px var(--mono);
+  color: #666;
+}
+
+.mp-article {
+  font: 600 26px var(--mono);
+}
+
+.mp-hardware .mp-cell {
+  padding-top: 10px;
+  gap: 4px;
+}
+
+.mp-step-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+}
+
+.mp-step-number {
+  font-size: 170px;
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+
+.mp-step-side {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.mp-box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px 26px;
+  max-width: 720px;
+  padding: 18px 26px;
+  border: 3px solid #141414;
+  border-radius: 22px;
+}
+
+.mp-box-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 30px;
+}
+
+.mp-box-item .mp-article {
+  font-size: 22px;
+}
+
+.mp-tool {
+  padding: 8px;
+  border: 3px solid #141414;
+  border-radius: 50%;
+}
+
+.mp-caption {
+  margin-top: 20px;
+  font-size: 30px;
+  color: #444;
+}
+
+.mp-turn {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  align-self: flex-start;
+  margin-top: 18px;
+  padding: 10px 22px 10px 14px;
+  border: 3px solid #141414;
+  border-radius: 999px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.mp-step-art {
+  margin: auto auto 50px;
+}
+
+/* ---------- Capture views ---------- */
+
+.render body {
+  background: #fff;
+}
+
+.render-session {
+  position: fixed;
+  inset: 0;
+}

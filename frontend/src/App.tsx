@@ -7,6 +7,7 @@ const ArDemo = lazy(() => import('./pages/ArDemo').then((m) => ({ default: m.ArD
 const ManualDemo = lazy(() => import('./pages/ManualDemo').then((m) => ({ default: m.ManualDemo })));
 const VideoDemo = lazy(() => import('./pages/VideoDemo').then((m) => ({ default: m.VideoDemo })));
 const Live = lazy(() => import('./pages/Live').then((m) => ({ default: m.Live })));
+const Render = lazy(() => import('./pages/Render').then((m) => ({ default: m.Render })));
 
 function Loading() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
       {route.page === 'manual' && <ManualDemo key={route.furniture} furniture={route.furniture} />}
       {route.page === 'video' && <VideoDemo key={route.furniture} furniture={route.furniture} />}
       {route.page === 'live' && <Live />}
+      {route.page === 'render' && <Render furniture={route.furniture} target={route.target} index={route.index} />}
     </Suspense>
   );
 }
