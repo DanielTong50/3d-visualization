@@ -44,7 +44,7 @@ def stored(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text())
 
 
-def eval_manual(plan_id: str, replay: bool = False) -> dict[str, Any]:
+def eval_manual(plan_id: str, replay: bool = False, write: bool = True) -> dict[str, Any]:
     """Read a library manual with the model (or, replaying, re-use the stored reading) and score it."""
     truth = CATALOG[plan_id]()
     path = LIBRARY / plan_id / "manual" / "reading.json"
@@ -82,7 +82,8 @@ def eval_manual(plan_id: str, replay: bool = False) -> dict[str, Any]:
         "reading": result.reading.model_dump(),
         "recovered": result.plan.model_dump(exclude_none=True),
     }
-    write_json(path, record)
+    if write:
+        write_json(path, record)
     return record
 
 
@@ -144,7 +145,7 @@ def score_session(analysis: VideoAnalysis, plan: AssemblyPlan, truth: dict[str, 
     )
 
 
-def eval_session(plan_id: str, every_s: float = 1.0, replay: bool = False) -> dict[str, Any]:
+def eval_session(plan_id: str, every_s: float = 1.0, replay: bool = False, write: bool = True) -> dict[str, Any]:
     """Watch a library session with the model (or, replaying, re-decode the stored readings) and score it."""
     folder = LIBRARY / plan_id / "session"
     video, truth_path = folder / "session.mp4", folder / "truth.json"
@@ -177,8 +178,29 @@ def eval_session(plan_id: str, every_s: float = 1.0, replay: bool = False) -> di
         analysis = analyze(video, plan, references=step_pages, every_s=every_s)
     score = score_session(analysis, plan, truth)
     record = {"score": score.model_dump(), **analysis.model_dump()}
-    write_json(folder / "analysis.json", record)
+    if write:
+        write_json(folder / "analysis.json", record)
     return record
+
+
+def check(plan_ids: list[str]) -> list[str]:
+    """Re-score every stored result (no API calls) and list the scores that no longer match."""
+    problems = []
+    for plan_id in plan_ids:
+        for kind, path in (
+            ("manual", LIBRARY / plan_id / "manual" / "reading.json"),
+            ("session", LIBRARY / plan_id / "session" / "analysis.json"),
+        ):
+            if not path.exists():
+                continue
+            stored_score = json.loads(path.read_text())["score"]
+            if kind == "manual":
+                fresh = eval_manual(plan_id, replay=True, write=False)["score"]
+            else:
+                fresh = eval_session(plan_id, replay=True, write=False)["score"]
+            if fresh != stored_score:
+                problems.append(f"{plan_id} {kind}: stored {stored_score}, re-scored {fresh}")
+    return problems
 
 
 # ---------- Summary ----------

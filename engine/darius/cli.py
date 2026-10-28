@@ -174,6 +174,12 @@ def _eval(args: argparse.Namespace) -> int:
 
     load_dotenv(REPO / ".env")
     ids = args.only or list(catalog.CATALOG)
+    if args.check:
+        problems = benchmark.check(ids)
+        for problem in problems:
+            print(problem, file=sys.stderr)
+        print(f"{len(ids)} plans: stored results {'match' if not problems else 'DO NOT match'} their re-scored values")
+        return 1 if problems else 0
     both = not args.manuals and not args.sessions
     for plan_id in ids:
         if args.manuals or both:
@@ -224,6 +230,7 @@ def main(argv: list[str] | None = None) -> int:
     command.add_argument("--only", nargs="+", help="plan ids")
     command.add_argument("--every", type=float, default=1.0, help="seconds between analyzed frames")
     command.add_argument("--replay", action="store_true", help="re-score the stored model outputs, no API calls")
+    command.add_argument("--check", action="store_true", help="fail if any stored score differs from a re-score")
     command.set_defaults(run=_eval)
 
     args = parser.parse_args(argv)
