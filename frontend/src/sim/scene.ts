@@ -3,7 +3,7 @@ import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
 
 /**
  * The scene package contract between the pipeline and the simulator: a folder holding
- * scene.json plus asset files. TypeScript mirror of pipeline/scan2sim/schema.py (the source of
+ * scene.json plus asset files. TypeScript mirror of pipeline/darius/scene/schema.py (the source of
  * truth); docs/scene-format.md is the field reference.
  */
 
@@ -15,7 +15,9 @@ export type ColliderSpec =
   | { type: 'box'; half_extents: Vec3 }
   | { type: 'sphere'; radius: number }
   | { type: 'cylinder'; radius: number; half_height: number }
-  | { type: 'convex_hull'; file: string };
+  | { type: 'convex_hull'; file: string }
+  /** Several convex pieces (OBJ files) that together approximate a concave object. */
+  | { type: 'convex_parts'; files: string[] };
 
 /** A colored point cloud: binary little-endian PLY with float xyz and uchar rgb. */
 export interface PointsVisual {
@@ -25,7 +27,35 @@ export interface PointsVisual {
   point_size_m: number;
 }
 
+/** Trained Gaussian splats (.spz, .splat or .ply); the file extension says which. */
+export interface SplatsVisual {
+  type: 'splats';
+  file: string;
+  count: number;
+  sh_degree?: number;
+  /** Trained with anti-aliased rasterization (render with Spark's defaults); else classic 3DGS. */
+  antialiased?: boolean;
+}
+
+export type Visual = PointsVisual | SplatsVisual;
+
 export type PhysicsSource = 'estimated' | 'measured' | 'hand-authored';
+
+/** How an object's mass is distributed, in its body frame (pipeline: darius.robotics.mass). */
+export interface Inertial {
+  com_m: Vec3;
+  /** About the center of mass, body axes: [ixx, iyy, izz, ixy, ixz, iyz]. */
+  inertia_kg_m2: [number, number, number, number, number, number];
+  model: 'solid' | 'shell';
+}
+
+/** A parallel-jaw grasp candidate in the body frame: +z approach, +y closing axis. */
+export interface Grasp {
+  position: Vec3;
+  rotation_quat: Quat;
+  width_m: number;
+  score: number;
+}
 
 export interface SceneObject {
   id: string;
@@ -45,12 +75,19 @@ export interface SceneObject {
   rigidity: 'rigid' | 'soft';
   fragile: boolean;
   /** The object's appearance in object-local coordinates; null means "draw the collider shape". */
-  visual?: PointsVisual | null;
+  visual?: Visual | null;
+  /** Shown instead of `visual` if that can't be loaded. */
+  fallback_visual?: PointsVisual | null;
   color?: string | null;
   collider: ColliderSpec;
+  /** One convex hull of the whole object (OBJ): used for taps and as a collider fallback. */
+  pick_hull?: string | null;
   pose: { position: Vec3; rotation_quat: Quat };
   physics_source: PhysicsSource;
   physics_notes?: string | null;
+  /** Robotics annotations (darius.robotics): mass distribution and grasp candidates, best first. */
+  inertial?: Inertial | null;
+  grasps?: Grasp[] | null;
 }
 
 export interface TablePlane {
@@ -58,6 +95,8 @@ export interface TablePlane {
   normal: Vec3;
   /** Table top size [along x, along z] in meters, centered on `point`. */
   size_m: [number, number];
+  /** Convex outline of the table top as [x, z] world points; preferred over `size_m` when present. */
+  polygon_m?: [number, number][] | null;
 }
 
 export interface Provenance {
@@ -67,6 +106,23 @@ export interface Provenance {
   models: Record<string, string>;
   timings?: { stage: string; seconds: number }[];
   scale_estimates?: number[];
+  appearance?: { test_psnr_db?: number | null; train_psnr_db?: number | null; gaussians: number; train_seconds: number } | null;
+}
+
+/** The filmed camera path (after refinement): OpenGL cameras (looking down -z, +y up) in the scene frame. */
+export interface Capture {
+  cameras: { position: Vec3; rotation_quat: Quat }[];
+  fov_deg: number;
+  aspect: number;
+  image_size?: [number, number] | null;
+}
+
+/** A camera the scene was filmed from (scene coordinates): splats look their best from there. */
+export interface CaptureView {
+  position: Vec3;
+  target: Vec3;
+  /** Vertical field of view. */
+  fov_deg: number;
 }
 
 export interface SceneManifest {
@@ -77,8 +133,11 @@ export interface SceneManifest {
   gravity: Vec3;
   scale_source: string;
   background: {
-    /** A scanned background in world coordinates; null means "draw a plain table". */
-    visual?: PointsVisual | null;
+    /** The scanned table top in world coordinates; null means "draw a plain table". */
+    visual?: Visual | null;
+    /** Splats beyond the table (walls, floor, the room): reliable only near the filmed viewpoints. */
+    backdrop?: SplatsVisual | null;
+    fallback_visual?: PointsVisual | null;
     collider: 'table_plane';
     table_plane: TablePlane;
     table_color?: string | null;
@@ -86,20 +145,29 @@ export interface SceneManifest {
     floor_depth_m?: number | null;
   };
   objects: SceneObject[];
+  /** Where the simulator's camera starts, if the pipeline knows where the video was filmed from. */
+  view?: CaptureView | null;
+  capture?: Capture | null;
   provenance?: Provenance | null;
 }
 
-/** Key for the background's point cloud in `LoadedScene.pointClouds`. */
+/** Key for the background in `LoadedScene.pointClouds` and `LoadedScene.splatFiles`. */
 export const BACKGROUND = 'background';
+/** Key for the backdrop (the surroundings beyond the table) in `LoadedScene.splatFiles`. */
+export const BACKDROP = 'backdrop';
 
 export interface LoadedScene {
   dir: string;
   manifest: SceneManifest;
-  /** Convex hull vertices (x, y, z, x, y, z, ...) per object id, read from collider files. */
+  /** One convex hull per object id (x, y, z, x, y, z, ...): its convex_hull collider or pick_hull. */
   hullPoints: Map<string, Float32Array>;
-  /** Point clouds per object id, plus BACKGROUND. */
+  /** Convex pieces per object id, for convex_parts colliders. */
+  hullParts: Map<string, Float32Array[]>;
+  /** Point clouds to draw, per object id plus BACKGROUND. */
   pointClouds: Map<string, BufferGeometry>;
-  /** Problems the loader worked around (a skipped object, a plain shape instead of a scan). */
+  /** Gaussian splat files to draw, per object id plus BACKGROUND. */
+  splatFiles: Map<string, { bytes: ArrayBuffer; name: string }>;
+  /** Problems the loader worked around (a skipped object, a fallback appearance or shape). */
   warnings: string[];
 }
 
@@ -123,35 +191,64 @@ const httpFiles: SceneFiles = {
 /** Load scene.json from a scene folder (a URL or a file path), plus the files it names. */
 export async function loadScene(dir: string, files: SceneFiles = httpFiles): Promise<LoadedScene> {
   const { manifest, warnings } = checkManifest(JSON.parse(await files.text(`${dir}/scene.json`)));
-  const hullPoints = new Map<string, Float32Array>();
-  const pointClouds = new Map<string, BufferGeometry>();
-
-  const loadPoints = async (key: string, visual: PointsVisual, name: string) => {
-    try {
-      pointClouds.set(key, new PLYLoader().parse(await files.binary(`${dir}/${visual.file}`)));
-    } catch (error) {
-      warnings.push(`${name}: ${visual.file}: ${(error as Error).message}; showing a plain shape instead`);
-    }
+  const scene: LoadedScene = {
+    dir,
+    manifest,
+    hullPoints: new Map(),
+    hullParts: new Map(),
+    pointClouds: new Map(),
+    splatFiles: new Map(),
+    warnings,
   };
-  const loadObject = async (object: SceneObject) => {
-    const name = `${object.id} (${object.label})`;
-    if (object.collider.type === 'convex_hull') {
+  const hull = async (file: string) => {
+    const points = parseObjVertices(await files.text(`${dir}/${file}`));
+    if (points.length < 12) throw new Error('needs at least 4 vertices');
+    return points;
+  };
+
+  /** The visual if it loads, else its points fallback, else nothing (plain shape). */
+  const loadVisual = async (key: string, name: string, visual?: Visual | null, fallback?: PointsVisual | null) => {
+    for (const candidate of [visual, fallback]) {
+      if (!candidate) continue;
       try {
-        const points = parseObjVertices(await files.text(`${dir}/${object.collider.file}`));
-        if (points.length < 12) throw new Error('needs at least 4 vertices');
-        hullPoints.set(object.id, points);
+        const bytes = await files.binary(`${dir}/${candidate.file}`);
+        if (candidate.type === 'splats') scene.splatFiles.set(key, { bytes, name: candidate.file });
+        else scene.pointClouds.set(key, new PLYLoader().parse(bytes));
+        return;
       } catch (error) {
-        warnings.push(`${name}: ${object.collider.file}: ${(error as Error).message}; using a box instead`);
+        warnings.push(`${name}: ${candidate.file}: ${(error as Error).message}`);
       }
     }
-    if (object.visual) await loadPoints(object.id, object.visual, name);
   };
-  const background = manifest.background.visual;
+
+  const loadObject = async (object: SceneObject) => {
+    const name = `${object.id} (${object.label})`;
+    const { collider } = object;
+    if (collider.type === 'convex_parts') {
+      try {
+        scene.hullParts.set(object.id, await Promise.all(collider.files.map(hull)));
+      } catch (error) {
+        warnings.push(`${name}: convex parts: ${(error as Error).message}; using a single hull instead`);
+      }
+    }
+    const single = collider.type === 'convex_hull' ? collider.file : object.pick_hull;
+    if (single) {
+      try {
+        scene.hullPoints.set(object.id, await hull(single));
+      } catch (error) {
+        warnings.push(`${name}: ${single}: ${(error as Error).message}`);
+      }
+    }
+    await loadVisual(object.id, name, object.visual, object.fallback_visual);
+  };
+
+  const { background } = manifest;
   await Promise.all([
     ...manifest.objects.map(loadObject),
-    background ? loadPoints(BACKGROUND, background, 'background') : Promise.resolve(),
+    loadVisual(BACKGROUND, 'background', background.visual, background.fallback_visual),
+    background.backdrop ? loadVisual(BACKDROP, 'backdrop', background.backdrop, null) : Promise.resolve(),
   ]);
-  return { dir, manifest, hullPoints, pointClouds, warnings };
+  return scene;
 }
 
 /** Vertex positions from a Wavefront OBJ file ("v x y z" lines); faces are ignored. */
@@ -196,23 +293,55 @@ function checkString(value: unknown, path: string): string {
   return value;
 }
 
-function checkPointsVisual(value: unknown, path: string): PointsVisual {
-  if (!isRecord(value) || value.type !== 'points') fail(path, 'null or {"type": "points", ...}');
+function checkVisual(value: unknown, path: string, allowSplats: boolean): Visual {
+  if (!isRecord(value) || (value.type !== 'points' && !(allowSplats && value.type === 'splats'))) {
+    fail(path, allowSplats ? 'null, {"type": "points", ...} or {"type": "splats", ...}' : 'null or {"type": "points", ...}');
+  }
   checkString(value.file, `${path}.file`);
-  checkNumber(value.point_size_m, `${path}.point_size_m`, 1e-5, 1);
-  return value as unknown as PointsVisual;
+  if (value.type === 'points') checkNumber(value.point_size_m, `${path}.point_size_m`, 1e-5, 1);
+  return value as unknown as Visual;
 }
 
 /** A bad appearance doesn't stop anything: report it and fall back to a plain shape. */
-function optionalVisual(value: unknown, path: string, warnings: string[]): PointsVisual | null {
+function optionalVisual<T extends Visual>(value: unknown, path: string, warnings: string[], allowSplats: boolean): T | null {
   if (value === undefined || value === null) return null;
   try {
-    return checkPointsVisual(value, path);
+    return checkVisual(value, path, allowSplats) as T;
   } catch (error) {
     if (!(error instanceof SceneFormatError)) throw error;
     warnings.push(`${error.message}; showing a plain shape instead`);
     return null;
   }
+}
+
+/** The table outline if it's a usable polygon, else null (the rectangle from size_m is used). */
+function optionalPolygon(value: unknown, warnings: string[]): [number, number][] | null {
+  if (value === undefined || value === null) return null;
+  const ok = Array.isArray(value) && value.length >= 3 && value.every((p) => Array.isArray(p) && p.length === 2 && p.every(isNumber));
+  if (!ok) {
+    warnings.push('scene.json: background.table_plane.polygon_m should be a list of at least 3 [x, z] points; using size_m');
+    return null;
+  }
+  return value as [number, number][];
+}
+
+/** The capture view if it's usable, else null (the simulator frames the objects itself). */
+function optionalView(value: unknown, warnings: string[]): CaptureView | null {
+  if (value === undefined || value === null) return null;
+  const vec3 = (v: unknown) => Array.isArray(v) && v.length === 3 && v.every(isNumber);
+  const ok =
+    isRecord(value) &&
+    vec3(value.position) &&
+    vec3(value.target) &&
+    isNumber(value.fov_deg) &&
+    value.fov_deg > 0 &&
+    value.fov_deg < 180 &&
+    Math.hypot(...(value.position as Vec3).map((p, i) => p - (value.target as Vec3)[i])) > 1e-6;
+  if (!ok) {
+    warnings.push('scene.json: view should have a position and a different target ([x, y, z]) and fov_deg; ignoring it');
+    return null;
+  }
+  return value as unknown as CaptureView;
 }
 
 /**
@@ -241,7 +370,6 @@ export function checkManifest(raw: unknown): { manifest: SceneManifest; warnings
   if (!Array.isArray(raw.objects)) fail('objects', 'a list');
 
   const warnings: string[] = [];
-  const backgroundVisual = optionalVisual(background.visual, 'background.visual', warnings);
   const objects: SceneObject[] = [];
   const ids = new Set<string>();
   raw.objects.forEach((item: unknown, index: number) => {
@@ -262,8 +390,15 @@ export function checkManifest(raw: unknown): { manifest: SceneManifest; warnings
     units: 'meters',
     gravity,
     title: typeof raw.title === 'string' && raw.title ? raw.title : String(raw.scene_id ?? 'Untitled scene'),
-    background: { ...background, visual: backgroundVisual },
+    background: {
+      ...background,
+      visual: optionalVisual(background.visual, 'background.visual', warnings, true),
+      backdrop: optionalVisual(background.backdrop, 'background.backdrop', warnings, true),
+      fallback_visual: optionalVisual(background.fallback_visual, 'background.fallback_visual', warnings, false),
+      table_plane: { ...plane, polygon_m: optionalPolygon(plane.polygon_m, warnings) },
+    },
     objects,
+    view: optionalView(raw.view, warnings),
   } as unknown as SceneManifest;
   return { manifest, warnings };
 }
@@ -277,6 +412,7 @@ function checkObject(raw: unknown, path: string, warnings: string[]): SceneObjec
   checkNumber(raw.friction, `${path}.friction`, 0, 2);
   checkNumber(raw.restitution, `${path}.restitution`, 0, 1);
   checkCollider(raw.collider, `${path}.collider`);
+  if (raw.pick_hull !== undefined && raw.pick_hull !== null) checkString(raw.pick_hull, `${path}.pick_hull`);
   const pose = raw.pose;
   if (!isRecord(pose)) fail(`${path}.pose`, 'an object');
   const position = checkVec3(pose.position, `${path}.pose.position`);
@@ -287,8 +423,31 @@ function checkObject(raw: unknown, path: string, warnings: string[]): SceneObjec
   return {
     ...(raw as unknown as SceneObject),
     pose: { position, rotation_quat: quat as Quat },
-    visual: optionalVisual(raw.visual, `${path}.visual`, warnings),
+    visual: optionalVisual(raw.visual, `${path}.visual`, warnings, true),
+    fallback_visual: optionalVisual(raw.fallback_visual, `${path}.fallback_visual`, warnings, false),
+    inertial: optionalInertial(raw.inertial, `${path}.inertial`, warnings),
+    grasps: optionalGrasps(raw.grasps, `${path}.grasps`, warnings),
   };
+}
+
+const isList = (value: unknown, length: number) => Array.isArray(value) && value.length === length && value.every(isNumber);
+
+/** Robotics annotations are optional extras: a malformed one is dropped, not fatal. */
+function optionalInertial(value: unknown, path: string, warnings: string[]): Inertial | null {
+  if (value === undefined || value === null) return null;
+  if (isRecord(value) && isList(value.com_m, 3) && isList(value.inertia_kg_m2, 6)) return value as unknown as Inertial;
+  warnings.push(`scene.json: ${path} should have com_m [x, y, z] and six inertia_kg_m2 values; ignoring it`);
+  return null;
+}
+
+function optionalGrasps(value: unknown, path: string, warnings: string[]): Grasp[] | null {
+  if (value === undefined || value === null) return null;
+  const ok =
+    Array.isArray(value) &&
+    value.every((g) => isRecord(g) && isList(g.position, 3) && isList(g.rotation_quat, 4) && isNumber(g.width_m) && isNumber(g.score));
+  if (ok) return value as Grasp[];
+  warnings.push(`scene.json: ${path} should be a list of {position, rotation_quat, width_m, score}; ignoring it`);
+  return null;
 }
 
 function checkCollider(raw: unknown, path: string): void {
@@ -309,7 +468,12 @@ function checkCollider(raw: unknown, path: string): void {
     case 'convex_hull':
       checkString(raw.file, `${path}.file`);
       return;
+    case 'convex_parts':
+      if (!Array.isArray(raw.files) || raw.files.length === 0 || !raw.files.every((f) => typeof f === 'string' && f !== '')) {
+        fail(`${path}.files`, 'a non-empty list of OBJ file names');
+      }
+      return;
     default:
-      fail(`${path}.type`, '"box", "sphere", "cylinder" or "convex_hull"');
+      fail(`${path}.type`, '"box", "sphere", "cylinder", "convex_hull" or "convex_parts"');
   }
 }
