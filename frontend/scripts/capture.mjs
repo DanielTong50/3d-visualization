@@ -5,6 +5,7 @@
  *   assemblies/<id>/manual/page-NN.png    every page of the generated manual, at print size
  *   assemblies/<id>/session/session.mp4   a clean session (no AR layer, no HUD), filmed handheld
  *   assemblies/<id>/session/truth.json    what is done at every instant of that video
+ *   assemblies/<id>/session/ids.bin.gz    exact part label maps (5 fps, 320x180) for scoring part tracking
  *   public/posters/copilot*.jpg           stills of the copilot session for the home page
  *
  * Usage: node scripts/capture.mjs [--manuals] [--sessions] [--posters] [--only id,id] [--fps 15]
@@ -14,6 +15,7 @@
 import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { gzipSync } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { createServer } from 'vite';
@@ -21,6 +23,9 @@ import { createServer } from 'vite';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const LIBRARY = join(ROOT, '..', 'assemblies');
 const VIDEO = { width: 1280, height: 720 };
+const IDS_FPS = 5;
+const IDS_W = 320;
+const IDS_H = 180;
 
 const args = process.argv.slice(2);
 const flag = (name) => args.includes(`--${name}`);
@@ -109,12 +114,33 @@ async function session(browser, base, id) {
   }
   ffmpeg.stdin.end();
   await done;
-  await page.close();
 
   // When each step is finished: the end of its verify phase.
   const steps = segments
     .filter((s) => s.phase === 'verify')
     .map((s) => ({ index: s.step, start: segments.find((x) => x.step === s.step).start, done_at: +(s.start + s.duration).toFixed(3) }));
+  // Ground-truth part masks for scoring part tracking: label maps at IDS_FPS, IDS_W x IDS_H.
+  const labels = [];
+  let parts = [];
+  for (let i = 0; i < Math.floor(duration * IDS_FPS); i++) {
+    const frame = await page.evaluate(({ t, w, h }) => window.__darius.ids(t, w, h), { t: i / IDS_FPS, w: IDS_W, h: IDS_H });
+    labels.push(Buffer.from(frame.labels, 'base64'));
+    parts = frame.parts;
+  }
+  await writeFile(join(out, 'ids.bin.gz'), gzipSync(Buffer.concat(labels), { level: 9 }));
+  await writeFile(
+    join(out, 'ids.json'),
+    JSON.stringify({
+      fps: IDS_FPS,
+      width: IDS_W,
+      height: IDS_H,
+      frames: labels.length,
+      parts,
+      encoding: 'uint8 label = part index + 1, gzip',
+    }) + '\n',
+  );
+  await page.close();
+
   const truth = {
     furniture: id,
     fps,
