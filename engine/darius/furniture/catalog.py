@@ -130,13 +130,15 @@ def varde_nightstand() -> AssemblyPlan:
     b.part("C", "C", "bottom", "bottom", [inner, t, d], [0, 60 + t / 2, 0])
     b.part("D", "D", "back panel", "back", [w - 4, 480, 3], [0, 302, -d / 2 - 1.5], color=BACK_BOARD,
            material="hardboard")  # fmt: skip
+    # The drawer box runs from the carcass front edge back 360 mm; the front overlays the carcass.
     side_x = inner / 2 - 6
-    b.part("F1", "F", "drawer side", "drawer_side", [12, 140, 360], [-side_x, 450, -10], color=WHITE)
-    b.part("F2", "F", "drawer side", "drawer_side", [12, 140, 360], [side_x, 450, -10], color=WHITE)
-    b.part("G", "G", "drawer back", "drawer_back", [inner - 24, 140, 12], [0, 450, -184], color=WHITE)
-    b.part("H", "H", "drawer bottom", "drawer_bottom", [inner - 24, 3, 348], [0, 384.5, -4], color=BACK_BOARD,
-           material="hardboard")  # fmt: skip
-    b.part("E", "E", "drawer front", "drawer_front", [w - 4, 160, t], [0, 450, 178])
+    box_back = d / 2 - 360
+    b.part("F1", "F", "drawer side", "drawer_side", [12, 140, 360], [-side_x, 450, d / 2 - 180], color=WHITE)
+    b.part("F2", "F", "drawer side", "drawer_side", [12, 140, 360], [side_x, 450, d / 2 - 180], color=WHITE)
+    b.part("G", "G", "drawer back", "drawer_back", [inner - 24, 140, 12], [0, 450, box_back + 6], color=WHITE)
+    b.part("H", "H", "drawer bottom", "drawer_bottom", [inner - 24, 3, 348], [0, 384.5, box_back + 12 + 174],
+           color=BACK_BOARD, material="hardboard")  # fmt: skip
+    b.part("E", "E", "drawer front", "drawer_front", [w - 4, 160, t], [0, 450, d / 2 + t / 2])
 
     b.step(
         "Bottom between the sides",
