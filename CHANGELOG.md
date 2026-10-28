@@ -119,6 +119,6 @@ Initial release.
 - CI: lint, tests and build for both halves, freshness of generated scene files, and a check that
   exported scenes settle in MuJoCo. GitHub Pages deployment of the simulator.
 
-[Unreleased]: https://github.com/DanielTong50/darius/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/DanielTong50/darius/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/DanielTong50/darius/releases/tag/v0.1.0
+[Unreleased]: https://github.com/DanielTong50/3d-visualization/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/DanielTong50/3d-visualization/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/DanielTong50/3d-visualization/releases/tag/v0.1.0

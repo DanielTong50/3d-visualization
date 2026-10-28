@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/DanielTong50/darius/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/DanielTong50/darius/actions/workflows/ci.yml/badge.svg"></a>
-  <a href="https://danieltong50.github.io/darius/"><img alt="Live demo" src="https://img.shields.io/badge/demo-live-ff4f00"></a>
+  <a href="https://github.com/DanielTong50/3d-visualization/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/DanielTong50/3d-visualization/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://danieltong50.github.io/3d-visualization/"><img alt="Live demo" src="https://img.shields.io/badge/demo-live-ff4f00"></a>
   <img alt="Python 3.11" src="https://img.shields.io/badge/python-3.11-3776ab">
   <img alt="TypeScript" src="https://img.shields.io/badge/typescript-6-3178c6">
   <img alt="MuJoCo" src="https://img.shields.io/badge/MuJoCo-3.17-0b6e4f">
@@ -124,7 +124,7 @@ The full reference, with derivations and simulator-specific notes: **[docs/robot
 
 ## Browser simulator
 
-**[Open the live demo →](https://danieltong50.github.io/darius/)** Ten real scans load instantly; no account,
+**[Open the live demo →](https://danieltong50.github.io/3d-visualization/)** Ten real scans load instantly; no account,
 no install. Grab, carry (Q / E to turn), throw and push objects; tap one for its physics and robotics card; change
 its material; switch gravity; or ask "what if someone bumps the table?" (Muse Spark tool calling, validated
 client-side).
@@ -163,7 +163,7 @@ docs/                       architecture · robotics · scene format + JSON Sche
 ## Quick start
 
 ```bash
-git clone https://github.com/DanielTong50/darius.git && cd darius
+git clone https://github.com/DanielTong50/3d-visualization.git darius && cd darius
 
 # Simulator only (no keys needed): opens the bundled scenes
 cd frontend && npm ci && npm run dev

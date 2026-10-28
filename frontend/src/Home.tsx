@@ -31,7 +31,7 @@ const FALLBACK_DEMO_IDS = ['kitchen-counter', 'objectron-mugs', 'sandbox'];
 const MAX_VIDEO_BYTES = 500 * 1024 * 1024;
 const SAFE_ID = /^[\w-]+$/;
 const SAFE_FILE = /^[\w.-]+$/;
-const SOURCE_URL = 'https://github.com/DanielTong50/darius';
+const SOURCE_URL = 'https://github.com/DanielTong50/3d-visualization';
 
 const EXPORTS: { name: string; file: string; body: string }[] = [
   {
