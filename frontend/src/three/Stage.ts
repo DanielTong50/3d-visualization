@@ -163,6 +163,7 @@ export class Stage {
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.05;
     container.appendChild(this.renderer.domElement);
+    this.renderer.domElement.addEventListener('webglcontextlost', this.onContextLost);
 
     const environment = new THREE.PMREMGenerator(this.renderer);
     this.scene.environment = environment.fromScene(new RoomEnvironment(), 0.04).texture;
@@ -581,7 +582,7 @@ export class Stage {
     const step = this.plan.steps[moment.step - 1];
     const fastening = step && moment.phase === 'fasten';
     const lean = fastening ? (this.mode === 'hero' ? 0.22 : 0.42) * smooth(moment.u / 0.18) * smooth((1 - moment.u) / 0.18) : 0;
-    const radius = (1.45 + reach * 1.45) * (this.mode === 'hero' ? 1.08 : 1) * (1 - lean);
+    const radius = (1.45 + reach * 1.45) * (this.mode === 'hero' ? 0.94 : 1) * (1 - lean);
     let azimuth: number;
     let height: number;
     if (this.mode === 'hero') {
@@ -740,21 +741,39 @@ export class Stage {
     this.camera.updateProjectionMatrix();
   }
 
+  /**
+   * Release everything the stage put on the GPU, textures included, and its WebGL context itself:
+   * browsers keep only a handful of contexts alive, and a page that builds a stage per product
+   * would otherwise run out after a few switches.
+   */
   dispose(): void {
+    if (this.disposed) return;
     this.disposed = true;
     this.resizeObserver.disconnect();
+    this.renderer.domElement.removeEventListener('webglcontextlost', this.onContextLost);
+    const textures = new Set<THREE.Texture>();
+    const materials = new Set<THREE.Material>([this.arrowHead, this.flow, ...Object.values(this.markers)]);
     this.scene.traverse((node) => {
-      if (node instanceof THREE.Mesh || node instanceof THREE.LineSegments) {
-        node.geometry.dispose();
-        const material = node.material as THREE.Material | THREE.Material[];
-        (Array.isArray(material) ? material : [material]).forEach((m) => m.dispose());
-      }
+      const object = node as THREE.Object3D & { geometry?: THREE.BufferGeometry; material?: THREE.Material | THREE.Material[] };
+      object.geometry?.dispose();
+      if (object.material) (Array.isArray(object.material) ? object.material : [object.material]).forEach((m) => materials.add(m));
     });
-    this.arrowHead.dispose();
-    this.markers.guide.map?.dispose();
-    Object.values(this.markers).forEach((m) => m.dispose());
+    for (const material of materials) {
+      for (const value of Object.values(material)) if (value instanceof THREE.Texture) textures.add(value);
+      material.dispose();
+    }
+    textures.forEach((t) => t.dispose());
     this.scene.environment?.dispose();
+    this.scene.clear();
+    this.renderer.renderLists.dispose();
     this.renderer.dispose();
+    this.renderer.forceContextLoss();
     this.renderer.domElement.remove();
   }
+
+  /** If the browser takes the context away anyway, stop drawing instead of throwing every frame. */
+  private readonly onContextLost = (event: Event) => {
+    event.preventDefault();
+    this.disposed = true;
+  };
 }

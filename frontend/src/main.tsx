@@ -1,5 +1,4 @@
-import '@fontsource-variable/host-grotesk'; // the generated manuals' typeface (the models were tested on it)
-import '@fontsource-variable/noto-sans';
+import '@fontsource-variable/host-grotesk';
 import '@fontsource/ibm-plex-mono/400.css';
 import '@fontsource/ibm-plex-mono/500.css';
 import { StrictMode } from 'react';

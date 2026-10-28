@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { ErrorBoundary } from './ErrorBoundary';
 import { routeFromUrl, type Route } from './navigation';
 
 // Each screen loads on demand: the 3D stage (three.js) is most of the app's weight.
@@ -25,13 +26,15 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
   return (
-    <Suspense fallback={<Loading />}>
-      {route.page === 'home' && <Home />}
-      {route.page === 'ar' && <ArDemo key={route.furniture} furniture={route.furniture} />}
-      {route.page === 'manual' && <ManualDemo key={route.furniture} furniture={route.furniture} />}
-      {route.page === 'video' && <VideoDemo key={route.furniture} furniture={route.furniture} />}
-      {route.page === 'live' && <Live />}
-      {route.page === 'render' && <Render furniture={route.furniture} target={route.target} index={route.index} />}
-    </Suspense>
+    <ErrorBoundary key={JSON.stringify(route)}>
+      <Suspense fallback={<Loading />}>
+        {route.page === 'home' && <Home />}
+        {route.page === 'ar' && <ArDemo key={route.furniture} furniture={route.furniture} />}
+        {route.page === 'manual' && <ManualDemo key={route.furniture} furniture={route.furniture} />}
+        {route.page === 'video' && <VideoDemo key={route.furniture} furniture={route.furniture} />}
+        {route.page === 'live' && <Live />}
+        {route.page === 'render' && <Render furniture={route.furniture} target={route.target} index={route.index} />}
+      </Suspense>
+    </ErrorBoundary>
   );
 }

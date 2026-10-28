@@ -5,11 +5,11 @@ import type { Belief } from '../engine/tracking';
 export function BeliefBars({ plan, belief }: { plan: AssemblyPlan; belief: Belief }) {
   return (
     <ol className="belief" aria-label="Probability of each number of completed steps">
-      {belief.probabilities.map((p, k) => (
+      {belief.probabilities.slice(0, plan.steps.length + 1).map((p, k) => (
         <li
           key={k}
           className={k === belief.completed ? 'is-map' : ''}
-          title={k === 0 ? 'Nothing done' : `Done through step ${k}: ${plan.steps[k - 1].title}`}
+          title={k === 0 ? 'Nothing done' : `Done through step ${k}: ${plan.steps[k - 1]?.title ?? ''}`}
         >
           <span className="belief-k">{k}</span>
           <span className="belief-track">
