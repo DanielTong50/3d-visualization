@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="obj_01">
+  <!-- cereal box: cardboard, 425 g. Written by Darius 0.2.0. Link frame: +z up, origin at the capture-time bounding-box center; place it at the pose in world.json -->
+  <mujoco>
+    <compiler meshdir="../meshes/" discardvisual="true" balanceinertia="true" fusestatic="false" />
+  </mujoco>
+  <link name="obj_01">
+    <inertial>
+      <origin xyz="0.00196 3e-05 -0.00353" rpy="0 0 0" />
+      <mass value="0.4254" />
+      <inertia ixx="0.000670138" ixy="4.79744e-06" ixz="-1.63205e-05" iyy="0.000673851" iyz="2.32125e-05" izz="0.00123395" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/obj_01_visual.obj" />
+      </geometry>
+      <material name="obj_01_color">
+        <color rgba="0.902 0.69 0.506 1" />
+      </material>
+    </visual>
+    <collision name="obj_01">
+      <geometry>
+        <mesh filename="../meshes/obj_01.obj" />
+      </geometry>
+    </collision>
+    <contact>
+      <lateral_friction value="0.5" />
+      <restitution value="0.1" />
+    </contact>
+  </link>
+</robot>
