@@ -1,4 +1,4 @@
-"""Material lookup table (data/materials.json), shared with the simulator's material editor."""
+"""Material lookup table (darius/data/materials.json), shared with the simulator's material editor."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ class Material(TypedDict):
 
 _TABLE: dict[str, Material] = {
     name: value
-    for name, value in json.loads((Path(__file__).parent / "data" / "materials.json").read_text()).items()
+    for name, value in json.loads((Path(__file__).resolve().parents[1] / "data" / "materials.json").read_text()).items()
     if not name.startswith("_")
 }
 

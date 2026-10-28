@@ -24,7 +24,7 @@ from pathlib import Path
 
 import numpy as np
 
-from . import geometry
+from ..core import geometry
 from .jobs import load_arrays
 from .reconstruct import camera_centers
 

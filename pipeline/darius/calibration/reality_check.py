@@ -125,7 +125,7 @@ def probe_video(video: Path) -> tuple[float, tuple[int, int]]:
 def track_centroids(video: Path, concept: str) -> tuple[np.ndarray, np.ndarray, float]:
     """Track the object with SAM 3.1; return times, pixel centroids of the track that moves
     most, and the object's extent in pixels on its first tracked frame."""
-    from . import meta_api
+    from ..models import meta_api
 
     fps, size = probe_video(video)
     file_id = meta_api.upload_video(video)

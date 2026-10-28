@@ -14,7 +14,7 @@ from typing import Any
 import openai
 from pydantic import BaseModel, Field
 
-from . import meta_api
+from ..models import meta_api
 
 SYSTEM = """You control a rigid-body physics simulation of a real tabletop that was scanned from video.
 Turn the user's scenario into calls to the provided tools. Coordinates: meters, +y is up,

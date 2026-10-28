@@ -17,9 +17,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-
-class InputError(ValueError):
-    """The video can't produce a usable scan; the message is shown to the user."""
+from ..core.errors import InputError
 
 
 @dataclass

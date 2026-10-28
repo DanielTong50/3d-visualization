@@ -20,9 +20,9 @@ import numpy as np
 from PIL import Image, ImageDraw
 from pydantic import BaseModel, Field
 
-from . import meta_api
-from .frames import FrameSet
-from .materials import MATERIAL_NAMES
+from ..core.materials import MATERIAL_NAMES
+from ..models import meta_api
+from .ingest import FrameSet
 
 DETECT_PROMPT = """You are building a physics simulation of the tabletop in this photo.
 List every separate, movable physical object resting on the main table or surface.
@@ -106,7 +106,7 @@ def label_maps(
 
 def draw_overlay(image: Image.Image, masks: list[meta_api.FrameMask], labels: dict[int, str]) -> Image.Image:
     """Keyframe with each object's mask tinted and labeled (used as the scene thumbnail)."""
-    from .materials import PALETTE
+    from ..core.materials import PALETTE
 
     base = image.convert("RGBA")
     tint = Image.new("RGBA", base.size, (0, 0, 0, 0))

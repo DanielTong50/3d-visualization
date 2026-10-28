@@ -32,6 +32,8 @@ from meta_sam_parser import (
 from PIL import Image
 from pydantic import BaseModel
 
+from ..core.errors import describe
+
 BASE_URL = "https://api.meta.ai/v1"
 MUSE_SPARK_MODEL = "muse-spark-1.3"
 SAM_MODEL = "sam-3.1"
@@ -100,14 +102,6 @@ def ask_structured(
             # 404 bursts cluster under concurrency, so back off long enough to outlast one.
             time.sleep(min(30.0, 3.0 * 2**attempt) * random.uniform(0.75, 1.25))
     raise RuntimeError(f"Muse Spark failed after {retries + 1} attempts: {describe(last_error)}")
-
-
-def describe(error: BaseException | None) -> str:
-    """A plain-string error summary. SDK exception objects don't survive pickling between
-    Modal containers, so stages re-raise API failures as RuntimeError(describe(e))."""
-    if isinstance(error, openai.APIStatusError):
-        return f"HTTP {error.status_code}: {error.message}"
-    return f"{type(error).__name__}: {error}"
 
 
 # ---------- SAM 3.1 ----------
