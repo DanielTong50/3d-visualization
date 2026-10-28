@@ -6,7 +6,44 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
-## [0.2.0] - 2026-10-27: Darius
+## [1.0.0] - 2026-10-28: the assembly copilot
+
+Darius becomes an AR copilot for flat-pack furniture. The real-to-sim scene compiler is retired and preserved at
+`v0.2.0`.
+
+### Added
+- The assembly plan (`darius.assembly`): parts, hardware, joints and steps as a graph, one Pydantic schema exported as
+  JSON Schema and mirrored in TypeScript; validation, subassemblies, and graph scoring by letter (`compare`).
+- Progress tracking: a hidden Markov model over the number of steps done (stay .86, advance .11, skip .02, back .01;
+  evidence capped to [.15, .85] and tempered by .7), with forward filtering live and Viterbi plus forward-backward for
+  a whole video, in Python and TypeScript. Guidance for the next step from the plan and the belief.
+- A flat-pack compiler (`darius.furniture`): products declared as boxes, contacts found from geometry, hardware laid
+  out per joint kind, floor layouts; a library of four products (bookcase, nightstand, side table, desk).
+- Perception with Muse Spark: manuals read into plans in one schema-constrained request (`to_plan` resolves repeated
+  letters and implicit base parts and validates the result); frames checked against a plan with the manual's step
+  pages as references; whole videos decoded into a dated build history.
+- `darius eval`: reads every library manual and watches every rendered session, stores the outputs with their scores,
+  and summarizes them in `assemblies/benchmarks.json`; `--replay` re-scores without the API and `--check` fails if a
+  stored score drifts. Results: parts F1 100% and hardware 100% on all four manuals, edges F1 99.2% on average;
+  18/18 steps found in video, 89.7% of frames right, 0.80 s mean timing error.
+- HTTP API (`/library`, `/manuals`, `/frames`, `/videos`) on Modal, gated by `DARIUS_ACCESS_CODE`.
+- Web app: a home page with the copilot building in a studio; the copilot session (tracked parts, ghosts, arcs,
+  turns, fastener markers, the assembly graph and the tracker's belief over simulated perception); the manual reader
+  and the video analyzer, which replay the stored runs; live mode on a camera, a video file or a filmed build.
+- Generated test data: hidden-line manuals in the flat-pack style drawn from each plan (parts slide in along a free
+  way, subassemblies come in as one piece) and handheld sessions with frame-exact ground truth
+  (`frontend/scripts/capture.mjs`).
+- Tests: 28 Python, 28 TypeScript; CI also validates the library and re-scores the stored results.
+
+### Changed
+- The Python project moved from `pipeline/` to `engine/`, with lighter dependencies (no GPU stack, no SAM client).
+- The web app is formatted with Prettier.
+
+### Removed
+- The scan pipeline (reconstruction, segmentation, physics, splats), the scene format, the robotics exporters, the
+  simulator and the scene library. All of it remains at `v0.2.0`.
+
+## [0.2.0] - 2026-10-27: Darius, a real-to-sim scene compiler
 
 The project is renamed **Darius** and becomes a real-to-sim scene compiler for robotics.
 
@@ -119,6 +156,7 @@ Initial release.
 - CI: lint, tests and build for both halves, freshness of generated scene files, and a check that
   exported scenes settle in MuJoCo. GitHub Pages deployment of the simulator.
 
-[Unreleased]: https://github.com/DanielTong50/3d-visualization/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/DanielTong50/3d-visualization/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/DanielTong50/3d-visualization/compare/v0.2.0...v1.0.0
 [0.2.0]: https://github.com/DanielTong50/3d-visualization/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DanielTong50/3d-visualization/releases/tag/v0.1.0

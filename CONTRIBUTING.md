@@ -3,69 +3,76 @@
 ## Layout
 
 ```
-pipeline/            Python 3.11: the darius package, the Modal deployment and the HTTP API
-  darius/            layered package: core, scene, models, robotics, pipeline, calibration, service, eval, tools
-  modal_app.py       Modal functions, GPU classes, concurrent stage graph, web API, CLI entrypoint
-  scripts/           evaluation, figures, API smoke checks
-  tests/             pytest (MuJoCo and OpenUSD round trips included)
-frontend/            React + three.js + Spark + Rapier: simulator, pipeline replay, scene graph (Vite, TypeScript)
-scenes/              scene packages; scenes/sandbox is hand-authored and must always load
-docs/                architecture, robotics, scene format, results, design, verified API notes
+engine/              Python 3.11 (uv): the darius package, the HTTP API and its Modal deployment
+  darius/            layered: core, assembly, furniture, models, perception, eval, service
+  modal_app.py       the API on Modal, and a cloud entrypoint that decodes a video
+  tests/             pytest: graph, tracker, library, perception (model stubbed), API
+frontend/            React 19 + three.js (Vite, TypeScript): home, copilot, manual reader, video analyzer, live
+  scripts/capture.mjs   renders manual pages, session videos and posters (Playwright, ffmpeg)
+assemblies/          the plan library and everything measured on it (see "The library" below)
+docs/                plan.schema.json (generated), verified API notes, README media
 ```
 
 ## Setup
 
 ```bash
-cp .env.example .env            # MODEL_API_KEY, HF_TOKEN (see comments in the file)
-cd pipeline && uv sync          # Python 3.11, exact pins from uv.lock
+cp .env.example .env            # MODEL_API_KEY (see the comments in the file)
+cd engine && uv sync            # exact pins from uv.lock
 cd ../frontend && npm ci
 ```
 
-Cloud runs need a Modal account (`uv run modal token new`) and the `darius` secret:
-`uv run modal secret create darius --from-dotenv ../.env`.
+The API runs on Modal: `uv run modal token new` once, then
+`uv run modal secret create darius --from-dotenv ../.env` and `uv run modal deploy modal_app.py`.
 
 ## Checks
 
 | | Command (from its folder) |
 |---|---|
-| Pipeline format, lint | `uv run ruff format --check . && uv run ruff check .` |
-| Pipeline tests | `uv run pytest` (no network, no GPU) |
-| Frontend types, tests, build | `npm run typecheck && npm test && npm run build` |
-| Schema in sync | `uv run darius schema > ../docs/scene.schema.json` (a test fails if it drifts) |
-| Scenes satisfy the contract | `uv run darius validate ../scenes/*/` |
-| Derived files are current | `uv run darius gallery --check` (rebuild with `uv run darius gallery`) |
-| Scenes settle in MuJoCo | `uv run darius sim ../scenes/<id>` |
-| Robotics bundle | `uv run darius export ../scenes/<id>` |
+| Engine format, lint | `uv run ruff format --check . && uv run ruff check .` |
+| Engine tests | `uv run pytest` (no network: model calls are stubbed) |
+| Library plans are valid | `uv run darius validate ../assemblies/*/plan.json` |
+| The exported library matches the catalog | `uv run darius export` leaves `git status` clean |
+| Stored model results re-score to the published numbers | `uv run darius eval --check` |
+| Schema in sync | `uv run darius schema > ../docs/plan.schema.json` leaves `git status` clean |
+| Web format, types, tests, build | `npm run format:check && npm run typecheck && npm test && npm run build` |
 
-CI runs all of these on every push and pull request.
+CI runs these on every push and pull request.
+
+## The library
+
+`assemblies/<id>/` holds everything about one product:
+
+| File | Written by |
+|---|---|
+| `plan.json` | `darius export` (from `engine/darius/furniture/catalog.py`) |
+| `manual/page-NN.png` | `node scripts/capture.mjs --manuals` |
+| `session/session.mp4`, `session/truth.json` | `node scripts/capture.mjs --sessions` |
+| `manual/reading.json` | `darius eval --manuals` (calls the model) |
+| `session/analysis.json` | `darius eval --sessions` (calls the model) |
+| `../benchmarks.json` | `darius eval` (any run) |
+
+Change the catalog, then re-export, re-capture and re-evaluate in that order. `darius eval --replay` re-scores the
+stored model outputs after a change to `to_plan`, the tracker or the scoring, without calling the model.
 
 ## Conventions
 
-- **The scene format is a contract.** Change `pipeline/darius/scene/schema.py` first, then regenerate
-  `docs/scene.schema.json`, update `docs/scene-format.md`, the TypeScript mirror
-  (`frontend/src/sim/scene.ts`) and `scenes/sandbox`, all in the same change.
-- **Respect the layers.** `core` and `scene` import nothing else from Darius; `robotics` reads scene packages only,
-  never pipeline internals. Keep `__init__` modules import-free: cloud images install only what their stages need.
-- **Stages stay pure functions of a job folder.** A stage may read any earlier stage's outputs and must
-  finish by writing its marker file (`jobs.STAGES`). Don't keep state anywhere else.
-- **Verify external APIs from documentation.** Meta Model API and VGGT details live in
-  [`docs/api-notes.md`](docs/api-notes.md), with dates and sources. Add to it when a live call teaches
-  something new.
+- **The plan schema is a contract.** Change `engine/darius/assembly/schema.py` first, then regenerate
+  `docs/plan.schema.json` and update the TypeScript mirror (`frontend/src/engine/plan.ts`) in the same change.
+- **The tracker exists twice.** `engine/darius/assembly/tracking.py` and `frontend/src/engine/tracking.ts` must keep
+  the same constants and math; both have tests.
+- **Respect the layers** (see `engine/darius/__init__.py`): a layer imports only from the layers below it, and
+  `__init__` modules stay import-free.
+- **Model output is untrusted input.** Constrain it with a JSON schema, then build and validate the structure in
+  code (`to_plan`, `to_observation`); never let a reading become a plan without `validate`.
+- **Every published number is a stored run.** Do not hand-edit `reading.json`, `analysis.json` or
+  `benchmarks.json`; `darius eval --check` fails if a stored score no longer matches its outputs.
+- **Verify external APIs from documentation.** Meta Model API details live in [`docs/api-notes.md`](docs/api-notes.md)
+  with dates and sources. Add to it when a live call teaches something new.
 - **Pin dependencies exactly** (`==` in `pyproject.toml`, exact versions in `package.json`).
-- **Model output is untrusted input.** Constrain it with a JSON schema, validate ranges, and fall back to
-  material defaults rather than failing.
-- **Cost.** Debug GPU work on small inputs. Every Modal function has a timeout. A full evaluation run
-  (24 clips) costs about $1–2.
+- **Cost.** A full `darius eval` is about 56 model calls (4 manuals, 52 frame batches of 4 frames plus the step
+  pages) and costs about $2 at Muse Spark 1.3 prices.
 
-## Running the pipeline
+## Filming a build
 
-```bash
-cd pipeline
-uv run modal run modal_app.py --video ../test_videos/desk.mov --name desk     # -> scenes/desk
-uv run modal run modal_app.py --job <job_id> --name desk --start physics      # re-run later stages
-uv run modal deploy modal_app.py                                              # web API
-uv run python scripts/evaluate_objectron.py --per-class 4                     # docs/results.md numbers
-```
-
-Filming tips for good scans: matte objects 3–10 cm apart on a plain table, bright indirect light, one
-slow full circle at chest height, 20–60 s. Glass, mirrors and polished metal break reconstruction.
+Live mode and `darius track` take real video. Film from chest height with the whole work area in view, keep the
+phone mostly still, and make sure each part's letter-side is visible when it goes on. Bright, even light helps.
