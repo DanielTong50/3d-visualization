@@ -192,7 +192,10 @@ class Hull:
     volume: float
 
 
-def convex_hull(points: np.ndarray, max_vertices: int = 32) -> Hull:
+HULL_VERTICES = 32
+
+
+def convex_hull(points: np.ndarray, max_vertices: int = HULL_VERTICES) -> Hull:
     """Convex hull with at most `max_vertices` vertices, outward-wound faces.
 
     The budget is a physics choice, not a file-size one: a scanned mug with a
@@ -252,3 +255,77 @@ def complete_bottom(points: np.ndarray, band: float) -> np.ndarray:
     ring = points[points[:, 1] <= base + band].copy()
     ring[:, 1] = 0.0
     return np.concatenate([points, ring])
+
+
+def table_outline(xz: np.ndarray, cell: float, min_density: int = 3) -> np.ndarray:
+    """Counter-clockwise (seen from +y) convex outline of the table top from its inlier points.
+
+    Points are binned on a 2D grid; only the largest 8-connected region of cells with
+    at least `min_density` points is kept, so stray coplanar points (a far wall's
+    base, floor patches) can't stretch the outline.
+    """
+    keys = np.floor(xz / cell).astype(np.int64)
+    origin = keys.min(axis=0)
+    keys -= origin
+    counts = np.zeros(keys.max(axis=0) + 1, dtype=np.int32)
+    np.add.at(counts, tuple(keys.T), 1)
+    dense = counts >= min_density
+    regions, count = ndimage.label(dense, structure=np.ones((3, 3)))
+    if count == 0:
+        raise ValueError("no dense table region")
+    sizes = np.bincount(regions.ravel())
+    sizes[0] = 0
+    cells = np.argwhere(regions == sizes.argmax())
+    corners = np.concatenate([cells + offset for offset in ([0, 0], [1, 0], [0, 1], [1, 1])])
+    outline = (corners + origin) * cell
+    hull = ConvexHull(outline)
+    polygon = outline[hull.vertices]
+    # ConvexHull lists 2D vertices counter-clockwise in (x, z). Seen from +y (looking down
+    # the -y axis) with right-handed axes, x right and z toward the viewer, that order
+    # is clockwise, so reverse it.
+    return polygon[::-1]
+
+
+def voxel_surface_mesh(points: np.ndarray, voxel: float, dilate: int = 1) -> tuple[np.ndarray, np.ndarray]:
+    """Closed triangle mesh of the occupied voxels (exposed cube faces), for convex decomposition.
+
+    Occupancy is dilated to close gaps between reconstructed points; cavities larger
+    than the dilation (a mug's inside) stay open.
+    """
+    keys = np.floor(points / voxel).astype(np.int64)
+    origin = keys.min(axis=0) - dilate - 1
+    keys -= origin
+    grid = np.zeros(keys.max(axis=0) + dilate + 2, dtype=bool)
+    grid[tuple(keys.T)] = True
+    if dilate:
+        grid = ndimage.binary_dilation(grid, iterations=dilate)
+    vertices: dict[tuple[int, int, int], int] = {}
+    faces: list[tuple[int, int, int]] = []
+
+    def vid(corner: tuple[int, int, int]) -> int:
+        if corner not in vertices:
+            vertices[corner] = len(vertices)
+        return vertices[corner]
+
+    # For each axis and direction, emit the face between an occupied and an empty cell.
+    for axis in range(3):
+        for direction in (-1, 1):
+            neighbor = np.roll(grid, -direction, axis=axis)
+            exposed = np.argwhere(grid & ~neighbor)
+            u, v = [a for a in range(3) if a != axis]
+            for cell in exposed:
+                base = cell.copy()
+                if direction == 1:
+                    base[axis] += 1
+                quad = []
+                for du, dv in ((0, 0), (1, 0), (1, 1), (0, 1)):
+                    corner = base.copy()
+                    corner[u] += du
+                    corner[v] += dv
+                    quad.append(vid(tuple(int(c) for c in corner)))
+                a, b, c, d = quad
+                # Orient outward: the cyclic order (u, v) gives normal +axis when u < v cyclically.
+                outward = direction if (v - u) % 3 == 1 else -direction
+                faces += [(a, b, c), (a, c, d)] if outward > 0 else [(a, c, b), (a, d, c)]
+    corners = np.array(list(vertices), dtype=float)
+    return (corners + origin) * voxel, np.array(faces, dtype=np.int64)
