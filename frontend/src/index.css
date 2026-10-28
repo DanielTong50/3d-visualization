@@ -1391,6 +1391,78 @@ code {
   stroke-width: 1.5;
 }
 
+/* SAM 3.1's masks over a video: the layer covers the video's 16:9 box. */
+.masks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  pointer-events: none;
+}
+
+.mask {
+  fill-opacity: 0.16;
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.mask-prompt path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 1px rgba(17, 17, 17, 0.7));
+}
+
+.mask-prompt circle {
+  fill: var(--yellow);
+  stroke: var(--text);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.mask-tag rect {
+  fill: #fff;
+}
+
+.mask-tag text {
+  font-family: var(--mono);
+  font-weight: 600;
+  fill: var(--text);
+  text-anchor: middle;
+}
+
+.mask-tag .mask-letter-text {
+  fill: #fff;
+}
+
+.video-hud button.chip {
+  cursor: pointer;
+}
+
+.video-hud button.chip.is-off {
+  color: var(--text-3);
+}
+
+.contact-runs {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  margin: 10px 0 2px;
+  font-size: 13px;
+}
+
+.contact-runs b {
+  font: 600 13px var(--mono);
+  text-align: right;
+}
+
+.contact-runs .is-bound {
+  color: var(--text-3);
+}
+
 .video-side {
   position: sticky;
   top: 86px;
