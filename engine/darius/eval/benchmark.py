@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import gzip
 import json
 import statistics
 from datetime import date
@@ -14,10 +15,20 @@ from pydantic import BaseModel
 
 from ..assembly.graph import compare
 from ..assembly.schema import AssemblyPlan, Observation
-from ..assembly.tracking import log_emission
+from ..assembly.tracking import decode, log_emission
 from ..furniture.catalog import CATALOG
 from ..perception.frames import Frame, FrameReading, StepCheck
 from ..perception.manual import ManualReading, ManualResult, read_manual, to_plan
+from ..perception.parts import (
+    Masks,
+    PartTracks,
+    contact_observations,
+    contact_series,
+    fuse,
+    held_contacts,
+    track_masks,
+    track_parts,
+)
 from ..perception.video import VideoAnalysis, analyze, analyze_readings
 
 REPO = Path(__file__).resolve().parents[3]
@@ -183,6 +194,162 @@ def eval_session(plan_id: str, every_s: float = 1.0, replay: bool = False, write
     return record
 
 
+# ---------- Part tracking (SAM 3.1) ----------
+
+MIN_VISIBLE_PX = 12
+
+
+class TrackingScore(BaseModel):
+    """SAM 3.1's part tracks against the parts' exact masks, and what their contacts add to the tracker.
+    The frame accuracies decode the same frames and differ only in their evidence."""
+
+    pieces: int
+    grounded: int
+    letters_right: int
+    mean_iou: float
+    frames_tracked: float
+    contacts_precision: float
+    contacts_recall: float
+    frames_right_spark: float
+    frames_right_contacts: float
+    frames_right_fused: float
+    frames_right_exact_contacts: float
+    step_error_fused_s: float | None
+
+
+def load_ids(plan_id: str) -> tuple[np.ndarray, list[str], float]:
+    """The session's exact part label maps (frames, height, width), the part ids by label, and their rate."""
+    folder = LIBRARY / plan_id / "session"
+    meta = json.loads((folder / "ids.json").read_text())
+    data = gzip.decompress((folder / "ids.bin.gz").read_bytes())
+    labels = np.frombuffer(data, np.uint8).reshape(meta["frames"], meta["height"], meta["width"])
+    return labels, meta["parts"], float(meta["fps"])
+
+
+def exact_masks(plan: AssemblyPlan, labels: np.ndarray, part_ids: list[str]) -> list[Masks]:
+    """The label maps as masks per frame, object i + 1 being part i: what perfect tracks would give."""
+    letter = {p.id: p.label for p in plan.parts}
+    frames: list[Masks] = []
+    for frame in labels:
+        masks = {}
+        for i, pid in enumerate(part_ids):
+            mask = frame == i + 1
+            if mask.any():
+                masks[i + 1] = (letter[pid], mask)
+        frames.append(masks)
+    return frames
+
+
+def iou(a: np.ndarray, b: np.ndarray) -> float:
+    union = np.logical_or(a, b).sum()
+    return float(np.logical_and(a, b).sum() / union) if union else 0.0
+
+
+def frame_accuracy(
+    observations: list[Observation], plan: AssemblyPlan, truth: dict[str, Any]
+) -> tuple[float, float | None]:
+    """Decode observations and compare with when each step's parts were really in place."""
+    steps = len(plan.steps)
+    placed = placed_at(truth)
+    timeline = decode(observations, steps)
+    expected = [sum(1 for k in range(1, steps + 1) if placed.get(k, float("inf")) <= t + 1e-6) for t in timeline.times]
+    right = sum(p == e for p, e in zip(timeline.path, expected, strict=True)) / max(1, len(expected))
+    errors = [abs(timeline.finished_at[k] - at) for k, at in placed.items() if k in timeline.finished_at]
+    return round(right, 4), (round(statistics.mean(errors), 3) if errors else None)
+
+
+def match_tracks(tracks: PartTracks, frames: list[Masks], labels: np.ndarray, part_ids: list[str]) -> dict[int, str]:
+    """Each track's part, matched where the tracks were prompted (the anchor frame) by mask overlap."""
+    anchor = min(tracks.anchor_frame, len(frames) - 1, len(labels) - 1)
+    candidates = [
+        (iou(mask, labels[anchor] == i + 1), obj, pid)
+        for obj, (_, mask) in frames[anchor].items()
+        for i, pid in enumerate(part_ids)
+    ]
+    match: dict[int, str] = {}
+    for overlap, obj, pid in sorted(candidates, reverse=True):
+        if overlap >= 0.1 and obj not in match and pid not in match.values():
+            match[obj] = pid
+    return match
+
+
+def score_tracking(
+    tracks: PartTracks, plan: AssemblyPlan, truth: dict[str, Any], analysis: VideoAnalysis
+) -> tuple[TrackingScore, dict[int, str], dict[int, float]]:
+    """The score, each track's matched part, and each track's mean overlap with that part."""
+    labels, part_ids, _ = load_ids(plan.id)
+    letter = {p.id: p.label for p in plan.parts}
+    frames = track_masks(tracks)
+    match = match_tracks(tracks, frames, labels, part_ids)
+
+    # Overlap with the part's exact mask on every frame where the part is visible.
+    overlaps: dict[int, list[float]] = {obj: [] for obj in match}
+    for f in range(min(len(frames), len(labels))):
+        for obj, pid in match.items():
+            exact = labels[f] == part_ids.index(pid) + 1
+            if exact.sum() >= MIN_VISIBLE_PX:
+                overlaps[obj].append(iou(frames[f][obj][1], exact) if obj in frames[f] else 0.0)
+    per_track = {obj: round(statistics.mean(v), 4) for obj, v in overlaps.items() if v}
+    every = [v for values in overlaps.values() for v in values]
+
+    # The contact graph by the end of the video, against the plan's joints (through the match).
+    joints = {frozenset(j.parts) for j in plan.joints}
+    held = held_contacts(contact_series(frames), tracks.fps)
+    named = [frozenset((match[a], match[b])) for a, b in held if a in match and b in match]
+    true_held = sum(1 for pair in named if pair in joints)
+
+    # Contacts as tracker evidence, next to Muse Spark's readings of the same frames.
+    times = [f.time_s for f in analysis.frames]
+    spark = [Observation(time_s=f.time_s, step_done=f.step_done, source="muse-spark") for f in analysis.frames]
+    contacts = contact_observations(plan, frames, tracks.fps, times)
+    exact = contact_observations(plan, exact_masks(plan, labels, part_ids), tracks.fps, times)
+    fused_right, fused_error = frame_accuracy([fuse(a, b) for a, b in zip(spark, contacts, strict=True)], plan, truth)
+    score = TrackingScore(
+        pieces=len(plan.parts),
+        grounded=len(tracks.tracks),
+        letters_right=sum(1 for t in tracks.tracks if t.object in match and t.label == letter[match[t.object]]),
+        mean_iou=round(statistics.mean(per_track.values()), 4) if per_track else 0.0,
+        frames_tracked=round(sum(1 for v in every if v >= 0.5) / len(every), 4) if every else 0.0,
+        contacts_precision=round(true_held / len(named), 4) if named else 0.0,
+        contacts_recall=round(len(set(named) & joints) / len(joints), 4),
+        frames_right_spark=frame_accuracy(spark, plan, truth)[0],
+        frames_right_contacts=frame_accuracy(contacts, plan, truth)[0],
+        frames_right_fused=fused_right,
+        frames_right_exact_contacts=frame_accuracy(exact, plan, truth)[0],
+        step_error_fused_s=fused_error,
+    )
+    return score, match, per_track
+
+
+def eval_tracking(plan_id: str, replay: bool = False, write: bool = True) -> dict[str, Any]:
+    """Track a library session's parts with Muse Spark + SAM 3.1 (or re-use the stored tracks) and score them."""
+    folder = LIBRARY / plan_id / "session"
+    path = folder / "tracks.json"
+    plan = CATALOG[plan_id]()
+    truth = json.loads((folder / "truth.json").read_text())
+    analysis = VideoAnalysis.model_validate({k: v for k, v in stored(folder / "analysis.json").items() if k != "score"})
+    if replay:
+        keep = set(PartTracks.model_fields)
+        tracks = PartTracks.model_validate({k: v for k, v in stored(path).items() if k in keep})
+    else:
+        tracks = track_parts(folder / "session.mp4", plan, parts_page=manual_pages(plan_id)[1])
+    score, match, per_track = score_tracking(tracks, plan, truth, analysis)
+    held = held_contacts(contact_series(track_masks(tracks)), tracks.fps)
+    letter = {t.object: t.label for t in tracks.tracks}
+    record = {
+        "score": score.model_dump(),
+        "parts": {str(obj): {"part": pid, "iou": per_track.get(obj)} for obj, pid in sorted(match.items())},
+        "contacts": [
+            {"objects": [a, b], "letters": [letter[a], letter[b]], "at": at}
+            for (a, b), at in sorted(held.items(), key=lambda kv: kv[1])
+        ],
+        **tracks.model_dump(),
+    }
+    if write:
+        write_json(path, record)
+    return record
+
+
 def check(plan_ids: list[str]) -> list[str]:
     """Re-score every stored result (no API calls) and list the scores that no longer match."""
     problems = []
@@ -190,14 +357,17 @@ def check(plan_ids: list[str]) -> list[str]:
         for kind, path in (
             ("manual", LIBRARY / plan_id / "manual" / "reading.json"),
             ("session", LIBRARY / plan_id / "session" / "analysis.json"),
+            ("tracking", LIBRARY / plan_id / "session" / "tracks.json"),
         ):
             if not path.exists():
                 continue
             stored_score = json.loads(path.read_text())["score"]
             if kind == "manual":
                 fresh = eval_manual(plan_id, replay=True, write=False)["score"]
-            else:
+            elif kind == "session":
                 fresh = eval_session(plan_id, replay=True, write=False)["score"]
+            else:
+                fresh = eval_tracking(plan_id, replay=True, write=False)["score"]
             if fresh != stored_score:
                 problems.append(f"{plan_id} {kind}: stored {stored_score}, re-scored {fresh}")
     return problems
@@ -208,14 +378,27 @@ def check(plan_ids: list[str]) -> list[str]:
 
 def summarize() -> dict[str, Any]:
     """Collect every stored result into assemblies/benchmarks.json."""
-    manuals, sessions = {}, {}
+    manuals, sessions, tracking = {}, {}, {}
     model = None
+    tracking_models = None
     for plan_id in CATALOG:
         reading = LIBRARY / plan_id / "manual" / "reading.json"
         if reading.exists():
             data = json.loads(reading.read_text())
             manuals[plan_id] = {**data["score"], "seconds": data["seconds"], "pages": data["pages"]}
             model = data["model"]
+        tracks = LIBRARY / plan_id / "session" / "tracks.json"
+        if tracks.exists():
+            data = json.loads(tracks.read_text())
+            refound = sum(1 for prompt in data["prompts"] if prompt["frame"] != data["anchor_frame"])
+            tracking[plan_id] = {
+                **data["score"],
+                "seconds": data["seconds"],
+                "frames": data["frames"],
+                "prompts": len(data["prompts"]),
+                "refound": refound,
+            }
+            tracking_models = {"segmentation": data["model"], "grounding": data["grounding_model"]}
         analysis = LIBRARY / plan_id / "session" / "analysis.json"
         if analysis.exists():
             data = json.loads(analysis.read_text())
@@ -237,6 +420,22 @@ def summarize() -> dict[str, Any]:
             "items": sessions,
             "mean": {
                 k: mean(sessions, k) for k in ("frame_accuracy", "raw_frame_accuracy", "step_error_s", "edges_recall")
+            },
+        },
+        "tracking": {
+            "models": tracking_models,
+            "items": tracking,
+            "mean": {
+                k: mean(tracking, k)
+                for k in (
+                    "mean_iou",
+                    "frames_tracked",
+                    "contacts_recall",
+                    "frames_right_spark",
+                    "frames_right_contacts",
+                    "frames_right_fused",
+                    "frames_right_exact_contacts",
+                )
             },
         },
     }
