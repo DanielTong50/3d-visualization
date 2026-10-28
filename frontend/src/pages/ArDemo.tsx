@@ -270,6 +270,12 @@ export function ArDemo({ furniture }: { furniture: string }) {
                 </div>
               )}
             </>
+          ) : moment.step > steps ? (
+            <>
+              <span className="eyebrow">Last move</span>
+              <h2>Stand it the right way up</h2>
+              <p className="muted">Every step is fastened. Turn the {plan.category} upright and it is done.</p>
+            </>
           ) : (
             <>
               <span className="eyebrow track">Scanning</span>
