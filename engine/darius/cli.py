@@ -110,24 +110,43 @@ def _schema(args: argparse.Namespace) -> int:
     return 0
 
 
+def _pages(paths: list[str]) -> list[Path]:
+    """Page images from files and folders (a folder contributes its images in name order)."""
+    pages: list[Path] = []
+    for path in map(Path, paths):
+        if path.is_dir():
+            pages += sorted(p for p in path.iterdir() if p.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp"})
+        else:
+            pages.append(path)
+    return pages
+
+
 def _manual(args: argparse.Namespace) -> int:
     from dotenv import load_dotenv
+    from PIL import Image
 
     from .assembly import graph
     from .perception import manual
 
     load_dotenv(REPO / ".env")
-    plan = manual.read_manual([Path(p) for p in args.pages], plan_id=args.id, title=args.title)
-    text = plan.model_dump_json(indent=1, exclude_none=True)
+    pages = [Image.open(p).convert("RGB") for p in _pages(args.pages)]
+    result = manual.read_manual(pages, plan_id=args.id)
+    text = result.plan.model_dump_json(indent=1, exclude_none=True)
     if args.out:
         Path(args.out).write_text(text + "\n")
     else:
         print(text)
+    for note in result.notes:
+        print(f"note: {note}", file=sys.stderr)
     if args.truth:
-        score = graph.compare(plan, load_plan(args.truth))
+        score = graph.compare(result.plan, load_plan(args.truth))
         print(f"edges F1 {score.edges_f1:.3f}  parts F1 {score.parts_f1:.3f}  exact steps {score.steps_exact:.2f}  "
               f"hardware {score.hardware_accuracy:.2f}", file=sys.stderr)  # fmt: skip
     return 0
+
+
+def _progress(done: int, total: int) -> None:
+    print(f"\r  {done}/{total} batches", end="\n" if done == total else "", file=sys.stderr, flush=True)
 
 
 def _track(args: argparse.Namespace) -> int:
@@ -136,12 +155,38 @@ def _track(args: argparse.Namespace) -> int:
     from .perception import video
 
     load_dotenv(REPO / ".env")
-    result = video.analyze(Path(args.video), load_plan(args.plan), every_s=args.every)
-    text = json.dumps(result, indent=1)
+    result = video.analyze(Path(args.video), load_plan(args.plan), every_s=args.every, on_batch=_progress)
+    text = result.model_dump_json(indent=1)
     if args.out:
         Path(args.out).write_text(text + "\n")
     else:
         print(text)
+    finished = ", ".join(f"step {k} at {t:.1f} s" for k, t in sorted(result.finished_at.items()))
+    print(f"{len(result.frames)} frames, finished: {finished or 'nothing'}", file=sys.stderr)
+    return 0
+
+
+def _eval(args: argparse.Namespace) -> int:
+    from dotenv import load_dotenv
+
+    from .eval import benchmark
+    from .furniture import catalog
+
+    load_dotenv(REPO / ".env")
+    ids = args.only or list(catalog.CATALOG)
+    both = not args.manuals and not args.sessions
+    for plan_id in ids:
+        if args.manuals or both:
+            score = benchmark.eval_manual(plan_id, replay=args.replay)["score"]
+            print(f"{plan_id:18} manual   edges F1 {score['edges_f1']:.3f}  parts F1 {score['parts_f1']:.3f}  "
+                  f"exact steps {score['steps_exact']:.2f}  hardware {score['hardware_accuracy']:.2f}")  # fmt: skip
+        if args.sessions or both:
+            print(f"{plan_id:18} session  reading frames…", file=sys.stderr)
+            score = benchmark.eval_session(plan_id, every_s=args.every, replay=args.replay)["score"]
+            print(f"{plan_id:18} session  frame accuracy {score['frame_accuracy']:.3f} (one frame alone "
+                  f"{score['raw_frame_accuracy']:.3f})  steps found {score['steps_found']}/{score['steps']}  "
+                  f"step error {score['step_error_s']} s")  # fmt: skip
+    benchmark.summarize()
     return 0
 
 
@@ -162,18 +207,24 @@ def main(argv: list[str] | None = None) -> int:
     command.set_defaults(run=_validate)
     commands.add_parser("schema", help="print the AssemblyPlan JSON Schema").set_defaults(run=_schema)
     command = commands.add_parser("manual", help="read manual pages into a plan (Meta Model API)")
-    command.add_argument("pages", nargs="+")
+    command.add_argument("pages", nargs="+", help="page images, or folders of them, in order")
     command.add_argument("--id", default="manual")
-    command.add_argument("--title", default="")
     command.add_argument("--truth", help="a plan to score the result against")
     command.add_argument("--out")
     command.set_defaults(run=_manual)
     command = commands.add_parser("track", help="decode a build video into a timeline (Meta Model API)")
     command.add_argument("video")
     command.add_argument("--plan", required=True)
-    command.add_argument("--every", type=float, default=2.0, help="seconds between analyzed frames")
+    command.add_argument("--every", type=float, default=1.0, help="seconds between analyzed frames")
     command.add_argument("--out")
     command.set_defaults(run=_track)
+    command = commands.add_parser("eval", help="benchmark the perception models on the library (Meta Model API)")
+    command.add_argument("--manuals", action="store_true", help="only read the manuals")
+    command.add_argument("--sessions", action="store_true", help="only watch the session videos")
+    command.add_argument("--only", nargs="+", help="plan ids")
+    command.add_argument("--every", type=float, default=1.0, help="seconds between analyzed frames")
+    command.add_argument("--replay", action="store_true", help="re-score the stored model outputs, no API calls")
+    command.set_defaults(run=_eval)
 
     args = parser.parse_args(argv)
     return args.run(args)
