@@ -761,7 +761,7 @@ export function Home() {
 
       <footer className="home-foot">
         <Wordmark onClick={() => navigate({ page: 'home' })} />
-        <span>Darius 1.2 · MIT license</span>
+        <span>Darius 1.3 · MIT license</span>
         <a href={REPO}>
           Source <ArrowUpRight size={13} />
         </a>
