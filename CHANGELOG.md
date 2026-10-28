@@ -6,6 +6,29 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-28: hardware, a light design, and the research behind it
+
+### Added
+- Hardware in the copilot: every fitting of the plan's inventory waits in a tray beside the parts, flies to its hole
+  during its step's fasten phase and goes in along its axis (turning if it screws in), driven by the step's tool (a
+  screwdriver or allen key that turns with it, a hammer that taps it home). Seats come from the joints' hole
+  patterns: dowels straddle the joint, screws and nails sit flush with the face they enter, cam locks sit in the
+  face of the panel their bolt reaches into. Seated fittings ride with their part through turns and joins.
+- A close-up view of the piece going in, a hardware panel that counts what is left in the tray, the step number in a
+  box as a manual prints it, and the step's fastening progress.
+- Home page: a showroom that builds each product in turn under an IKEA-style product tag; six live demo tiles that
+  keep rearranging (view transitions); research foundations (fifteen papers and where each shows up); the stack.
+- README: an abstract and a references table.
+- Tests for the hardware schedule (Vitest, 44 tests).
+
+### Changed
+- The web app is light: white pages, hairline boxes, mono labels, IKEA blue for the next move, IKEA yellow for what
+  the camera sees, Noto Sans. The generated manuals keep the typeface the models were tested on.
+- Guidance arcs are solid arrows with a highlight running toward the target and a cone head; the graph and the
+  detection boxes have no dashed lines.
+- A step's fasten phase lasts as long as its pieces need (1.4 s + 0.11 s per piece, up to 6.5 s), and the camera
+  leans in while it lasts.
+
 ## [1.0.0] - 2026-10-28: the assembly copilot
 
 Darius becomes an AR copilot for flat-pack furniture. The real-to-sim scene compiler is retired and preserved at
@@ -156,7 +179,8 @@ Initial release.
 - CI: lint, tests and build for both halves, freshness of generated scene files, and a check that
   exported scenes settle in MuJoCo. GitHub Pages deployment of the simulator.
 
-[Unreleased]: https://github.com/DanielTong50/3d-visualization/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/DanielTong50/3d-visualization/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/DanielTong50/3d-visualization/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/DanielTong50/3d-visualization/compare/v0.2.0...v1.0.0
 [0.2.0]: https://github.com/DanielTong50/3d-visualization/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DanielTong50/3d-visualization/releases/tag/v0.1.0

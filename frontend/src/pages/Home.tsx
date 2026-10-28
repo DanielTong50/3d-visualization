@@ -442,7 +442,7 @@ export function Home() {
 
       <header className="hero">
         <div className="hero-copy">
-          <span className="tag">Darius 1.0 · assembly copilot</span>
+          <span className="tag">Darius 1.1 · assembly copilot</span>
           <h1>
             Show it the manual.
             <br />
@@ -687,7 +687,7 @@ ${plan ? plan.hardware.reduce((n, h) => n + h.count, 0) : 72} fittings, seated f
 
       <footer className="home-foot">
         <Wordmark onClick={() => navigate({ page: 'home' })} />
-        <span className="faint">Darius 1.0 · MIT license · Muse Spark via the Meta Model API · three.js</span>
+        <span className="faint">Darius 1.1 · MIT license · Muse Spark via the Meta Model API · three.js</span>
         <a href={REPO} className="btn btn-outline btn-sm">
           <Github size={15} /> Source
         </a>
