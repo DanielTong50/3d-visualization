@@ -25,7 +25,7 @@ from pathlib import Path
 import modal
 import numpy as np
 
-from scan2sim.objectron import parse_sequence
+from darius.eval.objectron import parse_sequence
 
 PIPELINE = Path(__file__).resolve().parents[1]
 REPO = PIPELINE.parent
@@ -133,6 +133,8 @@ def score_clip(clip: str, job: str, volume: modal.Volume, variants: list[str]) -
             matches[gt.id] = best
     record["detected"] = len(matches)
     record["timings"] = {s["name"]: s["seconds"] for s in status.get("stages", [])}
+    record["splats"] = read_json(volume, f"/{job}/splats.json")
+    record["colliders"] = (read_json(volume, f"/{job}/package.json") or {}).get("colliders")
 
     for variant in variants:
         physics = read_json(volume, f"/{job}/{variant}")
@@ -194,15 +196,15 @@ def main() -> None:
     parser.add_argument("--start", help="re-run every clip from this stage onward (e.g. physics)")
     args = parser.parse_args()
 
-    volume = modal.Volume.from_name("scan2sim-jobs")
+    volume = modal.Volume.from_name("darius-jobs")
     clips = clip_list(args.per_class)
     jobs = {clip: job_id_for(clip) for clip in clips}
     variants = ["physics.json", "physics_hinted.json"]
 
     if not args.report_only:
         jobs = submit(clips, volume)
-        run_job = modal.Function.from_name("scan2sim", "run_job")
-        variant_fn = modal.Function.from_name("scan2sim", "physics_variant")
+        run_job = modal.Function.from_name("darius", "run_job")
+        variant_fn = modal.Function.from_name("darius", "physics_variant")
         started = time.monotonic()
         print(f"Running {len(jobs)} clips...")
 
@@ -228,7 +230,7 @@ def main() -> None:
             print(f"  retry {clip:<16} {'ok' if error is None else 'FAILED: ' + error}")
         print(f"Done in {time.monotonic() - started:.0f} s")
 
-    volume = modal.Volume.from_name("scan2sim-jobs")
+    volume = modal.Volume.from_name("darius-jobs")
     records = [score_clip(clip, job, volume, variants) for clip, job in jobs.items()]
     summary = {v: summarize(records, v) for v in variants}
     RESULTS.parent.mkdir(parents=True, exist_ok=True)

@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   pipeline:
-    name: Pipeline (lint, tests)
+    name: Python (lint, tests, scene contract, MuJoCo)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -24,13 +24,13 @@ jobs:
       - run: uv sync --locked
       - run: uv run ruff format --check .
       - run: uv run ruff check .
-      - run: uv run pytest -q
-      - name: Gallery and exports are current
-        run: |
-          uv run python -m scan2sim.gallery   # rebuilds index.json, scene.xml and export.zip
-          git diff --exit-code -- ../scenes
-      - name: Exported scenes settle in MuJoCo
-        run: uv run --with mujoco==3.17.0 python scripts/check_mujoco.py
+      - run: uv run pytest -q   # includes MuJoCo and OpenUSD round trips of every exported scene
+      - name: Shipped scenes satisfy the contract
+        run: uv run darius validate ../scenes/*/
+      - name: Robotics annotations, bundles and the gallery index are current
+        run: uv run darius gallery --check
+      - name: Every shipped scene comes to rest in MuJoCo
+        run: for scene in ../scenes/*/; do uv run darius sim "$scene" || exit 1; done
 
   frontend:
     name: Frontend (typecheck, tests, build)

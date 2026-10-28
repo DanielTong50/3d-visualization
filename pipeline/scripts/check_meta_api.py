@@ -39,7 +39,7 @@ from meta_sam_parser import (
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from pydantic import BaseModel, Field
 
-from scan2sim.meta_api import finish_text_lanes
+from darius.models.meta_api import finish_text_lanes
 
 PIPELINE_DIR = Path(__file__).resolve().parents[1]
 REPO_ROOT = PIPELINE_DIR.parent

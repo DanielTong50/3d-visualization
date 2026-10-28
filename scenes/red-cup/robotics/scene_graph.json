@@ -1,0 +1,549 @@
+{
+ "format": "darius.scene_graph/1",
+ "scene_id": "ca215027dc31",
+ "title": "Red party cup",
+ "frame": "world: +z up, meters, the table top is z = 0",
+ "counts": {
+  "nodes": {
+   "frame": 1,
+   "surface": 1,
+   "object": 1,
+   "part": 8,
+   "grasp": 8,
+   "camera": 8
+  },
+  "edges": 26
+ },
+ "nodes": [
+  {
+   "id": "world",
+   "type": "frame",
+   "position": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "label": "world frame"
+  },
+  {
+   "id": "table",
+   "type": "surface",
+   "position": [
+    -0.026,
+    0.056,
+    0.0
+   ],
+   "label": "table top",
+   "area_m2": 0.1028
+  },
+  {
+   "id": "obj_01",
+   "type": "object",
+   "position": [
+    0.01626,
+    0.02418,
+    0.04567
+   ],
+   "label": "plastic cup",
+   "material": "plastic",
+   "mass_kg": 0.0338,
+   "dimensions_m": [
+    0.1172,
+    0.12,
+    0.0889
+   ],
+   "friction": 0.4,
+   "restitution": 0.2,
+   "mesh": "meshes/obj_01_visual.obj",
+   "pose": {
+    "position": [
+     0.0126,
+     0.0227,
+     0.048
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "obj_01/part_0",
+   "type": "part",
+   "position": [
+    0.04369,
+    0.02096,
+    0.01828
+   ],
+   "label": "convex part 0",
+   "mesh": "meshes/obj_01_part0.obj"
+  },
+  {
+   "id": "obj_01/part_1",
+   "type": "part",
+   "position": [
+    -0.02449,
+    0.04951,
+    0.06252
+   ],
+   "label": "convex part 1",
+   "mesh": "meshes/obj_01_part1.obj"
+  },
+  {
+   "id": "obj_01/part_2",
+   "type": "part",
+   "position": [
+    0.03058,
+    0.05628,
+    0.07023
+   ],
+   "label": "convex part 2",
+   "mesh": "meshes/obj_01_part2.obj"
+  },
+  {
+   "id": "obj_01/part_3",
+   "type": "part",
+   "position": [
+    -0.01257,
+    0.0691,
+    0.01204
+   ],
+   "label": "convex part 3",
+   "mesh": "meshes/obj_01_part3.obj"
+  },
+  {
+   "id": "obj_01/part_4",
+   "type": "part",
+   "position": [
+    0.03724,
+    0.02179,
+    0.06343
+   ],
+   "label": "convex part 4",
+   "mesh": "meshes/obj_01_part4.obj"
+  },
+  {
+   "id": "obj_01/part_5",
+   "type": "part",
+   "position": [
+    0.01644,
+    -0.0215,
+    0.04065
+   ],
+   "label": "convex part 5",
+   "mesh": "meshes/obj_01_part5.obj"
+  },
+  {
+   "id": "obj_01/part_6",
+   "type": "part",
+   "position": [
+    -0.01928,
+    -0.01005,
+    0.00556
+   ],
+   "label": "convex part 6",
+   "mesh": "meshes/obj_01_part6.obj"
+  },
+  {
+   "id": "obj_01/part_7",
+   "type": "part",
+   "position": [
+    0.004,
+    0.00124,
+    0.05604
+   ],
+   "label": "convex part 7",
+   "mesh": "meshes/obj_01_part7.obj"
+  },
+  {
+   "id": "obj_01/grasp_0",
+   "type": "grasp",
+   "position": [
+    0.00701,
+    0.0203,
+    0.04611
+   ],
+   "label": "grasp 0",
+   "width_m": 0.1054,
+   "score": 0.796,
+   "approach": [
+    0.0017,
+    0.1247,
+    -0.9922
+   ],
+   "closing": [
+    -0.0134,
+    -0.9921,
+    -0.1247
+   ]
+  },
+  {
+   "id": "obj_01/grasp_1",
+   "type": "grasp",
+   "position": [
+    0.01508,
+    0.02821,
+    0.04314
+   ],
+   "label": "grasp 1",
+   "width_m": 0.1082,
+   "score": 0.779,
+   "approach": [
+    -0.0634,
+    -0.005,
+    -0.998
+   ],
+   "closing": [
+    0.9949,
+    0.0789,
+    -0.0636
+   ]
+  },
+  {
+   "id": "obj_01/grasp_2",
+   "type": "grasp",
+   "position": [
+    0.01077,
+    0.02125,
+    0.03447
+   ],
+   "label": "grasp 2",
+   "width_m": 0.1064,
+   "score": 0.741,
+   "approach": [
+    0.0017,
+    0.1247,
+    -0.9922
+   ],
+   "closing": [
+    -0.0134,
+    -0.9921,
+    -0.1247
+   ]
+  },
+  {
+   "id": "obj_01/grasp_3",
+   "type": "grasp",
+   "position": [
+    0.02219,
+    0.02195,
+    0.04837
+   ],
+   "label": "grasp 3",
+   "width_m": 0.1034,
+   "score": 0.646,
+   "approach": [
+    0.0045,
+    -0.0405,
+    -0.9992
+   ],
+   "closing": [
+    -0.1094,
+    0.9932,
+    -0.0407
+   ]
+  },
+  {
+   "id": "obj_01/grasp_4",
+   "type": "grasp",
+   "position": [
+    0.01485,
+    0.03289,
+    0.03224
+   ],
+   "label": "grasp 4",
+   "width_m": 0.111,
+   "score": 0.581,
+   "approach": [
+    -0.1424,
+    -0.0282,
+    -0.9894
+   ],
+   "closing": [
+    -0.9705,
+    -0.1924,
+    0.1451
+   ]
+  },
+  {
+   "id": "obj_01/grasp_5",
+   "type": "grasp",
+   "position": [
+    0.01494,
+    0.04062,
+    0.04621
+   ],
+   "label": "grasp 5",
+   "width_m": 0.1095,
+   "score": 0.578,
+   "approach": [
+    -0.0634,
+    -0.005,
+    -0.998
+   ],
+   "closing": [
+    0.9949,
+    0.0789,
+    -0.0636
+   ]
+  },
+  {
+   "id": "obj_01/grasp_6",
+   "type": "grasp",
+   "position": [
+    0.02234,
+    0.02141,
+    0.03505
+   ],
+   "label": "grasp 6",
+   "width_m": 0.1056,
+   "score": 0.569,
+   "approach": [
+    0.0017,
+    0.1247,
+    -0.9922
+   ],
+   "closing": [
+    -0.0134,
+    -0.9921,
+    -0.1247
+   ]
+  },
+  {
+   "id": "obj_01/grasp_7",
+   "type": "grasp",
+   "position": [
+    0.01288,
+    0.04433,
+    0.04064
+   ],
+   "label": "grasp 7",
+   "width_m": 0.1177,
+   "score": 0.542,
+   "approach": [
+    -0.0827,
+    0.0312,
+    -0.9961
+   ],
+   "closing": [
+    0.932,
+    -0.3515,
+    -0.0884
+   ]
+  },
+  {
+   "id": "view",
+   "type": "camera",
+   "position": [
+    0.0204,
+    0.1566,
+    0.2529
+   ],
+   "label": "view"
+  },
+  {
+   "id": "capture_00",
+   "type": "camera",
+   "position": [
+    0.01499,
+    -0.19075,
+    0.14009
+   ],
+   "label": "capture 00"
+  },
+  {
+   "id": "capture_08",
+   "type": "camera",
+   "position": [
+    0.02359,
+    -0.06238,
+    0.25133
+   ],
+   "label": "capture 08"
+  },
+  {
+   "id": "capture_16",
+   "type": "camera",
+   "position": [
+    0.01961,
+    0.09701,
+    0.31291
+   ],
+   "label": "capture 16"
+  },
+  {
+   "id": "capture_24",
+   "type": "camera",
+   "position": [
+    0.02944,
+    0.16386,
+    0.23662
+   ],
+   "label": "capture 24"
+  },
+  {
+   "id": "capture_31",
+   "type": "camera",
+   "position": [
+    0.05871,
+    0.14513,
+    0.27362
+   ],
+   "label": "capture 31"
+  },
+  {
+   "id": "capture_39",
+   "type": "camera",
+   "position": [
+    0.1423,
+    0.08269,
+    0.19733
+   ],
+   "label": "capture 39"
+  },
+  {
+   "id": "capture_47",
+   "type": "camera",
+   "position": [
+    0.15208,
+    0.0191,
+    0.15269
+   ],
+   "label": "capture 47"
+  }
+ ],
+ "edges": [
+  {
+   "source": "world",
+   "target": "table",
+   "relation": "contains"
+  },
+  {
+   "source": "obj_01/part_0",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_1",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_2",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_3",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_4",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_5",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_6",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/part_7",
+   "target": "obj_01",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_01/grasp_0",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_1",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_2",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_3",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_4",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_5",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_6",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_7",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "table",
+   "target": "obj_01",
+   "relation": "supports"
+  },
+  {
+   "source": "view",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_00",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_08",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_16",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_24",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_31",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_39",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_47",
+   "target": "obj_01",
+   "relation": "observes"
+  }
+ ]
+}

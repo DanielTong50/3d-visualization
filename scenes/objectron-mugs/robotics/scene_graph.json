@@ -1,0 +1,849 @@
+{
+ "format": "darius.scene_graph/1",
+ "scene_id": "d683afbd459c",
+ "title": "Two mugs on a garden table",
+ "frame": "world: +z up, meters, the table top is z = 0",
+ "counts": {
+  "nodes": {
+   "frame": 1,
+   "surface": 1,
+   "object": 2,
+   "grasp": 16,
+   "part": 8,
+   "camera": 8
+  },
+  "edges": 44
+ },
+ "nodes": [
+  {
+   "id": "world",
+   "type": "frame",
+   "position": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "label": "world frame"
+  },
+  {
+   "id": "table",
+   "type": "surface",
+   "position": [
+    0.101,
+    0.013,
+    0.0
+   ],
+   "label": "table top",
+   "area_m2": 0.3438
+  },
+  {
+   "id": "obj_01",
+   "type": "object",
+   "position": [
+    0.0055,
+    0.00131,
+    0.04049
+   ],
+   "label": "white mug",
+   "material": "ceramic",
+   "mass_kg": 0.2634,
+   "dimensions_m": [
+    0.1217,
+    0.095,
+    0.0737
+   ],
+   "friction": 0.5,
+   "restitution": 0.1,
+   "mesh": "meshes/obj_01_visual.obj",
+   "pose": {
+    "position": [
+     0.0005,
+     -0.0015,
+     0.0416
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "obj_01/grasp_0",
+   "type": "grasp",
+   "position": [
+    0.00896,
+    0.00118,
+    0.04083
+   ],
+   "label": "grasp 0",
+   "width_m": 0.0774,
+   "score": 0.774,
+   "approach": [
+    -0.0957,
+    -0.0331,
+    -0.9949
+   ],
+   "closing": [
+    -0.9403,
+    -0.3249,
+    0.1013
+   ]
+  },
+  {
+   "id": "obj_01/grasp_1",
+   "type": "grasp",
+   "position": [
+    0.00939,
+    9e-05,
+    0.05152
+   ],
+   "label": "grasp 1",
+   "width_m": 0.0805,
+   "score": 0.656,
+   "approach": [
+    -0.2423,
+    -0.0855,
+    -0.9664
+   ],
+   "closing": [
+    0.9114,
+    0.3216,
+    -0.257
+   ]
+  },
+  {
+   "id": "obj_01/grasp_2",
+   "type": "grasp",
+   "position": [
+    0.01391,
+    -0.00897,
+    0.04108
+   ],
+   "label": "grasp 2",
+   "width_m": 0.076,
+   "score": 0.611,
+   "approach": [
+    0.0267,
+    0.0132,
+    -0.9996
+   ],
+   "closing": [
+    0.8955,
+    0.4441,
+    0.0298
+   ]
+  },
+  {
+   "id": "obj_01/grasp_3",
+   "type": "grasp",
+   "position": [
+    -5e-05,
+    0.00466,
+    0.0413
+   ],
+   "label": "grasp 3",
+   "width_m": 0.1122,
+   "score": 0.576,
+   "approach": [
+    -0.0726,
+    0.0702,
+    -0.9949
+   ],
+   "closing": [
+    -0.7154,
+    0.6913,
+    0.101
+   ]
+  },
+  {
+   "id": "obj_01/grasp_4",
+   "type": "grasp",
+   "position": [
+    0.00227,
+    0.00873,
+    0.036
+   ],
+   "label": "grasp 4",
+   "width_m": 0.0738,
+   "score": 0.529,
+   "approach": [
+    -0.1557,
+    -0.1196,
+    -0.9805
+   ],
+   "closing": [
+    -0.7776,
+    -0.5973,
+    0.1963
+   ]
+  },
+  {
+   "id": "obj_01/grasp_5",
+   "type": "grasp",
+   "position": [
+    0.01022,
+    -0.00471,
+    0.03215
+   ],
+   "label": "grasp 5",
+   "width_m": 0.076,
+   "score": 0.494,
+   "approach": [
+    -0.1557,
+    -0.1196,
+    -0.9805
+   ],
+   "closing": [
+    -0.7776,
+    -0.5973,
+    0.1963
+   ]
+  },
+  {
+   "id": "obj_01/grasp_6",
+   "type": "grasp",
+   "position": [
+    0.00496,
+    0.00196,
+    0.04083
+   ],
+   "label": "grasp 6",
+   "width_m": 0.087,
+   "score": 0.456,
+   "approach": [
+    0.0391,
+    0.2243,
+    -0.9737
+   ],
+   "closing": [
+    0.1671,
+    0.9593,
+    0.2277
+   ]
+  },
+  {
+   "id": "obj_01/grasp_7",
+   "type": "grasp",
+   "position": [
+    0.01204,
+    -0.00318,
+    0.05801
+   ],
+   "label": "grasp 7",
+   "width_m": 0.0848,
+   "score": 0.451,
+   "approach": [
+    0.0368,
+    0.0444,
+    -0.9983
+   ],
+   "closing": [
+    0.6371,
+    0.7687,
+    0.0576
+   ]
+  },
+  {
+   "id": "obj_02",
+   "type": "object",
+   "position": [
+    0.07919,
+    0.05395,
+    0.04558
+   ],
+   "label": "purple mug",
+   "material": "ceramic",
+   "mass_kg": 0.2316,
+   "dimensions_m": [
+    0.1231,
+    0.0928,
+    0.0653
+   ],
+   "friction": 0.5,
+   "restitution": 0.1,
+   "mesh": "meshes/obj_02_visual.obj",
+   "pose": {
+    "position": [
+     0.0854,
+     0.0492,
+     0.0374
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "obj_02/part_0",
+   "type": "part",
+   "position": [
+    0.10403,
+    0.0412,
+    0.00512
+   ],
+   "label": "convex part 0",
+   "mesh": "meshes/obj_02_part0.obj"
+  },
+  {
+   "id": "obj_02/part_1",
+   "type": "part",
+   "position": [
+    0.11305,
+    0.06284,
+    0.05393
+   ],
+   "label": "convex part 1",
+   "mesh": "meshes/obj_02_part1.obj"
+  },
+  {
+   "id": "obj_02/part_2",
+   "type": "part",
+   "position": [
+    0.06313,
+    0.04027,
+    0.05245
+   ],
+   "label": "convex part 2",
+   "mesh": "meshes/obj_02_part2.obj"
+  },
+  {
+   "id": "obj_02/part_3",
+   "type": "part",
+   "position": [
+    0.06519,
+    0.0472,
+    0.01295
+   ],
+   "label": "convex part 3",
+   "mesh": "meshes/obj_02_part3.obj"
+  },
+  {
+   "id": "obj_02/part_4",
+   "type": "part",
+   "position": [
+    0.05007,
+    0.0901,
+    0.05519
+   ],
+   "label": "convex part 4",
+   "mesh": "meshes/obj_02_part4.obj"
+  },
+  {
+   "id": "obj_02/part_5",
+   "type": "part",
+   "position": [
+    0.07577,
+    0.00346,
+    0.05422
+   ],
+   "label": "convex part 5",
+   "mesh": "meshes/obj_02_part5.obj"
+  },
+  {
+   "id": "obj_02/part_6",
+   "type": "part",
+   "position": [
+    0.0859,
+    0.08798,
+    0.05297
+   ],
+   "label": "convex part 6",
+   "mesh": "meshes/obj_02_part6.obj"
+  },
+  {
+   "id": "obj_02/part_7",
+   "type": "part",
+   "position": [
+    0.06336,
+    0.0507,
+    0.03147
+   ],
+   "label": "convex part 7",
+   "mesh": "meshes/obj_02_part7.obj"
+  },
+  {
+   "id": "obj_02/grasp_0",
+   "type": "grasp",
+   "position": [
+    0.06999,
+    0.04735,
+    0.05578
+   ],
+   "label": "grasp 0",
+   "width_m": 0.1069,
+   "score": 0.665,
+   "approach": [
+    0.0046,
+    -0.0114,
+    -0.9999
+   ],
+   "closing": [
+    -0.3746,
+    0.9271,
+    -0.0123
+   ]
+  },
+  {
+   "id": "obj_02/grasp_1",
+   "type": "grasp",
+   "position": [
+    0.08271,
+    0.06129,
+    0.04297
+   ],
+   "label": "grasp 1",
+   "width_m": 0.0852,
+   "score": 0.618,
+   "approach": [
+    0.0287,
+    -0.0009,
+    -0.9996
+   ],
+   "closing": [
+    0.9991,
+    -0.0324,
+    0.0288
+   ]
+  },
+  {
+   "id": "obj_02/grasp_2",
+   "type": "grasp",
+   "position": [
+    0.08404,
+    0.06214,
+    0.05563
+   ],
+   "label": "grasp 2",
+   "width_m": 0.0886,
+   "score": 0.549,
+   "approach": [
+    0.0287,
+    -0.0009,
+    -0.9996
+   ],
+   "closing": [
+    0.9991,
+    -0.0324,
+    0.0288
+   ]
+  },
+  {
+   "id": "obj_02/grasp_3",
+   "type": "grasp",
+   "position": [
+    0.08103,
+    0.05906,
+    0.04532
+   ],
+   "label": "grasp 3",
+   "width_m": 0.0915,
+   "score": 0.546,
+   "approach": [
+    -0.4739,
+    -0.0671,
+    -0.878
+   ],
+   "closing": [
+    0.8694,
+    0.1231,
+    -0.4786
+   ]
+  },
+  {
+   "id": "obj_02/grasp_4",
+   "type": "grasp",
+   "position": [
+    0.07981,
+    0.06339,
+    0.04748
+   ],
+   "label": "grasp 4",
+   "width_m": 0.0858,
+   "score": 0.512,
+   "approach": [
+    -0.1569,
+    0.0746,
+    -0.9848
+   ],
+   "closing": [
+    -0.8895,
+    0.4227,
+    0.1737
+   ]
+  },
+  {
+   "id": "obj_02/grasp_5",
+   "type": "grasp",
+   "position": [
+    0.08024,
+    0.0632,
+    0.0311
+   ],
+   "label": "grasp 5",
+   "width_m": 0.0823,
+   "score": 0.477,
+   "approach": [
+    -0.2211,
+    0.021,
+    -0.975
+   ],
+   "closing": [
+    -0.9707,
+    0.0921,
+    0.2221
+   ]
+  },
+  {
+   "id": "obj_02/grasp_6",
+   "type": "grasp",
+   "position": [
+    0.08329,
+    0.06914,
+    0.03601
+   ],
+   "label": "grasp 6",
+   "width_m": 0.0838,
+   "score": 0.432,
+   "approach": [
+    0.0982,
+    -0.0486,
+    -0.994
+   ],
+   "closing": [
+    0.8908,
+    -0.4411,
+    0.1096
+   ]
+  },
+  {
+   "id": "obj_02/grasp_7",
+   "type": "grasp",
+   "position": [
+    0.08459,
+    0.07012,
+    0.05694
+   ],
+   "label": "grasp 7",
+   "width_m": 0.0898,
+   "score": 0.388,
+   "approach": [
+    0.0982,
+    -0.0486,
+    -0.994
+   ],
+   "closing": [
+    0.8908,
+    -0.4411,
+    0.1096
+   ]
+  },
+  {
+   "id": "view",
+   "type": "camera",
+   "position": [
+    0.0248,
+    -0.2382,
+    0.3559
+   ],
+   "label": "view"
+  },
+  {
+   "id": "capture_00",
+   "type": "camera",
+   "position": [
+    0.07824,
+    -0.2497,
+    0.36452
+   ],
+   "label": "capture 00"
+  },
+  {
+   "id": "capture_04",
+   "type": "camera",
+   "position": [
+    0.05909,
+    -0.24171,
+    0.3602
+   ],
+   "label": "capture 04"
+  },
+  {
+   "id": "capture_08",
+   "type": "camera",
+   "position": [
+    -0.01675,
+    -0.23546,
+    0.34864
+   ],
+   "label": "capture 08"
+  },
+  {
+   "id": "capture_12",
+   "type": "camera",
+   "position": [
+    -0.09855,
+    -0.21533,
+    0.35207
+   ],
+   "label": "capture 12"
+  },
+  {
+   "id": "capture_17",
+   "type": "camera",
+   "position": [
+    -0.14177,
+    -0.10782,
+    0.33172
+   ],
+   "label": "capture 17"
+  },
+  {
+   "id": "capture_21",
+   "type": "camera",
+   "position": [
+    -0.19661,
+    -0.04676,
+    0.33127
+   ],
+   "label": "capture 21"
+  },
+  {
+   "id": "capture_25",
+   "type": "camera",
+   "position": [
+    -0.27482,
+    0.00856,
+    0.34772
+   ],
+   "label": "capture 25"
+  }
+ ],
+ "edges": [
+  {
+   "source": "world",
+   "target": "table",
+   "relation": "contains"
+  },
+  {
+   "source": "obj_01/grasp_0",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_1",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_2",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_3",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_4",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_5",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_6",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_01/grasp_7",
+   "target": "obj_01",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/part_0",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_1",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_2",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_3",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_4",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_5",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_6",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/part_7",
+   "target": "obj_02",
+   "relation": "part_of"
+  },
+  {
+   "source": "obj_02/grasp_0",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_1",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_2",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_3",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_4",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_5",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_6",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "obj_02/grasp_7",
+   "target": "obj_02",
+   "relation": "grasp_of"
+  },
+  {
+   "source": "table",
+   "target": "obj_01",
+   "relation": "supports"
+  },
+  {
+   "source": "table",
+   "target": "obj_02",
+   "relation": "supports"
+  },
+  {
+   "source": "obj_01",
+   "target": "obj_02",
+   "relation": "near",
+   "distance_m": 0.0
+  },
+  {
+   "source": "view",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "view",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_00",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_00",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_04",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_04",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_08",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_08",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_12",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_12",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_17",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_17",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_21",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_21",
+   "target": "obj_02",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_25",
+   "target": "obj_01",
+   "relation": "observes"
+  },
+  {
+   "source": "capture_25",
+   "target": "obj_02",
+   "relation": "observes"
+  }
+ ]
+}

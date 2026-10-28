@@ -1,5 +1,5 @@
 # white mug: convex hull of the lifted points
-# Object-local coordinates in meters.
+# Body-frame coordinates in meters.
 v -0.01661 0.03080 0.03459
 v -0.05075 -0.03964 -0.04190
 v 0.04460 -0.03964 -0.00508

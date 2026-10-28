@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="obj_05">
+  <!-- rubber doorstop: rubber, 150 g. Written by Darius 0.2.0. Link frame: +z up, origin at the capture-time bounding-box center; place it at the pose in world.json -->
+  <mujoco>
+    <compiler meshdir="../meshes/" discardvisual="true" balanceinertia="true" fusestatic="false" />
+  </mujoco>
+  <link name="obj_05">
+    <inertial>
+      <origin xyz="-0.02167 0 -0.00667" rpy="0 0 0" />
+      <mass value="0.15" />
+      <inertia ixx="4.45833e-05" ixy="0" ixz="2.16667e-05" iyy="0.000154167" iyz="0" izz="0.000172083" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/obj_05_visual.obj" />
+      </geometry>
+      <material name="obj_05_color">
+        <color rgba="0.29 0.29 0.29 1" />
+      </material>
+    </visual>
+    <collision name="obj_05">
+      <geometry>
+        <mesh filename="../meshes/obj_05.obj" />
+      </geometry>
+    </collision>
+    <contact>
+      <lateral_friction value="0.9" />
+      <restitution value="0.3" />
+    </contact>
+  </link>
+</robot>

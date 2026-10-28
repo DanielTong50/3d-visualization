@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from scan2sim import geometry
+from darius.core import geometry
 
 
 def noisy_plane(normal, offset, n=4000, noise=0.002, seed=0):

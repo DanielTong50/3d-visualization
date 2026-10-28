@@ -1,0 +1,90 @@
+<mujoco model="sandbox">
+  <!-- Physics sandbox. Written by Darius 0.2.0 from hand-authored. World frame: +z up, meters, the table top is z = 0. -->
+  <compiler angle="radian" meshdir="meshes" autolimits="true" />
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast" />
+  <visual>
+    <global offwidth="1280" offheight="960" />
+  </visual>
+  <default>
+    <default class="object">
+      <geom condim="4" priority="1" />
+    </default>
+    <default class="grasp">
+      <site type="box" size="0.002 0.004 0.012" rgba="0.1 0.6 1 0.5" group="4" />
+    </default>
+  </default>
+  <asset>
+    <mesh name="table" file="table.obj" />
+    <mesh name="obj_05" file="obj_05.obj" />
+  </asset>
+  <worldbody>
+    <light name="key" pos="0.4 -0.6 1.6" dir="-0.25 0.37 -0.9" directional="true" />
+    <geom name="table" type="mesh" mesh="table" rgba="0.659 0.467 0.31 1" friction="1 0.005 0.0001" />
+    <geom name="floor" type="plane" size="5 5 0.1" pos="0 0 -0.74" rgba="0.2 0.21 0.23 1" />
+    <body name="obj_01" pos="-0.22 -0.05 0.04" quat="0.991445 0 0 0.130526">
+      <!-- hardcover book: paper, 1200 g, hand-authored -->
+      <freejoint name="obj_01" />
+      <inertial pos="0 0 0" mass="1.2" fullinertia="0.00305 0.00592 0.00865 0 0 0" />
+      <geom name="obj_01" class="object" friction="0.5 0.005 0.0001" solref="0.004 0.690107" rgba="0.184 0.365 0.541 1" type="box" size="0.12 0.085 0.02" />
+    </body>
+    <body name="obj_02" pos="0.2 0.12 0.065" quat="0.996195 0 0 -0.087156">
+      <!-- tissue box: cardboard, 150 g, hand-authored -->
+      <freejoint name="obj_02" />
+      <inertial pos="0 0 0" mass="0.15" fullinertia="0.000455499 0.00133006 0.0014576 0 0 0" />
+      <geom name="obj_02" class="object" friction="0.45 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.424 0.765 0.725 1" type="box" size="0.12 0.06 0.045" />
+      <site name="obj_02/grasp_0" class="grasp" pos="0.00321 0 -0.00191" quat="1.11022e-16 1 0 0" />
+      <site name="obj_02/grasp_1" class="grasp" pos="-0.00827 0 0.01984" quat="1.11022e-16 1 0 0" />
+      <site name="obj_02/grasp_2" class="grasp" pos="-0.02216 0 2e-05" quat="0 0 1 0" />
+      <site name="obj_02/grasp_3" class="grasp" pos="-0.00629 0 -0.02608" quat="1.11022e-16 1 0 0" />
+      <site name="obj_02/grasp_4" class="grasp" pos="0.03061 0 -0.00487" quat="0 0 1 0" />
+      <site name="obj_02/grasp_5" class="grasp" pos="0.01958 0 0.02429" quat="1.11022e-16 1 0 0" />
+      <site name="obj_02/grasp_6" class="grasp" pos="0.02448 0 -0.02943" quat="0 0 1 0" />
+      <site name="obj_02/grasp_7" class="grasp" pos="-0.03342 0 0.02518" quat="0 0 1 0" />
+    </body>
+    <body name="obj_03" pos="0.02 -0.13 0.07" quat="1 0 0 0">
+      <!-- coffee mug: ceramic, 330 g, hand-authored -->
+      <freejoint name="obj_03" />
+      <inertial pos="0 0 0" mass="0.33" fullinertia="0.000638106 0.000638106 0.000441186 0 0 0" />
+      <geom name="obj_03" class="object" friction="0.55 0.005 0.0001" solref="0.00492615 0.516931" rgba="0.894 0.341 0.18 1" type="cylinder" size="0.042 0.05" />
+      <site name="obj_03/grasp_0" class="grasp" pos="0.00078 -0.00012 -0.00019" quat="0 0.0735645 0.99729 0" />
+      <site name="obj_03/grasp_1" class="grasp" pos="0.00052 0.00013 -0.00068" quat="1.11864e-16 0.99248 0.12241 -1.35903e-17" />
+      <site name="obj_03/grasp_2" class="grasp" pos="-0.00035 -0.00058 0.00066" quat="0 0.870087 0.492899 0" />
+      <site name="obj_03/grasp_3" class="grasp" pos="0.00064 -0.00106 0.00071" quat="0 0.870087 -0.492899 0" />
+      <site name="obj_03/grasp_4" class="grasp" pos="0.00026 0.00175 -0.00085" quat="1.45033e-16 -0.653173 0.757209 0" />
+      <site name="obj_03/grasp_5" class="grasp" pos="-0.00058 -0.00043 -0.00274" quat="0 0.949528 0.313681 0" />
+      <site name="obj_03/grasp_6" class="grasp" pos="-0.00097 0.00072 -0.00483" quat="0 0.949528 -0.313681 0" />
+      <site name="obj_03/grasp_7" class="grasp" pos="0.00023 -0.00014 0.00652" quat="0 0.963776 -0.266712 0" />
+    </body>
+    <body name="obj_04" pos="-0.02 0.02 0.25" quat="1 0 0 0">
+      <!-- rubber ball: rubber, 60 g, hand-authored -->
+      <freejoint name="obj_04" />
+      <inertial pos="0 0 0" mass="0.06" fullinertia="4.36654e-05 4.36654e-05 4.36654e-05 0 0 0" />
+      <geom name="obj_04" class="object" friction="0.8 0.005 0.0001" solref="0.0492909 0.0516623" rgba="0.953 0.776 0.137 1" type="sphere" size="0.035" />
+      <site name="obj_04/grasp_0" class="grasp" pos="-8e-05 0.0001 -0.00015" quat="0 0.449209 0.893427 0" />
+      <site name="obj_04/grasp_1" class="grasp" pos="1e-05 2e-05 -0.00035" quat="0 -0.449209 0.893427 0" />
+      <site name="obj_04/grasp_2" class="grasp" pos="-0.00039 7e-05 0.0003" quat="0 0.996094 -0.0883034 0" />
+      <site name="obj_04/grasp_3" class="grasp" pos="8e-05 0.00024 -0.00049" quat="0.015632 -0.629845 0.776325 -0.019268" />
+      <site name="obj_04/grasp_4" class="grasp" pos="0.00022 0.00013 0.00013" quat="0.0113399 0.288783 -0.95659 -0.0375644" />
+      <site name="obj_04/grasp_5" class="grasp" pos="0.00011 -0.00033 0.0001" quat="0.0340083 0.803066 -0.594386 -0.0251709" />
+      <site name="obj_04/grasp_6" class="grasp" pos="0.00042 0.00014 0.00055" quat="0.0404861 0.992771 0.112896 0.00460397" />
+      <site name="obj_04/grasp_7" class="grasp" pos="-0.00029 0.0001 0.00096" quat="0.0113399 0.288783 0.95659 0.0375644" />
+    </body>
+    <body name="obj_05" pos="-0.05 0.16 0.04" quat="0.976296 0 0 0.21644">
+      <!-- rubber doorstop: rubber, 150 g, hand-authored -->
+      <freejoint name="obj_05" />
+      <inertial pos="-0.02167 0 -0.00667" mass="0.15" fullinertia="4.45833e-05 0.000154167 0.000172083 0 2.16667e-05 0" />
+      <geom name="obj_05" class="object" friction="0.9 0.005 0.0001" solref="0.00711591 0.357857" rgba="0.29 0.29 0.29 1" type="mesh" mesh="obj_05" />
+      <site name="obj_05/grasp_0" class="grasp" pos="-0.02122 0 -0.00692" quat="1.11022e-16 1 0 0" />
+      <site name="obj_05/grasp_1" class="grasp" pos="-0.02514 0 0.00574" quat="1.11022e-16 1 0 0" />
+      <site name="obj_05/grasp_2" class="grasp" pos="-0.00835 0 -0.01003" quat="0 0 1 0" />
+      <site name="obj_05/grasp_3" class="grasp" pos="-0.03601 0 -0.00355" quat="0 0 1 0" />
+      <site name="obj_05/grasp_4" class="grasp" pos="-0.0379 0 0.00941" quat="1.11022e-16 1 0 0" />
+      <site name="obj_05/grasp_5" class="grasp" pos="0.00329 0 -0.00314" quat="1.11022e-16 1 0 0" />
+      <site name="obj_05/grasp_6" class="grasp" pos="-0.04701 0 -0.01116" quat="1.11022e-16 1 0 0" />
+      <site name="obj_05/grasp_7" class="grasp" pos="-0.04896 0 0.00207" quat="1.11022e-16 1 0 0" />
+    </body>
+  </worldbody>
+  <keyframe>
+    <key name="capture" qpos="-0.22 -0.05 0.04 0.991445 0 0 0.130526 0.2 0.12 0.065 0.996195 0 0 -0.087156 0.02 -0.13 0.07 1 0 0 0 -0.02 0.02 0.25 1 0 0 0 -0.05 0.16 0.04 0.976296 0 0 0.21644" />
+  </keyframe>
+</mujoco>

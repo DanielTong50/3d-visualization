@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="obj_01">
+  <!-- hardcover book: paper, 1200 g. Written by Darius 0.2.0. Link frame: +z up, origin at the capture-time bounding-box center; place it at the pose in world.json -->
+  <mujoco>
+    <compiler meshdir="../meshes/" discardvisual="true" balanceinertia="true" fusestatic="false" />
+  </mujoco>
+  <link name="obj_01">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1.2" />
+      <inertia ixx="0.00305" ixy="0" ixz="0" iyy="0.00592" iyz="0" izz="0.00865" />
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.24 0.17 0.04" />
+      </geometry>
+      <material name="obj_01_color">
+        <color rgba="0.184 0.365 0.541 1" />
+      </material>
+    </visual>
+    <collision name="obj_01">
+      <geometry>
+        <box size="0.24 0.17 0.04" />
+      </geometry>
+    </collision>
+    <contact>
+      <lateral_friction value="0.5" />
+      <restitution value="0.05" />
+    </contact>
+  </link>
+</robot>

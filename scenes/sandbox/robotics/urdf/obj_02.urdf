@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="obj_02">
+  <!-- tissue box: cardboard, 150 g. Written by Darius 0.2.0. Link frame: +z up, origin at the capture-time bounding-box center; place it at the pose in world.json -->
+  <mujoco>
+    <compiler meshdir="../meshes/" discardvisual="true" balanceinertia="true" fusestatic="false" />
+  </mujoco>
+  <link name="obj_02">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.15" />
+      <inertia ixx="0.000455499" ixy="0" ixz="0" iyy="0.00133006" iyz="0" izz="0.0014576" />
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.24 0.12 0.09" />
+      </geometry>
+      <material name="obj_02_color">
+        <color rgba="0.424 0.765 0.725 1" />
+      </material>
+    </visual>
+    <collision name="obj_02">
+      <geometry>
+        <box size="0.24 0.12 0.09" />
+      </geometry>
+    </collision>
+    <contact>
+      <lateral_friction value="0.45" />
+      <restitution value="0.1" />
+    </contact>
+  </link>
+</robot>

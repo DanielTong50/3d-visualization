@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<robot name="obj_01">
+  <!-- dress shoe: leather, 512 g. Written by Darius 0.2.0. Link frame: +z up, origin at the capture-time bounding-box center; place it at the pose in world.json -->
+  <mujoco>
+    <compiler meshdir="../meshes/" discardvisual="true" balanceinertia="true" fusestatic="false" />
+  </mujoco>
+  <link name="obj_01">
+    <inertial>
+      <origin xyz="0.00121 0.00707 -0.00561" rpy="0 0 0" />
+      <mass value="0.5117" />
+      <inertia ixx="0.00359496" ixy="-0.000493362" ixz="-1.24113e-05" iyy="0.00149224" iyz="-0.000480182" izz="0.00393883" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/obj_01_visual.obj" />
+      </geometry>
+      <material name="obj_01_color">
+        <color rgba="0.847 0.62 0.42 1" />
+      </material>
+    </visual>
+    <collision name="obj_01_part0">
+      <geometry>
+        <mesh filename="../meshes/obj_01_part0.obj" />
+      </geometry>
+    </collision>
+    <collision name="obj_01_part1">
+      <geometry>
+        <mesh filename="../meshes/obj_01_part1.obj" />
+      </geometry>
+    </collision>
+    <collision name="obj_01_part2">
+      <geometry>
+        <mesh filename="../meshes/obj_01_part2.obj" />
+      </geometry>
+    </collision>
+    <collision name="obj_01_part3">
+      <geometry>
+        <mesh filename="../meshes/obj_01_part3.obj" />
+      </geometry>
+    </collision>
+    <collision name="obj_01_part4">
+      <geometry>
+        <mesh filename="../meshes/obj_01_part4.obj" />
+      </geometry>
+    </collision>
+    <collision name="obj_01_part5">
+      <geometry>
+        <mesh filename="../meshes/obj_01_part5.obj" />
+      </geometry>
+    </collision>
+    <collision name="obj_01_part6">
+      <geometry>
+        <mesh filename="../meshes/obj_01_part6.obj" />
+      </geometry>
+    </collision>
+    <collision name="obj_01_part7">
+      <geometry>
+        <mesh filename="../meshes/obj_01_part7.obj" />
+      </geometry>
+    </collision>
+    <contact>
+      <lateral_friction value="0.6" />
+      <restitution value="0.1" />
+    </contact>
+  </link>
+</robot>

@@ -6,13 +6,16 @@ import { defineConfig, searchForWorkspaceRoot, type Plugin } from 'vite';
 
 const SCENES_DIR = fileURLToPath(new URL('../scenes', import.meta.url));
 // The materials table is shared with the pipeline; the dev server may read only that folder of it.
-const SHARED_DATA_DIR = fileURLToPath(new URL('../pipeline/scan2sim/data', import.meta.url));
+const SHARED_DATA_DIR = fileURLToPath(new URL('../pipeline/darius/data', import.meta.url));
 
 const CONTENT_TYPES: Record<string, string> = {
   '.json': 'application/json',
   '.obj': 'text/plain',
   '.ply': 'application/octet-stream',
   '.splat': 'application/octet-stream',
+  '.spz': 'application/octet-stream',
+  '.xml': 'application/xml',
+  '.zip': 'application/zip',
   '.glb': 'model/gltf-binary',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
@@ -25,7 +28,7 @@ const CONTENT_TYPES: Record<string, string> = {
  */
 function scenesFolder(): Plugin {
   return {
-    name: 'scan2sim-scenes-folder',
+    name: 'darius-scenes-folder',
     configureServer(server) {
       server.middlewares.use('/scenes', (req, res, next) => {
         let file: string;

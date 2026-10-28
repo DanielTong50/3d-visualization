@@ -30,7 +30,7 @@ jobs:
       - run: npm ci
       - run: npm run build -- --base=/${{ github.event.repository.name }}/
         env:
-          VITE_API_URL: https://danieltong12345--scan2sim-api.us-east.modal.run
+          VITE_API_URL: https://danieltong12345--darius-api.us-east.modal.run
       - uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/dist

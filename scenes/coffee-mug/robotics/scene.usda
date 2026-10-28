@@ -1,0 +1,189 @@
+#usda 1.0
+(
+    doc = "Coffee mug. Written by Darius 0.2.0 from Objectron cup/batch-5/39, Google. +z up, meters, table top at z = 0."
+    defaultPrim = "World"
+    metersPerUnit = 1
+    kilogramsPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "World"
+{
+    def PhysicsScene "PhysicsScene"
+    {
+        vector3f physics:gravityDirection = (0, 0, -1)
+        float physics:gravityMagnitude = 9.81
+    }
+
+    def Scope "PhysicsMaterials"
+    {
+        def Material "table" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0
+            float physics:staticFriction = 0
+            float physics:restitution = 0
+            uniform token physxMaterial:frictionCombineMode = "max"
+            uniform token physxMaterial:restitutionCombineMode = "max"
+        }
+        def Material "obj_01" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "PhysxMaterialAPI"]
+        )
+        {
+            float physics:dynamicFriction = 0.45
+            float physics:staticFriction = 0.45
+            float physics:restitution = 0.15
+            uniform token physxMaterial:frictionCombineMode = "max"
+            uniform token physxMaterial:restitutionCombineMode = "max"
+        }
+    }
+
+    def Mesh "Table" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI", "PhysicsMeshCollisionAPI"]
+    )
+    {
+        uniform token physics:approximation = "convexHull"
+        int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+        int[] faceVertexIndices = [0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 7, 0, 7, 8, 0, 8, 9, 0, 9, 10, 0, 10, 11, 12, 14, 13, 12, 15, 14, 12, 16, 15, 12, 17, 16, 12, 18, 17, 12, 19, 18, 12, 20, 19, 12, 21, 20, 12, 22, 21, 12, 23, 22, 0, 12, 13, 0, 13, 1, 1, 13, 14, 1, 14, 2, 2, 14, 15, 2, 15, 3, 3, 15, 16, 3, 16, 4, 4, 16, 17, 4, 17, 5, 5, 17, 18, 5, 18, 6, 6, 18, 19, 6, 19, 7, 7, 19, 20, 7, 20, 8, 8, 20, 21, 8, 21, 9, 9, 21, 22, 9, 22, 10, 10, 22, 23, 10, 23, 11, 11, 23, 12, 11, 12, 0]
+        point3f[] points = [(0.18, 0.14, 0), (0.1, 0.14, 0), (-0.06, 0.1, 0), (-0.1, 0.08, 0), (-0.18, -0, 0), (-0.18, -0.08, 0), (-0.1, -0.14, 0), (-0.06, -0.16, 0), (0.14, -0.16, 0), (0.16, -0.14, 0), (0.2, -0.08, 0), (0.2, -0.06, 0), (0.18, 0.14, -0.04), (0.1, 0.14, -0.04), (-0.06, 0.1, -0.04), (-0.1, 0.08, -0.04), (-0.18, -0, -0.04), (-0.18, -0.08, -0.04), (-0.1, -0.14, -0.04), (-0.06, -0.16, -0.04), (0.14, -0.16, -0.04), (0.16, -0.14, -0.04), (0.2, -0.08, -0.04), (0.2, -0.06, -0.04)]
+        uniform token subdivisionScheme = "none"
+        color3f[] primvars:displayColor = [(0.608, 0.573, 0.549)]
+        rel material:binding:physics = </World/PhysicsMaterials/table>
+    }
+
+    def Cube "Floor" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        double size = 1
+        double3 xformOp:translate = (0, 0, -0.8)
+        float3 xformOp:scale = (10, 10, 0.1)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        color3f[] primvars:displayColor = [(0.2, 0.21, 0.23)]
+        rel material:binding:physics = </World/PhysicsMaterials/table>
+    }
+
+    def Scope "Objects"
+    {
+        def Xform "obj_01" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+            doc = "coffee mug: ceramic, 356 g, estimated"
+        )
+        {
+            double3 xformOp:translate = (0.0201, -0.0361, 0.0435)
+            quatf xformOp:orient = (1, 0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float physics:mass = 0.3555
+            point3f physics:centerOfMass = (0.00228, 0.00422, -0.00057)
+            float3 physics:diagonalInertia = (0.000556902, 0.000698599, 0.000703578)
+            quatf physics:principalAxes = (0.291561, 0.547518, 0.603789, 0.500654)
+            string darius:label = "coffee mug"
+            string darius:material = "ceramic"
+
+            def Mesh "collision" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "MaterialBindingAPI", "PhysicsMeshCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "convexHull"
+                int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+                int[] faceVertexIndices = [22, 0, 3, 7, 8, 3, 26, 5, 22, 10, 0, 22, 10, 22, 5, 2, 5, 26, 19, 6, 29, 19, 13, 6, 21, 1, 7, 21, 7, 29, 21, 11, 1, 21, 29, 11, 28, 7, 1, 28, 8, 7, 27, 0, 10, 27, 17, 0, 20, 1, 11, 20, 13, 4, 20, 11, 13, 15, 5, 2, 15, 10, 5, 15, 9, 10, 16, 3, 8, 25, 13, 0, 25, 4, 13, 25, 17, 4, 25, 0, 17, 30, 11, 29, 30, 13, 11, 30, 29, 6, 30, 6, 13, 14, 29, 7, 14, 19, 29, 14, 7, 3, 14, 3, 0, 14, 0, 13, 14, 13, 19, 18, 9, 17, 18, 17, 27, 18, 10, 9, 18, 27, 10, 23, 3, 16, 23, 12, 26, 23, 22, 3, 23, 26, 22, 31, 2, 26, 31, 26, 12, 24, 23, 16, 24, 12, 23, 24, 16, 31, 24, 31, 12, 31, 1, 20, 31, 28, 1, 31, 17, 9, 31, 4, 17, 31, 9, 15, 31, 8, 28, 31, 20, 4, 31, 15, 2, 31, 16, 8]
+                point3f[] points = [(-0.05032, 0.01518, 0.04062), (0.02114, -0.05819, -0.04155), (0.02149, 0.05108, -0.04155), (0.05032, 0.00622, 0.03956), (-0.04106, -0.00075, -0.04155), (0.00901, 0.05949, 0.03515), (-0.00717, -0.03267, 0.03601), (0.0375, -0.04519, 0.01338), (0.04058, 0.00793, -0.04155), (-0.0285, 0.04242, -0.04155), (-0.0275, 0.0474, 0.04005), (-0.00037, -0.05704, 0.00677), (0.03892, 0.04087, 0.0386), (-0.03986, -0.01771, 0.03753), (0.03649, -0.01926, 0.03858), (-0.00485, 0.0546, -0.04155), (0.04117, 0.03371, -0.04155), (-0.04467, 0.02517, -0.04155), (-0.03826, 0.03706, 0.02187), (0.0161, -0.0319, 0.03658), (-0.00094, -0.0544, -0.04155), (0.02207, -0.05949, 0.0067), (-0.00808, 0.04949, 0.04155), (0.04696, 0.02444, 0.03998), (0.04349, 0.03456, 0.02208), (-0.04949, -0.00278, 0.03844), (0.02458, 0.05263, 0.03995), (-0.0399, 0.03544, 0.03954), (0.03037, -0.04496, -0.04155), (0.01549, -0.05448, 0.01983), (-0.02166, -0.02874, 0.03625), (0.03329, 0.04431, -0.04155)]
+                uniform token subdivisionScheme = "none"
+                color3f[] primvars:displayColor = [(0.827, 0.698, 0.482)]
+                rel material:binding:physics = </World/PhysicsMaterials/obj_01>
+            }
+        }
+    }
+
+    def Scope "Cameras"
+    {
+        def Camera "view"
+        {
+            double3 xformOp:translate = (-0.1016, 0.1082, 0.2416)
+            quatf xformOp:orient = (0.318634, 0.127503, -0.348951, -0.872037)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float focalLength = 24.7615
+            float verticalAperture = 20.955
+            float horizontalAperture = 15.7162
+            float2 clippingRange = (0.01, 100)
+        }
+
+        def Camera "capture_00"
+        {
+            double3 xformOp:translate = (0.04659, -0.23962, 0.2817)
+            quatf xformOp:orient = (0.957402, 0.287687, 0.0213546, 0.0127138)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float focalLength = 25.0842
+            float verticalAperture = 20.955
+            float horizontalAperture = 15.7162
+            float2 clippingRange = (0.01, 100)
+        }
+
+        def Camera "capture_08"
+        {
+            double3 xformOp:translate = (-0.03307, -0.22483, 0.28497)
+            quatf xformOp:orient = (0.947008, 0.273799, -0.0262408, -0.165895)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float focalLength = 25.0842
+            float verticalAperture = 20.955
+            float horizontalAperture = 15.7162
+            float2 clippingRange = (0.01, 100)
+        }
+
+        def Camera "capture_16"
+        {
+            double3 xformOp:translate = (-0.11321, -0.16313, 0.28591)
+            quatf xformOp:orient = (0.878516, 0.237651, -0.0946674, -0.403447)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float focalLength = 25.0842
+            float verticalAperture = 20.955
+            float horizontalAperture = 15.7162
+            float2 clippingRange = (0.01, 100)
+        }
+
+        def Camera "capture_24"
+        {
+            double3 xformOp:translate = (-0.15487, -0.01017, 0.25195)
+            quatf xformOp:orient = (0.632186, 0.17633, -0.191356, -0.729816)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float focalLength = 25.0842
+            float verticalAperture = 20.955
+            float horizontalAperture = 15.7162
+            float2 clippingRange = (0.01, 100)
+        }
+
+        def Camera "capture_31"
+        {
+            double3 xformOp:translate = (-0.10179, 0.09339, 0.22674)
+            quatf xformOp:orient = (0.351451, 0.105973, -0.246277, -0.896995)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float focalLength = 25.0842
+            float verticalAperture = 20.955
+            float horizontalAperture = 15.7162
+            float2 clippingRange = (0.01, 100)
+        }
+
+        def Camera "capture_39"
+        {
+            double3 xformOp:translate = (-0.04169, 0.16051, 0.25731)
+            quatf xformOp:orient = (0.170582, 0.0122753, -0.279483, -0.944797)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float focalLength = 25.0842
+            float verticalAperture = 20.955
+            float horizontalAperture = 15.7162
+            float2 clippingRange = (0.01, 100)
+        }
+
+        def Camera "capture_47"
+        {
+            double3 xformOp:translate = (-0.00424, 0.15371, 0.25289)
+            quatf xformOp:orient = (0.108322, -0.014432, -0.267944, -0.957217)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+            float focalLength = 25.0842
+            float verticalAperture = 20.955
+            float horizontalAperture = 15.7162
+            float2 clippingRange = (0.01, 100)
+        }
+    }
+}

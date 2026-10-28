@@ -182,7 +182,7 @@ describe('sandbox scene', () => {
     physics.moveGrabTarget(lifted);
     simulate(physics, 1);
     const held = mug.translation();
-    expect(Math.hypot(held.x - lifted.x, held.y + 0.05 - lifted.y, held.z - lifted.z)).toBeLessThan(0.01);
+    expect(Math.hypot(held.x - lifted.x, held.y + 0.05 - lifted.y, held.z - lifted.z)).toBeLessThan(0.02); // hangs from a spring: a 330 g mug sags about 8 mm
 
     // Flick: sweep the pointer 30 cm sideways in 0.1 s, then let go.
     for (let i = 1; i <= 12; i++) {
@@ -215,12 +215,12 @@ describe('holding objects', () => {
       const v = body.linvel();
       fastest = Math.max(fastest, Math.hypot(v.x, v.y, v.z));
     };
-    // Carry it up and sideways over half a second, then hold still for a second.
+    // Carry it up and sideways over half a second, then hold still for two seconds.
     for (let i = 1; i <= 60; i++) {
       physics.moveGrabTarget({ x: grabPoint.x + 0.002 * i, y: grabPoint.y + 0.001 * i, z: grabPoint.z });
       simulate(physics, 1 / PHYSICS_HZ, track);
     }
-    simulate(physics, 1, track);
+    simulate(physics, 2, track); // a held object swings a little, like a real one, then settles
     expect(fastest).toBeLessThan(1);
     const still = body.linvel();
     expect(Math.hypot(still.x, still.y, still.z)).toBeLessThan(0.05);
@@ -232,13 +232,60 @@ describe('holding objects', () => {
   });
 });
 
+describe('carrying', () => {
+  it('holds a heavy object as tightly as a light one', () => {
+    const physics = new PhysicsWorld(sandbox);
+    simulate(physics, 2);
+    const sag = (id: string, mass: number) => {
+      physics.updateObject(id, { mass_kg: mass });
+      const { body } = find(physics, id);
+      const p = body.translation();
+      const grabPoint = { x: p.x, y: p.y, z: p.z };
+      physics.grabAt(body, grabPoint, true);
+      physics.moveGrabTarget({ ...grabPoint, y: grabPoint.y + 0.2 });
+      simulate(physics, 1.5);
+      const held = body.translation();
+      physics.release();
+      return grabPoint.y + 0.2 - held.y;
+    };
+    const light = sag('obj_02', 0.15);
+    const heavy = sag('obj_01', 20); // the book, made 20 kg
+    expect(light).toBeLessThan(0.02);
+    expect(heavy).toBeLessThan(0.02);
+    physics.dispose();
+  });
+
+  it('keeps a carried object upright, turns it on request, and throws it with the hand', () => {
+    const physics = new PhysicsWorld(sandbox);
+    simulate(physics, 2);
+    const { body } = find(physics, 'obj_05'); // the doorstop, held by its thin end
+    const p = body.translation();
+    const grabPoint = { x: p.x + 0.05, y: p.y, z: p.z };
+    const before = body.rotation();
+    physics.grabAt(body, grabPoint, true);
+    physics.moveGrabTarget({ ...grabPoint, y: grabPoint.y + 0.15 });
+    simulate(physics, 1);
+    const carried = body.rotation();
+    expect(Math.abs(carried.x * before.x + carried.y * before.y + carried.z * before.z + carried.w * before.w)).toBeCloseTo(1, 4);
+    physics.turnHeld(Math.PI / 2);
+    const turned = body.rotation();
+    expect(Math.abs(turned.x * before.x + turned.y * before.y + turned.z * before.z + turned.w * before.w)).toBeCloseTo(Math.SQRT1_2, 3);
+    physics.release({ x: 2, y: 0.5, z: 0 });
+    const v = body.linvel();
+    expect(v.x).toBeCloseTo(2, 5);
+    simulate(physics, 0.05);
+    expect(body.angvel().y).toBeDefined(); // rotations are free again once let go
+    physics.dispose();
+  });
+});
+
 describe('scene variations', () => {
   it('stands a box in for a convex hull that is flat', () => {
     const flat = new Float32Array([0, 0, 0, 0.1, 0, 0, 0, 0, 0.1, 0.1, 0, 0.1]); // four points in one plane
     const physics = new PhysicsWorld({ ...sandbox, hullPoints: new Map([['obj_05', flat]]) });
     const doorstop = find(physics, 'obj_05');
-    expect(doorstop.boxFallback).toBe(true);
-    expect(physics.warnings).toEqual(['obj_05 (rubber doorstop): its convex hull is flat, so a box stands in']);
+    expect(doorstop.shape).toBe('box-fallback');
+    expect(physics.warnings).toEqual(['obj_05 (rubber doorstop): its collision shape was missing or flat, so a box stands in']);
     simulate(physics, 2);
     expect(doorstop.body.translation().y).toBeCloseTo(0.02, 2); // a 4 cm tall box resting on the table
     physics.dispose();
@@ -257,20 +304,28 @@ describe('scene variations', () => {
 });
 
 describe.skipIf(!existsSync(SCAN_DIR))('real scan (scenes/objectron-mugs)', () => {
-  it('loads both mugs with their point clouds, and they settle on the table', async () => {
+  it('loads both mugs with their splats (or point clouds), and they settle on the table', async () => {
     const scan = await loadScene(SCAN_DIR, diskFiles);
     expect(scan.warnings).toEqual([]);
     const labels = scan.manifest.objects.map((o) => o.label);
     expect(labels).toHaveLength(2);
     for (const label of labels) expect(label).toMatch(/mug/);
-    for (const object of scan.manifest.objects) {
-      expect(scan.pointClouds.get(object.id)?.getAttribute('position').count).toBe(object.visual?.count);
-      expect(scan.pointClouds.get(object.id)?.hasAttribute('color')).toBe(true);
+    const visuals = [
+      ...scan.manifest.objects.map((o) => [o.id, o.visual] as const),
+      [BACKGROUND, scan.manifest.background.visual] as const,
+    ];
+    for (const [key, visual] of visuals) {
+      if (visual?.type === 'splats') {
+        expect(scan.splatFiles.get(key)?.bytes.byteLength, key).toBeGreaterThan(0);
+      } else {
+        expect(scan.pointClouds.get(key)?.getAttribute('position').count, key).toBe(visual?.count);
+        expect(scan.pointClouds.get(key)?.hasAttribute('color'), key).toBe(true);
+      }
     }
-    expect(scan.pointClouds.get(BACKGROUND)?.getAttribute('position').count).toBe(scan.manifest.background.visual?.count);
 
     const physics = new PhysicsWorld(scan);
     expect(physics.warnings).toEqual([]);
+    for (const { spec, shape } of physics.bodies) expect(shape, `${spec.id} collider`).toBe('as-specified');
     simulate(physics, 3);
     const tableTop = scan.manifest.background.table_plane.point[1];
     for (const { spec, body } of physics.bodies) {
@@ -387,5 +442,94 @@ describe('scene.json checks', () => {
 
   it('rejects a scene with the wrong units', () => {
     expect(() => checkManifest({ ...sandbox.manifest, units: 'feet' })).toThrow('units should be "meters"');
+  });
+
+  it('reads the filmed view, and ignores a broken one with a warning', () => {
+    const view = { position: [0, 0.4, 0.3], target: [0, 0.04, 0], fov_deg: 57 };
+    expect(checkManifest({ ...sandbox.manifest, view }).manifest.view).toEqual(view);
+    expect(checkManifest(sandbox.manifest).manifest.view).toBeNull();
+    const broken = checkManifest({ ...sandbox.manifest, view: { ...view, target: view.position } });
+    expect(broken.manifest.view).toBeNull();
+    expect(broken.warnings).toHaveLength(1);
+  });
+});
+
+describe('scanned tables and shapes', () => {
+  const withOutline = (scene: LoadedScene, polygon: [number, number][]): LoadedScene => ({
+    ...scene,
+    manifest: {
+      ...scene.manifest,
+      background: { ...scene.manifest.background, table_plane: { ...scene.manifest.background.table_plane, polygon_m: polygon } },
+    },
+  });
+
+  it('uses the table outline (polygon_m) as the collider, so objects rest wherever the table is', () => {
+    const scene = variant({ obj_04: placeAt(0.75, 0, 0, 0.035) }); // the ball, past size_m's 0.6 m half-width
+    const outlined = new PhysicsWorld(withOutline(scene, [[-0.6, -0.375], [0.9, -0.375], [0.9, 0.375], [-0.6, 0.375]]));
+    simulate(outlined, 1);
+    expect(find(outlined, 'obj_04').body.translation().y).toBeGreaterThan(0.03);
+    expect(outlined.tableBounds.maxX).toBe(0.9);
+    outlined.dispose();
+    const rectangle = new PhysicsWorld(scene);
+    simulate(rectangle, 1);
+    expect(find(rectangle, 'obj_04').body.translation().y).toBeLessThan(-0.1);
+    rectangle.dispose();
+  });
+
+  it('holds objects up across a many-sided outline, and they slide over it as on a plain table', () => {
+    // A 24-sided ellipse: the table is built from wedges that all meet at its center.
+    const ellipse = Array.from({ length: 24 }, (_, i): [number, number] => {
+      const angle = (2 * Math.PI * i) / 24;
+      return [0.62 * Math.cos(angle), 0.4 * Math.sin(angle)];
+    });
+    const physics = new PhysicsWorld(withOutline(variant({ obj_01: placeAt(-0.3, 0, 0, 0.02) }), ellipse));
+    simulate(physics, 0.3);
+    const { spec, body } = find(physics, 'obj_01');
+    const start = body.translation().x;
+    const v0 = 1.6;
+    body.setLinvel({ x: v0, y: 0, z: 0 }, true);
+    simulate(physics, 2);
+    const slid = body.translation().x - start;
+    const expected = v0 ** 2 / (2 * spec.friction * 9.81);
+    expect(Math.abs(slid - expected) / expected).toBeLessThan(0.08);
+    expect(body.translation().y).toBeCloseTo(0.02, 2); // resting on the top, not sunk into it
+    expect(Math.hypot(body.linvel().x, body.linvel().y, body.linvel().z)).toBeLessThan(0.01);
+    physics.dispose();
+  });
+
+  it('builds convex_parts as one body and shares the mass out by volume', () => {
+    const box = (x0: number, x1: number) => {
+      const v: number[] = [];
+      for (const x of [x0, x1]) for (const y of [-0.02, 0.02]) for (const z of [-0.025, 0.025]) v.push(x, y, z);
+      return new Float32Array(v);
+    };
+    const scene = variant({
+      obj_05: (spec) => ({ ...placeAt(0, 0, 0, 0.02)(spec), collider: { type: 'convex_parts', files: ['a.obj', 'b.obj'] } }),
+    });
+    const physics = new PhysicsWorld({ ...scene, hullParts: new Map([['obj_05', [box(-0.065, 0), box(0, 0.065)]]]) });
+    const { body, shape, spec } = find(physics, 'obj_05');
+    expect(shape).toBe('as-specified');
+    expect(body.numColliders()).toBe(2);
+    expect(body.mass()).toBeCloseTo(spec.mass_kg, 5);
+    expect(body.collider(0).mass()).toBeCloseTo(spec.mass_kg / 2, 5);
+    simulate(physics, 1);
+    expect(body.translation().y).toBeCloseTo(0.02, 2);
+    physics.dispose();
+  });
+
+  it('a poke sends a light ball much further than a heavy book', () => {
+    const physics = new PhysicsWorld(variant({ obj_01: placeAt(-0.3, 0, 0, 0.02), obj_04: placeAt(0.3, 0, 0, 0.035) }));
+    simulate(physics, 0.5);
+    const book = find(physics, 'obj_01').body;
+    const ball = find(physics, 'obj_04').body;
+    const [bookStart, ballStart] = [book.translation(), ball.translation()];
+    physics.poke('obj_01', book.translation(), { x: 0, y: 0, z: -1 });
+    physics.poke('obj_04', ball.translation(), { x: 0, y: 0, z: -1 });
+    simulate(physics, 0.3);
+    const bookMoved = Math.abs(book.translation().z - bookStart.z);
+    const ballMoved = Math.abs(ball.translation().z - ballStart.z);
+    expect(ballMoved).toBeGreaterThan(0.3);
+    expect(ballMoved).toBeGreaterThan(10 * bookMoved);
+    physics.dispose();
   });
 });

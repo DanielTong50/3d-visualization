@@ -1,6 +1,6 @@
-# Design: Scan2Sim
+# Design: Darius
 
-**Status:** v0.3 · **Scope:** single tabletop scenes, rigid bodies
+**Status:** v0.2 (Darius) · **Scope:** single tabletop scenes, rigid bodies, robot-ready exports
 
 ## Problem
 
@@ -19,7 +19,8 @@ only; the result is a frozen shell with no physics. Geometry from video is large
 | Objects are the right size | Height error against metric ground truth (Objectron) |
 | Objects behave like what they are | Mass, friction, restitution plausible per material; heavy, light, bouncy and fragile objects visibly differ |
 | Simulation can be corrected from reality | Friction measured from a real push closes the sim-vs-real slide-distance gap |
-| Usable by non-experts, useful to researchers | Works in a browser on a phone; exports to MuJoCo |
+| Usable by non-experts, useful to researchers | Works in a browser on a phone; exports to MuJoCo, Isaac Sim (USD) and URDF |
+| A scan is a robot environment | Every scene settles in MuJoCo; exported mass, inertia and contact parameters match the manifest; grasp candidates and a scene graph for every object |
 
 ## Non-goals (v1)
 
@@ -27,7 +28,7 @@ only; the result is a frozen shell with no physics. Geometry from video is large
 - **Deformables, liquids, cloth, articulation.** Everything is a rigid body; soft objects get a `soft`
   flag and low restitution.
 - **Transparent or mirror-like objects.** They break multi-view reconstruction.
-- **Photorealistic rendering.** Objects render as colored point clouds; Gaussian splats are future work.
+- **Relighting.** Splats bake in the capture's lighting; moving an object doesn't update its shading or shadows.
 - **Accounts and multi-user sharing.**
 
 ## Users
@@ -35,7 +36,8 @@ only; the result is a frozen shell with no physics. Geometry from video is large
 - **Curious users:** film a desk, then grab, throw and stack the real objects in a browser; tap one to
   see what the system thinks it is and how heavy it is; type "what if someone bumps the table?".
 - **Robotics and ML researchers:** inspect estimated physical parameters and their provenance, compare
-  simulated and real outcomes with numbers, and export the scene to their simulator.
+  simulated and real outcomes with numbers, and load the scene in their simulator (MuJoCo, Isaac Sim,
+  PyBullet), or train in it directly with the Gymnasium-style pushing environment.
 
 ## Experience
 
@@ -63,8 +65,14 @@ as the only contract, and a browser simulator on three.js and Rapier.
 | Majority vote per voxel across views | Per-frame mask projection with depth tests | Each point already has a label from its own pixel; voting removes mask bleed without visibility reasoning |
 | Scale from recognized objects' typical sizes | Reference card in every scene | No setup for the user; multiple objects vote, so one misrecognition doesn't decide it |
 | Mass = hull volume × density × fill fraction | Ask the model for mass | Geometry is measured; the model only supplies material and hollowness; its mass guess is a sanity check |
-| Point-cloud visuals | Meshes, Gaussian splats | Exact correspondence with what was reconstructed; per-object motion is trivial |
+| Gaussian splats, separated by label | Textured meshes | Photo-real from the same cameras; carrying labels through densification makes per-object motion trivial |
+| Convex parts only when they help | Always decompose | Scanned interiors are filled by depth noise; a measured gate avoids paying for parts that change nothing |
 | Rapier (WASM) in the browser | Server-side simulation | Interactive at 120 Hz on phones, no server cost per user |
+| MCMC densification with a fixed budget | Clone-and-split with opacity resets | +2.2 dB median held-out PSNR on the same clips, and a splat count the browser can afford |
+| One robotics model, many writers | A writer per format reading scene.json | MJCF, URDF, USD and the scene graph cannot disagree about a pose, a mass or a grasp |
+| Shell model for hollow objects | Uniform density over the hull | A mug carries its mass in its wall; closed form, no extra geometry |
+| Contact time constant from a fixed natural period | MuJoCo's customary 0.01 s | Low damping ratios (bouncy materials) otherwise gain energy at a 2 ms step |
+| 140 mm parallel-jaw gripper by default | Franka Hand (80 mm) | Most tabletop objects (mugs, shoes, cameras) are 9–14 cm across |
 
 ## Risks
 
@@ -80,7 +88,9 @@ as the only contract, and a browser simulator on three.js and Rapier.
 
 ## Future work
 
-- Gaussian-splat visuals per object (VGGT poses initialize gsplat directly).
+- Relightable appearance, so moved objects cast and receive shadows.
 - Hole filling under moved objects (Muse Image edits of keyframes).
 - Convex decomposition (CoACD) for strongly concave objects.
-- Articulated objects; full rooms; a simulated robot arm practicing in the scanned scene.
+- Articulated objects; full rooms.
+- A simulated arm (MuJoCo Menagerie) in the exported scenes, with grasps executed and verified in simulation.
+- Grasp synthesis on the convex parts instead of the single hull, so handles and rims become graspable.

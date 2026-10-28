@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="obj_01">
+  <!-- dslr camera: plastic, 561 g. Written by Darius 0.2.0. Link frame: +z up, origin at the capture-time bounding-box center; place it at the pose in world.json -->
+  <mujoco>
+    <compiler meshdir="../meshes/" discardvisual="true" balanceinertia="true" fusestatic="false" />
+  </mujoco>
+  <link name="obj_01">
+    <inertial>
+      <origin xyz="0.00661 -0.00246 -0.01182" rpy="0 0 0" />
+      <mass value="0.5611" />
+      <inertia ixx="0.000474796" ixy="-2.96916e-06" ixz="-9.49841e-06" iyy="0.0010381" iyz="1.75475e-05" izz="0.00118884" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="../meshes/obj_01_visual.obj" />
+      </geometry>
+      <material name="obj_01_color">
+        <color rgba="0.071 0.122 0.075 1" />
+      </material>
+    </visual>
+    <collision name="obj_01">
+      <geometry>
+        <mesh filename="../meshes/obj_01.obj" />
+      </geometry>
+    </collision>
+    <contact>
+      <lateral_friction value="0.5" />
+      <restitution value="0.15" />
+    </contact>
+  </link>
+</robot>
