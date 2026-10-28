@@ -70,14 +70,13 @@ def describe_plan(plan: AssemblyPlan) -> str:
     return "\n".join(lines)
 
 
-FRAMES_PROMPT = """These {count} images are consecutive frames, {every:.1f} s apart, of someone assembling
-the furniture below by its manual. The furniture is built step by step in this order; a step is done
-when all of its parts are in place and joined as described (fastening is the last thing; a part only
-held in position is not done).
+FRAMES_PROMPT = """{references}{subject}, {every:.1f} s apart, of someone
+assembling the furniture below by its manual. The furniture is built step by step in this order; a step
+is done when all of its parts are in their place in the assembly as described.
 
 {plan}
 
-For each frame, report:
+For each frame (numbered from 1 among the frames only), report:
 - steps: for every step 1..{steps}, whether it is done in this frame and how sure you are (0.5 = cannot tell
   from this frame; use the build's order: if a later step is clearly done, earlier ones are too).
 - attached: the letters of the parts joined into an assembly (one entry per piece); loose: the letters of
@@ -102,29 +101,57 @@ def to_observation(reading: FrameReading, time_s: float, steps: int) -> Observat
     return Observation(time_s=time_s, step_done=step_done, visible_parts=seen, source="muse-spark")
 
 
+def frames_prompt(plan: AssemblyPlan, count: int, every: float, references: int) -> str:
+    lead = (
+        f"The first {references} images are the manual's step pages, steps 1 to {references} in order: "
+        "they show the assembly at each step, the parts going on drawn white with letters and arrows.\n"
+        if references
+        else ""
+    )
+    if count == 1:
+        subject = "The last image is a frame" if references else "This image is a frame"
+    else:
+        subject = (
+            f"The last {count} images are consecutive frames"
+            if references
+            else f"These {count} images are consecutive frames"
+        )
+    return FRAMES_PROMPT.format(
+        references=lead,
+        subject=subject,
+        every=every,
+        plan=describe_plan(plan),
+        steps=len(plan.steps),
+    )
+
+
 def verify_frames(
     plan: AssemblyPlan,
     frames: Sequence[Frame],
     *,
+    references: Sequence[Image.Image] = (),
     batch: int = 4,
     workers: int = 6,
     effort: str = "low",
     on_batch: Callable[[int, int], None] | None = None,
 ) -> list[FrameReading]:
-    """Read every frame, `batch` consecutive frames per request, requests in parallel."""
+    """Read every frame, `batch` consecutive frames per request, requests in parallel.
+
+    `references` (the manual's step pages, one per step) go first in every request, so the
+    model can compare what it sees with what each step looks like."""
     from ..models import meta_api
 
     if not frames:
         return []
     every = (frames[-1].time_s - frames[0].time_s) / max(1, len(frames) - 1)
-    description = describe_plan(plan)
     chunks = [list(frames[i : i + batch]) for i in range(0, len(frames), batch)]
     done = 0
 
     def read(chunk: list[Frame]) -> list[FrameReading]:
         nonlocal done
-        prompt = FRAMES_PROMPT.format(count=len(chunk), every=every, plan=description, steps=len(plan.steps))
-        result, _ = meta_api.ask_structured(prompt, [f.image for f in chunk], BatchReading, reasoning_effort=effort)
+        prompt = frames_prompt(plan, len(chunk), every, len(references))
+        images = [*references, *(f.image for f in chunk)]
+        result, _ = meta_api.ask_structured(prompt, images, BatchReading, reasoning_effort=effort)
         by_frame = {r.frame: r for r in result.frames}
         # A missing frame reads as "cannot tell": no evidence either way.
         blank = [

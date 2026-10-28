@@ -9,7 +9,7 @@ finished. The video tells when each joint was made, in what order, and how sure 
 from __future__ import annotations
 
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
 import cv2
@@ -128,17 +128,18 @@ def analyze(
     video: Path,
     plan: AssemblyPlan,
     *,
+    references: Sequence[Image.Image] = (),
     every_s: float = 1.0,
     batch: int = 4,
     workers: int = 6,
     on_batch: Callable[[int, int], None] | None = None,
 ) -> VideoAnalysis:
-    """Sample, read and decode a build video against its plan."""
+    """Sample, read and decode a build video against its plan (and its manual's step pages)."""
     from ..models.meta_api import MUSE_SPARK_MODEL
 
     started = time.monotonic()
     frames, duration = sample_frames(video, every_s)
-    readings = verify_frames(plan, frames, batch=batch, workers=workers, on_batch=on_batch)
+    readings = verify_frames(plan, frames, references=references, batch=batch, workers=workers, on_batch=on_batch)
     analysis = analyze_readings(plan, frames, readings, MUSE_SPARK_MODEL, every_s, duration)
     analysis.seconds = round(time.monotonic() - started, 2)
     return analysis
