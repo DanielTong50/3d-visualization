@@ -4,9 +4,11 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from scan2sim import geometry, meta_api, segment
-from scan2sim.package import write_obj, write_ply
-from scan2sim.schema import Scene
+from darius.core import geometry
+from darius.models import meta_api
+from darius.pipeline import segment
+from darius.scene.io import write_obj, write_ply
+from darius.scene.schema import Scene
 
 REPO = Path(__file__).resolve().parents[2]
 SCENES = sorted((REPO / "scenes").glob("*/scene.json"))
@@ -69,7 +71,7 @@ def test_box_local_masks_are_pasted_at_their_box():
     class Record:
         mask, bounds = Mask(), Bounds()
 
-    import scan2sim.meta_api as api
+    import darius.models.meta_api as api
 
     original = api.decode_mask_to_raster
     api.decode_mask_to_raster = lambda mask: bytes([1, 0, 1, 1])
@@ -83,3 +85,20 @@ def test_box_local_masks_are_pasted_at_their_box():
 def test_schema_file_is_current():
     committed = json.loads((REPO / "docs" / "scene.schema.json").read_text())
     assert committed == Scene.model_json_schema()
+
+
+def test_the_table_reaches_under_every_object():
+    from scipy.spatial import Delaunay
+
+    from darius.pipeline.package import TABLE_MARGIN_M, table_polygon
+
+    rng = np.random.default_rng(0)
+    table = np.column_stack([rng.uniform(-0.2, 0.2, 4000), np.zeros(4000), rng.uniform(-0.1, 0.1, 4000)])
+    towel = np.array([[0.35, 0.05], [0.45, 0.05], [0.45, 0.15], [0.35, 0.15]])  # off the dense region
+    polygon = table_polygon(table, band=0.002, cell=0.02, footprints=[towel])
+    center = towel.mean(axis=0)
+    radius = np.linalg.norm(towel - center, axis=1).max()
+    probes = center + (towel - center) * (1 + 0.9 * TABLE_MARGIN_M / radius)  # just inside the margin
+    assert (Delaunay(polygon).find_simplex(probes) >= 0).all()
+    area = 0.5 * np.sum(polygon[:, 0] * np.roll(polygon[:, 1], -1) - np.roll(polygon[:, 0], -1) * polygon[:, 1])
+    assert area < 0  # same winding as before: counter-clockwise seen from +y means clockwise in (x, z)
