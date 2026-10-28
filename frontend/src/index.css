@@ -273,3 +273,111 @@ p {
   color: var(--text-3);
 }
 
+/* ---------- The assembly graph ---------- */
+
+.graph {
+  position: relative;
+}
+
+.graph-svg {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  cursor: grab;
+  touch-action: none;
+}
+
+.graph-floor line {
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 0.25;
+}
+
+.graph-edge {
+  stroke-width: 0.7;
+  stroke-linecap: round;
+  transition: stroke 0.4s var(--ease), opacity 0.4s var(--ease);
+}
+
+.graph-edge.is-future {
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-dasharray: 1.2 1.6;
+}
+
+.graph-edge.is-done {
+  stroke: rgba(240, 240, 235, 0.78);
+}
+
+.graph-edge.is-active {
+  stroke: var(--guide);
+  stroke-width: 1.1;
+  stroke-dasharray: 2.4 1.4;
+  animation: flow 0.9s linear infinite;
+  filter: drop-shadow(0 0 1.5px rgba(255, 106, 26, 0.9));
+}
+
+.graph-edge.is-wrong {
+  stroke: var(--danger);
+  stroke-dasharray: 1 1;
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -3.8;
+  }
+}
+
+.graph-node circle {
+  fill: #15171c;
+  stroke: rgba(255, 255, 255, 0.28);
+  stroke-width: 0.45;
+  transition: fill 0.4s var(--ease), stroke 0.4s var(--ease);
+}
+
+.graph-node text {
+  font: 600 3.1px var(--mono);
+  text-anchor: middle;
+  fill: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+
+.graph-node.is-done circle {
+  fill: #f0f0eb;
+  stroke: #ffffff;
+}
+
+.graph-node.is-done text {
+  fill: #0b0b0b;
+}
+
+.graph-node.is-active circle {
+  fill: var(--guide);
+  stroke: #ffd2b8;
+}
+
+.graph-node.is-active text {
+  fill: #160800;
+}
+
+.graph-halo {
+  fill: none !important;
+  stroke: var(--guide) !important;
+  stroke-width: 0.35 !important;
+  opacity: 0.6;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.graph-node.is-hover circle {
+  stroke: var(--track);
+  stroke-width: 0.8;
+}
+
+.graph-tip {
+  position: absolute;
+  left: 8px;
+  bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+}
+
