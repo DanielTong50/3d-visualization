@@ -1327,3 +1327,155 @@ p {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ---------- Video analyzer ---------- */
+
+.video-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  gap: 20px;
+  padding: 22px clamp(16px, 3vw, 40px) 60px;
+  align-items: start;
+}
+
+.video-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.video-frame {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px var(--line);
+}
+
+.video-frame video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  cursor: pointer;
+}
+
+.video-hud {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.video-hud .chip {
+  background: rgba(8, 9, 12, 0.66);
+  backdrop-filter: blur(8px);
+}
+
+.video-reading {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  min-width: 250px;
+  padding: 10px 12px;
+}
+
+.reading-letters {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 6px 10px;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.reading-letters > span:nth-child(even) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.letter.is-on {
+  background: var(--track);
+  color: #001018;
+}
+
+.heatmap {
+  display: block;
+  width: 100%;
+  margin: 6px 0 2px;
+  cursor: crosshair;
+  user-select: none;
+}
+
+.hm-label,
+.hm-tick {
+  font: 500 11px var(--mono);
+  fill: var(--text-3);
+  text-anchor: middle;
+}
+
+.hm-cell {
+  fill: var(--track);
+}
+
+.hm-path {
+  fill: none;
+  stroke: var(--guide);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px rgba(255, 106, 26, 0.8));
+}
+
+.hm-truth line {
+  stroke: var(--done);
+  stroke-width: 2;
+}
+
+.hm-found {
+  fill: var(--guide);
+  stroke: #160800;
+  stroke-width: 1;
+}
+
+.hm-playhead {
+  stroke: #fff;
+  stroke-width: 1.5;
+  opacity: 0.9;
+}
+
+.video-side {
+  position: sticky;
+  top: 86px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.scores b.plain::after {
+  content: none;
+}
+
+.chip.done {
+  border-color: rgba(52, 211, 153, 0.45);
+  color: #b9f5dc;
+}
+
+@media (max-width: 1080px) {
+  .video-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .video-side {
+    position: static;
+  }
+}
+
+@media (max-width: 560px) {
+  .video-reading {
+    position: static;
+    margin: 8px;
+  }
+}
