@@ -7,11 +7,13 @@ import {
   loadBenchmarks,
   loadSessionResult,
   loadSessionTruth,
+  loadTrackingResult,
   manualPageUrl,
   sessionVideoUrl,
   type Benchmarks,
   type SessionResult,
   type SessionTruth,
+  type TrackingResult,
 } from '../engine/results';
 import { Wordmark } from '../Logo';
 import { navigate, type Route } from '../navigation';
@@ -19,6 +21,7 @@ import { Stage } from '../three/Stage';
 import { AssemblyGraph } from '../ui/AssemblyGraph';
 import { BeliefBars } from '../ui/BeliefBars';
 import { EvidenceHeatmap } from '../ui/EvidenceHeatmap';
+import { TrackedVideo } from '../ui/TrackedVideo';
 
 /**
  * The front page. The copilot builds each product of the library in the background, full bleed;
@@ -127,7 +130,17 @@ interface FigureSpec {
  * The demos as captioned figures in a grid that rearranges itself: every few seconds the next
  * figure takes the large slot (a view transition morphs them into place where supported).
  */
-function Figures({ plan, session, truth }: { plan: AssemblyPlan; session: SessionResult | null; truth: SessionTruth | null }) {
+function Figures({
+  plan,
+  session,
+  truth,
+  tracks,
+}: {
+  plan: AssemblyPlan;
+  session: SessionResult | null;
+  truth: SessionTruth | null;
+  tracks: TrackingResult | null;
+}) {
   const [order, setOrder] = useState<FigureId[]>(['copilot', 'manual', 'video', 'graph']);
   const [paused, setPaused] = useState(false);
   const tick = useTicker(1200);
@@ -164,7 +177,7 @@ function Figures({ plan, session, truth }: { plan: AssemblyPlan; session: Sessio
     video: {
       route: { page: 'video', furniture: plan.id },
       title: 'Video analyzer',
-      caption: 'A filmed build decoded: per-frame step verification, the most likely build history, every joint dated.',
+      caption: 'A filmed build decoded: SAM 3.1 masks on every part, per-frame step verification, the most likely build history.',
     },
     graph: {
       route: { page: 'video', furniture: plan.id },
@@ -184,7 +197,7 @@ function Figures({ plan, session, truth }: { plan: AssemblyPlan; session: Sessio
     ),
     video: (
       <>
-        <video src={sessionVideoUrl(plan.id)} muted loop autoPlay playsInline preload="metadata" />
+        <TrackedVideo src={sessionVideoUrl(plan.id)} tracks={tracks} labels={false} />
         {session && (
           <div className="figure-heatmap">
             <EvidenceHeatmap plan={plan} result={session} placed={placed} />
@@ -280,6 +293,37 @@ const REFERENCES: { authors: string; title: string; venue: string; use: string }
     use: 'an assistant that watches a task and guides it',
   },
   {
+    authors:
+      'A. Kirillov, E. Mintun, N. Ravi, H. Mao, C. Rolland, L. Gustafson, T. Xiao, S. Whitehead, A. C. Berg, W.-Y. Lo, P. Dollár, R. Girshick',
+    title: 'Segment Anything',
+    venue: 'ICCV 2023',
+    use: 'segmentation prompted by boxes and points',
+  },
+  {
+    authors: 'N. Ravi, V. Gabeur, Y.-T. Hu, R. Hu, C. Ryali, T. Ma, H. Khedr, R. Rädle, C. Rolland, L. Gustafson, et al.',
+    title: 'SAM 2: Segment Anything in Images and Videos',
+    venue: 'ICLR 2025',
+    use: 'propagating prompted masks through a video, forward and backward',
+  },
+  {
+    authors: 'N. Carion, L. Gustafson, Y.-T. Hu, S. Debnath, R. Hu, D. Suris, C. Ryali, K. V. Alwala, H. Khedr, et al.',
+    title: 'SAM 3: Segment Anything with Concepts',
+    venue: 'arXiv, 2025',
+    use: 'the model family SAM 3.1 belongs to, which tracks every part',
+  },
+  {
+    authors: 'J. Yang, H. Zhang, F. Li, X. Zou, C. Li, J. Gao',
+    title: 'Set-of-Mark Prompting Unleashes Extraordinary Visual Grounding in GPT-4V',
+    venue: 'arXiv, 2023',
+    use: 'finding lost parts again from numbered outlines on the first frame',
+  },
+  {
+    authors: 'G. E. Hinton',
+    title: 'Training Products of Experts by Minimizing Contrastive Divergence',
+    venue: 'Neural Computation, 2002',
+    use: 'fusing mask contacts with the frame readings',
+  },
+  {
     authors: 'B. T. Willard, R. Louf',
     title: 'Efficient Guided Generation for Large Language Models',
     venue: 'arXiv, 2023',
@@ -317,8 +361,95 @@ const REFERENCES: { authors: string; title: string; venue: string; use: string }
   },
 ];
 
+/** What each model does in the pipeline, in order, and the number that measures it. */
+function Models({ plan, tracks, benchmarks }: { plan: AssemblyPlan; tracks: TrackingResult | null; benchmarks: Benchmarks | null }) {
+  const tracking = benchmarks?.tracking;
+  const items = tracking ? Object.values(tracking.items) : [];
+  const letters = items.reduce((n, t) => n + t.letters_right, 0);
+  const pieces = items.reduce((n, t) => n + t.pieces, 0);
+  const refound = items.reduce((n, t) => n + (t.refound ?? 0), 0);
+  const spark = benchmarks?.model ?? 'Muse Spark';
+  const sam = tracking?.models?.segmentation ?? 'SAM 3.1';
+  const stages: { model: string; title: string; text: string; value: string; unit: string }[] = [
+    {
+      model: spark,
+      title: 'Read the manual',
+      text: 'Every page in one request, decoding constrained to a JSON schema. A resolver turns the reading into a validated assembly graph.',
+      value: pct(benchmarks?.manuals.mean.edges_f1),
+      unit: 'edge F1',
+    },
+    {
+      model: spark,
+      title: 'Ground the parts',
+      text: 'On the first frame, a letter, a box and a point for every piece; a second look at a close crop around them pins down thin parts.',
+      value: pieces ? `${letters}/${pieces}` : '—',
+      unit: 'letters right, up to look-alikes',
+    },
+    {
+      model: sam,
+      title: 'Track every part',
+      text: "One video request: each piece's box and point are its prompt, and its mask is propagated forward and backward through the build.",
+      value: pct(tracking?.mean.mean_iou),
+      unit: 'mask IoU, exact masks',
+    },
+    {
+      model: spark,
+      title: 'Find lost parts',
+      text: 'SAM drops a part that leaves the frame. Every 4 s the lost ones are looked for again against the first frame, outlined and numbered, and SAM tracks once more.',
+      value: items.length ? String(refound) : '—',
+      unit: 'prompts added',
+    },
+    {
+      model: spark,
+      title: 'Verify each frame',
+      text: "Sampled frames are checked against the manual's own step drawings, as P(step done) for every step.",
+      value: pct(benchmarks?.sessions.mean.frame_accuracy),
+      unit: 'frames right, decoded',
+    },
+    {
+      model: 'tracker',
+      title: 'Fuse the evidence',
+      text: "Masks that touch for a second are counted against the plan's joints, and join the readings as a product of experts.",
+      value: pct(tracking?.mean.frames_right_contacts),
+      unit: `frames right, contacts alone (${pct(tracking?.mean.frames_right_exact_contacts)} with exact masks)`,
+    },
+  ];
+  return (
+    <div className="models">
+      <figure className="models-figure" onClick={() => navigate({ page: 'video', furniture: plan.id })}>
+        <TrackedVideo src={sessionVideoUrl(plan.id)} tracks={tracks} />
+        <figcaption>
+          <b>{plan.title}, tracked.</b> SAM 3.1 masks for {tracks ? tracks.tracks.length : 'all'} parts, prompted by Muse Spark on the first
+          frame and wherever a lost part was found again (white corners). A stored run, replayed.
+        </figcaption>
+      </figure>
+      <ol className="pipeline">
+        {stages.map((stage, i) => (
+          <li key={stage.title}>
+            <span className="pipeline-index">{i + 1}</span>
+            <div>
+              <h3>
+                {stage.title} <span>{stage.model}</span>
+              </h3>
+              <p>{stage.text}</p>
+            </div>
+            <div className="pipeline-value">
+              <b>{stage.value}</b>
+              <span>{stage.unit}</span>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
 const STACK: { layer: string; items: string }[] = [
-  { layer: 'Perception', items: 'Muse Spark 1.3 through the Meta Model API, decoding constrained to JSON schemas' },
+  {
+    layer: 'Perception',
+    items:
+      'Muse Spark 1.3 (manual reading, part grounding, re-finding, frame verification) and SAM 3.1 (video part tracking), through the Meta Model API',
+  },
   { layer: 'Engine', items: 'Python 3.11, Pydantic, NumPy, OpenCV, FastAPI' },
   { layer: 'Serving', items: 'Modal, one CPU function that scales to zero' },
   { layer: 'Web', items: 'React 19, TypeScript, three.js with instancing and custom shaders, Vite' },
@@ -335,7 +466,12 @@ export function Home() {
   const [benchmarks, setBenchmarks] = useState<Benchmarks | null>(null);
   // A product's stored run, kept with the product it belongs to: during a switch the new plan
   // must never be drawn with the previous product's data.
-  const [results, setResults] = useState<{ id: string; session: SessionResult | null; truth: SessionTruth | null } | null>(null);
+  const [results, setResults] = useState<{
+    id: string;
+    session: SessionResult | null;
+    truth: SessionTruth | null;
+    tracks: TrackingResult | null;
+  } | null>(null);
 
   useEffect(() => {
     loadLibrary()
@@ -368,8 +504,12 @@ export function Home() {
   useEffect(() => {
     if (!plan) return;
     let cancelled = false;
-    Promise.all([loadSessionResult(plan.id).catch(() => null), loadSessionTruth(plan.id).catch(() => null)]).then(([session, truth]) => {
-      if (!cancelled) setResults({ id: plan.id, session, truth });
+    Promise.all([
+      loadSessionResult(plan.id).catch(() => null),
+      loadSessionTruth(plan.id).catch(() => null),
+      loadTrackingResult(plan.id).catch(() => null),
+    ]).then(([session, truth, tracks]) => {
+      if (!cancelled) setResults({ id: plan.id, session, truth, tracks });
     });
     return () => {
       cancelled = true;
@@ -377,6 +517,7 @@ export function Home() {
   }, [plan]);
   const session = plan && results?.id === plan.id ? results.session : null;
   const truth = plan && results?.id === plan.id ? results.truth : null;
+  const tracks = plan && results?.id === plan.id && results.tracks?.plan === plan.id ? results.tracks : null;
 
   const sessions = benchmarks ? Object.values(benchmarks.sessions.items) : [];
   const stepsFound = sessions.reduce((n, s) => n + s.steps_found, 0);
@@ -396,6 +537,7 @@ export function Home() {
           <Wordmark onClick={() => navigate({ page: 'home' })} />
           <div className="home-nav-links">
             <a href="#demos">Demos</a>
+            <a href="#models">Models</a>
             <a href="#method">Method</a>
             <a href="#results">Results</a>
             <a href="#references">References</a>
@@ -455,8 +597,8 @@ export function Home() {
                 <dd>of joints recovered from manuals (edge F1)</dd>
               </div>
               <div>
-                <dt>{pct(benchmarks.manuals.mean.parts_f1, 0)}</dt>
-                <dd>of parts and hardware counts read</dd>
+                <dt>{pct(benchmarks.tracking?.mean.mean_iou, 0)}</dt>
+                <dd>mask IoU of SAM 3.1's part tracks against exact masks</dd>
               </div>
               <div>
                 <dt>
@@ -470,8 +612,8 @@ export function Home() {
               </div>
             </dl>
             <p className="numbers-note">
-              {benchmarks.model} on a four-product library with generated manuals and rendered sessions. Stored runs, re-scored on every
-              commit.
+              {benchmarks.model} and {benchmarks.tracking?.models?.segmentation ?? 'SAM 3.1'} on a four-product library with generated
+              manuals and rendered sessions. Stored runs, re-scored on every commit.
             </p>
           </>
         )}
@@ -485,7 +627,18 @@ export function Home() {
             background.
           </p>
         </div>
-        {plan && <Figures plan={plan} session={session} truth={truth} />}
+        {plan && <Figures plan={plan} session={session} truth={truth} tracks={tracks} />}
+      </section>
+
+      <section id="models" className="section">
+        <div className="section-head">
+          <h2>Models</h2>
+          <p>
+            Perception runs on two Meta models through the Meta Model API. Muse Spark reads the manual and the frames and points at the
+            parts; SAM 3.1 follows every part through the video from those prompts.
+          </p>
+        </div>
+        {plan && <Models plan={plan} tracks={tracks} benchmarks={benchmarks} />}
       </section>
 
       <section id="method" className="section">
@@ -508,9 +661,9 @@ export function Home() {
             <span className="method-index">2</span>
             <h3>Track the build</h3>
             <p>
-              Frames are checked against the plan with the manual's own step drawings as references. Progress is the hidden state of a
-              Markov model over steps done: stay .86, advance .11, skip .02, back .01, with each frame's evidence capped to [.15, .85] and
-              tempered by .7. Viterbi gives the build history, forward–backward its confidence.
+              Frames are checked against the plan with the manual's own step drawings as references, and the parts' masks add contacts.
+              Progress is the hidden state of a Markov model over steps done: stay .86, advance .11, skip .02, back .01, with each frame's
+              evidence capped to [.15, .85] and tempered by .7. Viterbi gives the build history, forward–backward its confidence.
             </p>
             <a href={`${SOURCE}/engine/darius/assembly/tracking.py`}>assembly/tracking.py</a>
           </article>
@@ -532,7 +685,7 @@ export function Home() {
             <h2>Results</h2>
             <p>
               Each manual is generated from a procedural plan and read back by the model; each session is a rendered build with frame-exact
-              ground truth, where a step counts as done once its parts are in place.
+              ground truth, where a step counts as done once its parts are in place, and the renderer's exact mask for every part.
             </p>
           </div>
           <div className="table-wrap">
@@ -542,6 +695,7 @@ export function Home() {
                   <th rowSpan={2}>Product</th>
                   <th colSpan={4}>Manual → graph</th>
                   <th colSpan={3}>Video → timeline</th>
+                  <th colSpan={3}>Video → part tracks</th>
                 </tr>
                 <tr>
                   <th>Parts F1</th>
@@ -551,12 +705,16 @@ export function Home() {
                   <th>Frames right</th>
                   <th>Steps found</th>
                   <th>Timing error</th>
+                  <th>Mask IoU</th>
+                  <th>Held</th>
+                  <th>Joints touched</th>
                 </tr>
               </thead>
               <tbody>
                 {library.map((p) => {
                   const m = benchmarks.manuals.items[p.id];
                   const s = benchmarks.sessions.items[p.id];
+                  const t = benchmarks.tracking?.items[p.id];
                   return (
                     <tr key={p.id}>
                       <td>
@@ -574,6 +732,9 @@ export function Home() {
                       <td>{pct(s?.frame_accuracy)}</td>
                       <td>{s ? `${s.steps_found}/${s.steps}` : '—'}</td>
                       <td>{s?.step_error_s != null ? `${s.step_error_s.toFixed(2)} s` : '—'}</td>
+                      <td>{pct(t?.mean_iou)}</td>
+                      <td>{pct(t?.frames_tracked)}</td>
+                      <td>{pct(t?.contacts_recall)}</td>
                     </tr>
                   );
                 })}
