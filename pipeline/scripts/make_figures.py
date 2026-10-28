@@ -22,8 +22,8 @@ import modal  # noqa: E402
 import numpy as np  # noqa: E402
 from PIL import Image  # noqa: E402
 
-from scan2sim import geometry  # noqa: E402
-from scan2sim.materials import PALETTE  # noqa: E402
+from darius.core import geometry  # noqa: E402
+from darius.core.materials import PALETTE  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -54,7 +54,7 @@ def main() -> None:
     parser.add_argument("--name", required=True)
     args = parser.parse_args()
 
-    volume = modal.Volume.from_name("scan2sim-jobs")
+    volume = modal.Volume.from_name("darius-jobs")
     job = f"/{args.job}"
     detections = json.loads(read(volume, f"{job}/detections.json"))
     physics = json.loads(read(volume, f"{job}/physics.json"))
