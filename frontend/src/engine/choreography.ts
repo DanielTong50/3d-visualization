@@ -105,7 +105,8 @@ export class Choreography {
     this.mainPart = plan.steps[0]?.parts[0] ?? plan.parts[0].id;
     for (let k = 0; k <= plan.steps.length; k++) {
       const map = new Map<string, string>();
-      for (const group of subassemblies(plan, k)) for (const id of group) map.set(id, group.includes(this.mainPart) ? this.mainPart : group[0]);
+      for (const group of subassemblies(plan, k))
+        for (const id of group) map.set(id, group.includes(this.mainPart) ? this.mainPart : group[0]);
       this.components.push(map);
     }
     this.furniture = plan.parts.reduce((acc, p) => acc.union(box(p)), new THREE.Box3());

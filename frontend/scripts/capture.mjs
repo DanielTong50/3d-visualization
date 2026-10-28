@@ -56,11 +56,35 @@ async function manual(browser, base, id, pages) {
 function encoder(path) {
   const ffmpeg = spawn(
     'ffmpeg',
-    ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'mjpeg', '-i', '-',
-      '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '27', '-preset', 'slow', '-movflags', '+faststart', path],
+    [
+      '-y',
+      '-loglevel',
+      'error',
+      '-f',
+      'image2pipe',
+      '-framerate',
+      String(fps),
+      '-c:v',
+      'mjpeg',
+      '-i',
+      '-',
+      '-c:v',
+      'libx264',
+      '-pix_fmt',
+      'yuv420p',
+      '-crf',
+      '27',
+      '-preset',
+      'slow',
+      '-movflags',
+      '+faststart',
+      path,
+    ],
     { stdio: ['pipe', 'inherit', 'inherit'] },
   );
-  const done = new Promise((resolve, reject) => ffmpeg.on('close', (code) => (code === 0 ? resolve() : reject(new Error(`ffmpeg exited ${code}`)))));
+  const done = new Promise((resolve, reject) =>
+    ffmpeg.on('close', (code) => (code === 0 ? resolve() : reject(new Error(`ffmpeg exited ${code}`)))),
+  );
   return { ffmpeg, done };
 }
 

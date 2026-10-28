@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { madeAt } from "../engine/graph";
-import type { AssemblyPlan } from "../engine/plan";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { madeAt } from '../engine/graph';
+import type { AssemblyPlan } from '../engine/plan';
 
 /**
  * The assembly graph as a 3D skeleton: every part is a node at its center in the finished
@@ -49,11 +49,7 @@ export function AssemblyGraph({
   const spinning = spin && !drag.current;
 
   useEffect(() => {
-    if (
-      !spinning ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    )
-      return;
+    if (!spinning || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let frame = 0;
     let last = performance.now();
     const tick = (now: number) => {
@@ -73,33 +69,18 @@ export function AssemblyGraph({
     const scale = 1 / Math.max(1, ...hi.map((v, i) => v - lo[i]));
     const nodes = plan.parts.map((p, i) => ({
       part: p,
-      position: centers[i].map((v, k) => (v - mid[k]) * scale * 2) as [
-        number,
-        number,
-        number,
-      ],
-      radius:
-        5 + 9 * Math.cbrt((p.size_mm[0] * p.size_mm[1] * p.size_mm[2]) / 1e8),
+      position: centers[i].map((v, k) => (v - mid[k]) * scale * 2) as [number, number, number],
+      radius: 5 + 9 * Math.cbrt((p.size_mm[0] * p.size_mm[1] * p.size_mm[2]) / 1e8),
     }));
     return { nodes, index: new Map(nodes.map((n, i) => [n.part.id, i])) };
   }, [plan]);
 
   const made = useMemo(() => madeAt(plan), [plan]);
-  const activeJoints = new Set(
-    active ? (plan.steps[active - 1]?.joints ?? []) : [],
-  );
+  const activeJoints = new Set(active ? (plan.steps[active - 1]?.joints ?? []) : []);
   const attached = new Set(
-    plan.joints
-      .filter(
-        (j) =>
-          (made.get(j.id) ?? Infinity) <= completed &&
-          (!known || known.has(j.id)),
-      )
-      .flatMap((j) => j.parts),
+    plan.joints.filter((j) => (made.get(j.id) ?? Infinity) <= completed && (!known || known.has(j.id))).flatMap((j) => j.parts),
   );
-  const activeParts = new Set(
-    plan.joints.filter((j) => activeJoints.has(j.id)).flatMap((j) => j.parts),
-  );
+  const activeParts = new Set(plan.joints.filter((j) => activeJoints.has(j.id)).flatMap((j) => j.parts));
 
   const project = ([x, y, z]: [number, number, number]): Projected => {
     const cos = Math.cos(yaw);
@@ -126,25 +107,19 @@ export function AssemblyGraph({
       .filter((j) => !known || known.has(j.id) || activeJoints.has(j.id))
       .map((j) => {
         const step = made.get(j.id) ?? Infinity;
-        const state = wrong?.has(j.id)
-          ? "wrong"
-          : activeJoints.has(j.id)
-            ? "active"
-            : step <= completed
-              ? "done"
-              : "future";
+        const state = wrong?.has(j.id) ? 'wrong' : activeJoints.has(j.id) ? 'active' : step <= completed ? 'done' : 'future';
         return {
           id: j.id,
           parts: j.parts,
-          title: `${j.parts.join(" – ")} · ${j.kind}`,
+          title: `${j.parts.join(' – ')} · ${j.kind}`,
           state,
         };
       }),
     ...extra.map((e) => ({
       id: e.id,
       parts: e.parts,
-      title: `${e.parts.join(" – ")} · not in the plan`,
-      state: "wrong",
+      title: `${e.parts.join(' – ')} · not in the plan`,
+      state: 'wrong',
     })),
   ]
     .map((e) => {
@@ -153,15 +128,11 @@ export function AssemblyGraph({
     })
     .sort((e, f) => e.depth - f.depth);
 
-  const order = geometry.nodes
-    .map((_, i) => i)
-    .sort((a, b) => points[a].depth - points[b].depth);
-  const hovered = hover
-    ? geometry.nodes.find((n) => n.part.id === hover)
-    : null;
+  const order = geometry.nodes.map((_, i) => i).sort((a, b) => points[a].depth - points[b].depth);
+  const hovered = hover ? geometry.nodes.find((n) => n.part.id === hover) : null;
 
   return (
-    <div className={`graph${compact ? " graph-compact" : ""}`}>
+    <div className={`graph${compact ? ' graph-compact' : ''}`}>
       <svg
         viewBox={`0 0 ${size} ${size}`}
         className="graph-svg"
@@ -170,8 +141,7 @@ export function AssemblyGraph({
           (e.target as Element).setPointerCapture?.(e.pointerId);
         }}
         onPointerMove={(e) => {
-          if (drag.current)
-            setYaw(drag.current.yaw + (e.clientX - drag.current.x) * 0.01);
+          if (drag.current) setYaw(drag.current.yaw + (e.clientX - drag.current.x) * 0.01);
         }}
         onPointerUp={() => (drag.current = null)}
         role="img"
@@ -186,14 +156,7 @@ export function AssemblyGraph({
         {edges.map(({ id, title, a, b, state }) => {
           const [s, t] = [toSvg(points[a]), toSvg(points[b])];
           return (
-            <line
-              key={id}
-              className={`graph-edge is-${state}`}
-              x1={s.x}
-              y1={s.y}
-              x2={t.x}
-              y2={t.y}
-            >
+            <line key={id} className={`graph-edge is-${state}`} x1={s.x} y1={s.y} x2={t.x} y2={t.y}>
               <title>{title}</title>
             </line>
           );
@@ -201,23 +164,17 @@ export function AssemblyGraph({
         {order.map((i) => {
           const node = geometry.nodes[i];
           const p = toSvg(points[i]);
-          const state = activeParts.has(node.part.id)
-            ? "active"
-            : attached.has(node.part.id)
-              ? "done"
-              : "future";
+          const state = activeParts.has(node.part.id) ? 'active' : attached.has(node.part.id) ? 'done' : 'future';
           const r = (node.radius / 10) * (compact ? 1.6 : 2);
           return (
             <g
               key={node.part.id}
-              className={`graph-node is-${state}${hover === node.part.id ? " is-hover" : ""}`}
+              className={`graph-node is-${state}${hover === node.part.id ? ' is-hover' : ''}`}
               transform={`translate(${p.x} ${p.y})`}
               onPointerEnter={() => setHover(node.part.id)}
               onPointerLeave={() => setHover(null)}
             >
-              {state === "active" && (
-                <circle className="graph-halo" r={r * 1.9} />
-              )}
+              {state === 'active' && <circle className="graph-halo" r={r * 1.9} />}
               <circle r={r} />
               <text dy="0.36em">{node.part.label}</text>
             </g>
@@ -226,11 +183,8 @@ export function AssemblyGraph({
       </svg>
       {hovered && !compact && (
         <p className="graph-tip">
-          <span className="letter">{hovered.part.label}</span>{" "}
-          {hovered.part.name}{" "}
-          <span className="faint">
-            {hovered.part.size_mm.map((v) => Math.round(v)).join(" × ")} mm
-          </span>
+          <span className="letter">{hovered.part.label}</span> {hovered.part.name}{' '}
+          <span className="faint">{hovered.part.size_mm.map((v) => Math.round(v)).join(' × ')} mm</span>
         </p>
       )}
     </div>

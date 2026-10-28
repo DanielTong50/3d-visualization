@@ -177,7 +177,10 @@ export class Stage {
     side.position.set(-3.6, 1.6, 0);
     side.rotation.y = Math.PI / 2;
     side.receiveShadow = true;
-    const skirting = new THREE.Mesh(new THREE.BoxGeometry(14, 0.08, 0.015), new THREE.MeshStandardMaterial({ color: '#f4f2ee', roughness: 0.5 }));
+    const skirting = new THREE.Mesh(
+      new THREE.BoxGeometry(14, 0.08, 0.015),
+      new THREE.MeshStandardMaterial({ color: '#f4f2ee', roughness: 0.5 }),
+    );
     skirting.position.set(0, 0.04, -2.39);
     this.scene.add(back, side, skirting);
 
@@ -221,7 +224,9 @@ export class Stage {
     ghost.renderOrder = 5;
     this.ar.add(ghost);
     this.scene.add(mesh, edges);
-    const corners = [-1, 1].flatMap((x) => [-1, 1].flatMap((y) => [-1, 1].map((z) => new THREE.Vector3((x * w) / 2, (y * h) / 2, (z * d) / 2))));
+    const corners = [-1, 1].flatMap((x) =>
+      [-1, 1].flatMap((y) => [-1, 1].map((z) => new THREE.Vector3((x * w) / 2, (y * h) / 2, (z * d) / 2))),
+    );
     this.views.set(part.id, { part, mesh, edges, ghost, corners });
   }
 
@@ -271,7 +276,10 @@ export class Stage {
       this.arcs.push(mesh);
     }
     const lift = 0.25 + from.distanceTo(to) * 0.25;
-    const middle = from.clone().lerp(to, 0.5).setY(Math.max(from.y, to.y) + lift);
+    const middle = from
+      .clone()
+      .lerp(to, 0.5)
+      .setY(Math.max(from.y, to.y) + lift);
     const curve = new THREE.QuadraticBezierCurve3(from, middle, to);
     const mesh = this.arcs[index];
     mesh.geometry.dispose();
@@ -290,7 +298,8 @@ export class Stage {
       const state = states.get(id)!;
       view.mesh.matrix.copy(state.matrix);
       view.edges.matrix.copy(state.matrix);
-      const showGhost = ar && state.target !== null && active.has(id) && ['locate', 'place'].includes(moment.phase) && state.status !== 'attached';
+      const showGhost =
+        ar && state.target !== null && active.has(id) && ['locate', 'place'].includes(moment.phase) && state.status !== 'attached';
       view.ghost.visible = showGhost;
       if (showGhost) {
         view.ghost.matrix.copy(state.target!);
@@ -327,7 +336,9 @@ export class Stage {
       const joining = c.joining(moment).map((id) => states.get(id)!);
       if (joining.length && joining.every((s) => s.target)) {
         const center = (key: 'matrix' | 'target') =>
-          joining.reduce((sum, s) => sum.add(new THREE.Vector3().setFromMatrixPosition(s[key]!)), new THREE.Vector3()).divideScalar(joining.length);
+          joining
+            .reduce((sum, s) => sum.add(new THREE.Vector3().setFromMatrixPosition(s[key]!)), new THREE.Vector3())
+            .divideScalar(joining.length);
         const to = center('target');
         this.arc(k++, center('matrix'), to);
         if (k === 1) this.focusPoint.copy(to);
@@ -393,7 +404,10 @@ export class Stage {
       height + shake * Math.sin(clock * 5.1 + 1),
       center.z + Math.cos(azimuth) * radius + shake * Math.sin(clock * 6.7 + 2),
     );
-    let attention = c.workCenter.clone().lerp(c.layoutCenter, 0.3).setY(size.y * 0.3);
+    let attention = c.workCenter
+      .clone()
+      .lerp(c.layoutCenter, 0.3)
+      .setY(size.y * 0.3);
     const step = this.plan.steps[moment.step - 1];
     if (step && moment.phase === 'locate') {
       const loose = step.parts.map((id) => new THREE.Vector3().setFromMatrixPosition(states.get(id)!.matrix));

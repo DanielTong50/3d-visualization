@@ -72,7 +72,9 @@ export function partMaterial(material: string, color: string): THREE.Material {
   const key = `${material}|${color}`;
   if (cache.has(key)) return cache.get(key)!;
   const wood = /oak|pine|wood|birch|veneer/i.test(material);
-  const map = wood ? woodGrain(color, color.length * 97 + material.length) : speckle(color, 7, material.includes('hardboard') ? 0.1 : 0.035);
+  const map = wood
+    ? woodGrain(color, color.length * 97 + material.length)
+    : speckle(color, 7, material.includes('hardboard') ? 0.1 : 0.035);
   const result = new THREE.MeshStandardMaterial({
     map,
     roughness: wood ? 0.62 : material.includes('hardboard') ? 0.85 : 0.42,

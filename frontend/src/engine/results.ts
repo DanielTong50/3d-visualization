@@ -1,5 +1,5 @@
-import { madeAt } from "./graph";
-import { ASSEMBLIES_URL, type AssemblyPlan, type Orientation } from "./plan";
+import { madeAt } from './graph';
+import { ASSEMBLIES_URL, type AssemblyPlan, type Orientation } from './plan';
 
 /**
  * The stored outputs of `darius eval` (engine/darius/eval/benchmark.py): what the models read
@@ -107,10 +107,7 @@ export interface Benchmarks {
     mean: Partial<ManualScore>;
   };
   sessions: {
-    items: Record<
-      string,
-      SessionScore & { seconds: number; duration_s: number }
-    >;
+    items: Record<string, SessionScore & { seconds: number; duration_s: number }>;
     mean: Partial<SessionScore>;
   };
 }
@@ -118,23 +115,16 @@ export interface Benchmarks {
 async function json<T>(url: string): Promise<T | null> {
   const response = await fetch(url);
   if (response.status === 404) return null;
-  if (!response.ok)
-    throw new Error(`could not load ${url} (HTTP ${response.status})`);
+  if (!response.ok) throw new Error(`could not load ${url} (HTTP ${response.status})`);
   return (await response.json()) as T;
 }
 
-export const manualPageUrl = (id: string, page: number) =>
-  `${ASSEMBLIES_URL}/${id}/manual/page-${String(page).padStart(2, "0")}.png`;
-export const sessionVideoUrl = (id: string) =>
-  `${ASSEMBLIES_URL}/${id}/session/session.mp4`;
-export const loadManualResult = (id: string) =>
-  json<ManualResult>(`${ASSEMBLIES_URL}/${id}/manual/reading.json`);
-export const loadSessionResult = (id: string) =>
-  json<SessionResult>(`${ASSEMBLIES_URL}/${id}/session/analysis.json`);
-export const loadSessionTruth = (id: string) =>
-  json<SessionTruth>(`${ASSEMBLIES_URL}/${id}/session/truth.json`);
-export const loadBenchmarks = () =>
-  json<Benchmarks>(`${ASSEMBLIES_URL}/benchmarks.json`);
+export const manualPageUrl = (id: string, page: number) => `${ASSEMBLIES_URL}/${id}/manual/page-${String(page).padStart(2, '0')}.png`;
+export const sessionVideoUrl = (id: string) => `${ASSEMBLIES_URL}/${id}/session/session.mp4`;
+export const loadManualResult = (id: string) => json<ManualResult>(`${ASSEMBLIES_URL}/${id}/manual/reading.json`);
+export const loadSessionResult = (id: string) => json<SessionResult>(`${ASSEMBLIES_URL}/${id}/session/analysis.json`);
+export const loadSessionTruth = (id: string) => json<SessionTruth>(`${ASSEMBLIES_URL}/${id}/session/truth.json`);
+export const loadBenchmarks = () => json<Benchmarks>(`${ASSEMBLIES_URL}/benchmarks.json`);
 
 export interface Matched {
   /** Truth joints matched by each recovered step. */
@@ -149,16 +139,12 @@ export interface Matched {
  * Lay a recovered plan over the truth: each recovered joint takes a truth joint that joins
  * parts with the same letters (from the same step if there is one), the way the scores count.
  */
-export function matchRecovered(
-  truth: AssemblyPlan,
-  recovered: AssemblyPlan,
-): Matched {
+export function matchRecovered(truth: AssemblyPlan, recovered: AssemblyPlan): Matched {
   const truthLabel = new Map(truth.parts.map((p) => [p.id, p.label]));
   const recoveredLabel = new Map(recovered.parts.map((p) => [p.id, p.label]));
   const firstOf = new Map<string, string>();
-  for (const part of truth.parts)
-    if (!firstOf.has(part.label)) firstOf.set(part.label, part.id);
-  const key = (labels: string[]) => [...labels].sort().join("–");
+  for (const part of truth.parts) if (!firstOf.has(part.label)) firstOf.set(part.label, part.id);
+  const key = (labels: string[]) => [...labels].sort().join('–');
   const truthStep = madeAt(truth);
   const open = new Map<string, string[]>();
   for (const joint of truth.joints) {
@@ -167,7 +153,7 @@ export function matchRecovered(
   }
   const joints = new Map(recovered.joints.map((j) => [j.id, j]));
   const known = new Map<number, string[]>();
-  const extra: Matched["extra"] = [];
+  const extra: Matched['extra'] = [];
   for (const step of recovered.steps) {
     for (const id of step.joints) {
       const joint = joints.get(id)!;

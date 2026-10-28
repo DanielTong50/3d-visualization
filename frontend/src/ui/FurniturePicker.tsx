@@ -4,7 +4,9 @@ import { loadLibrary, type PlanSummary } from '../engine/plan';
 export function FurniturePicker({ current, onPick }: { current: string; onPick: (id: string) => void }) {
   const [library, setLibrary] = useState<PlanSummary[]>([]);
   useEffect(() => {
-    loadLibrary().then(setLibrary).catch(() => setLibrary([]));
+    loadLibrary()
+      .then(setLibrary)
+      .catch(() => setLibrary([]));
   }, []);
   if (library.length < 2) return null;
   return (

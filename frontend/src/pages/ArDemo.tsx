@@ -164,8 +164,8 @@ export function ArDemo({ furniture }: { furniture: string }) {
           </div>
           <BeliefBars plan={plan} belief={belief} />
           <p className="panel-note">
-            P(steps done) from per-frame step verification, filtered over the manual's order. Simulated observations, ~1 in 12 misread
-            on purpose.
+            P(steps done) from per-frame step verification, filtered over the manual's order. Simulated observations, ~1 in 12 misread on
+            purpose.
           </p>
         </aside>
       )}
@@ -177,8 +177,8 @@ export function ArDemo({ furniture }: { furniture: string }) {
               <span className="eyebrow done">Verified</span>
               <h2>{plan.title} is assembled.</h2>
               <p className="muted">
-                {plan.parts.length} parts, {plan.joints.length} joints, {plan.hardware.reduce((s, h) => s + h.count, 0)} pieces of
-                hardware, {steps} steps.
+                {plan.parts.length} parts, {plan.joints.length} joints, {plan.hardware.reduce((s, h) => s + h.count, 0)} pieces of hardware,{' '}
+                {steps} steps.
               </p>
             </>
           ) : step ? (
@@ -200,7 +200,12 @@ export function ArDemo({ furniture }: { furniture: string }) {
                 </ol>
               </div>
               <h2>{step.title}</h2>
-              <p className="muted">{moment.phase === 'reorient' ? step.actions.find((a) => ['flip', 'stand_up', 'rotate'].includes(a.kind))?.text ?? `Turn the assembly ${step.orientation.replace('_', ' ')}` : step.instruction}</p>
+              <p className="muted">
+                {moment.phase === 'reorient'
+                  ? (step.actions.find((a) => ['flip', 'stand_up', 'rotate'].includes(a.kind))?.text ??
+                    `Turn the assembly ${step.orientation.replace('_', ' ')}`)
+                  : step.instruction}
+              </p>
               <div className="step-chips">
                 {step.parts.map((id) => {
                   const part = plan.parts.find((p) => p.id === id)!;
@@ -226,9 +231,7 @@ export function ArDemo({ furniture }: { furniture: string }) {
             <>
               <span className="eyebrow track">Scanning</span>
               <h2>Finding the parts</h2>
-              <p className="muted">
-                {plan.parts.length} parts expected from the manual. Matching each one by shape and size.
-              </p>
+              <p className="muted">{plan.parts.length} parts expected from the manual. Matching each one by shape and size.</p>
             </>
           )}
         </section>

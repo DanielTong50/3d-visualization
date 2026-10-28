@@ -200,8 +200,11 @@ export function stepItems(plan: AssemblyPlan, index: number): DrawItem[] {
       for (const b of movers) {
         if (a >= b || !pulled(a).intersectsBox(pulled(b))) continue;
         const way = direction.get(a)!;
-        const outer = assembledBox(parts.get(a)!).getCenter(new THREE.Vector3()).dot(way) >
-          assembledBox(parts.get(b)!).getCenter(new THREE.Vector3()).dot(way) ? a : b;
+        const outer =
+          assembledBox(parts.get(a)!).getCenter(new THREE.Vector3()).dot(way) >
+          assembledBox(parts.get(b)!).getCenter(new THREE.Vector3()).dot(way)
+            ? a
+            : b;
         depth.set(outer, (depth.get(outer) ?? 1) + 1);
         moved = true;
       }
@@ -219,7 +222,13 @@ export function stepItems(plan: AssemblyPlan, index: number): DrawItem[] {
     const part = parts.get(id)!;
     const isFresh = fresh.has(id);
     const way = direction.get(id);
-    const explode = isFresh && way ? way.clone().applyQuaternion(turn).multiplyScalar(distance * (depth.get(id) ?? 1)) : undefined;
+    const explode =
+      isFresh && way
+        ? way
+            .clone()
+            .applyQuaternion(turn)
+            .multiplyScalar(distance * (depth.get(id) ?? 1))
+        : undefined;
     return {
       part,
       matrix: frame.clone().multiply(assembledMatrix(part)),
@@ -279,15 +288,20 @@ export class ManualArt {
     scene.add(light);
 
     const placed = items.map((item) => {
-      const matrix = item.explode ? new THREE.Matrix4().makeTranslation(item.explode.x, item.explode.y, item.explode.z).multiply(item.matrix) : item.matrix;
+      const matrix = item.explode
+        ? new THREE.Matrix4().makeTranslation(item.explode.x, item.explode.y, item.explode.z).multiply(item.matrix)
+        : item.matrix;
       return { ...item, final: item.matrix, matrix };
     });
     const bounds = new THREE.Box3();
     const corners = (part: Part, matrix: THREE.Matrix4) => {
       const half = halfSize(part);
-      return [-1, 1].flatMap((x) => [-1, 1].flatMap((y) => [-1, 1].map((z) => new THREE.Vector3(x * half.x, y * half.y, z * half.z).applyMatrix4(matrix))));
+      return [-1, 1].flatMap((x) =>
+        [-1, 1].flatMap((y) => [-1, 1].map((z) => new THREE.Vector3(x * half.x, y * half.y, z * half.z).applyMatrix4(matrix))),
+      );
     };
-    for (const item of placed) for (const corner of [...corners(item.part, item.matrix), ...corners(item.part, item.final)]) bounds.expandByPoint(corner);
+    for (const item of placed)
+      for (const corner of [...corners(item.part, item.matrix), ...corners(item.part, item.final)]) bounds.expandByPoint(corner);
 
     const center = bounds.getCenter(new THREE.Vector3());
     const camera = new THREE.OrthographicCamera();
@@ -295,7 +309,8 @@ export class ManualArt {
     camera.lookAt(center);
     camera.updateMatrixWorld();
     const view = new THREE.Box3();
-    for (const item of placed) for (const corner of corners(item.part, item.matrix)) view.expandByPoint(corner.applyMatrix4(camera.matrixWorldInverse));
+    for (const item of placed)
+      for (const corner of corners(item.part, item.matrix)) view.expandByPoint(corner.applyMatrix4(camera.matrixWorldInverse));
     const aspect = width / height;
     let halfW = ((view.max.x - view.min.x) / 2) * 1.1;
     let halfH = ((view.max.y - view.min.y) / 2) * 1.1;
@@ -334,11 +349,18 @@ export class ManualArt {
       url: this.renderer.domElement.toDataURL('image/png'),
       width,
       height,
-      callouts: placed.filter((i) => i.callout).map((i) => {
-        const [x, y] = screen(centerOf(i.matrix));
-        return { partId: i.part.id, label: i.part.label, x, y };
-      }),
-      arrows: [...groupBy(placed.filter((i) => i.explode), (i) => i.group ?? i.part.id).values()].map((items) => {
+      callouts: placed
+        .filter((i) => i.callout)
+        .map((i) => {
+          const [x, y] = screen(centerOf(i.matrix));
+          return { partId: i.part.id, label: i.part.label, x, y };
+        }),
+      arrows: [
+        ...groupBy(
+          placed.filter((i) => i.explode),
+          (i) => i.group ?? i.part.id,
+        ).values(),
+      ].map((items) => {
         const mean = (key: 'matrix' | 'final') =>
           items.reduce((sum, i) => sum.add(centerOf(i[key])), new THREE.Vector3()).divideScalar(items.length);
         const from = mean('matrix');
