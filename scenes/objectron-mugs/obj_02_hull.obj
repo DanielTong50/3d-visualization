@@ -1,5 +1,5 @@
 # purple mug: convex hull of the lifted points
-# Object-local coordinates in meters.
+# Body-frame coordinates in meters.
 v -0.04279 0.02923 0.00766
 v 0.04019 0.02554 -0.05110
 v 0.01035 -0.03542 0.02339

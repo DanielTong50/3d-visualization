@@ -1,0 +1,79 @@
+<mujoco model="d683afbd459c">
+  <!-- Two mugs on a garden table. Written by Darius 0.2.0 from Objectron cup/batch-3/4, Google. World frame: +z up, meters, the table top is z = 0. -->
+  <compiler angle="radian" meshdir="meshes" autolimits="true" />
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast" />
+  <visual>
+    <global offwidth="1280" offheight="960" />
+  </visual>
+  <default>
+    <default class="object">
+      <geom condim="4" priority="1" />
+    </default>
+    <default class="grasp">
+      <site type="box" size="0.002 0.004 0.012" rgba="0.1 0.6 1 0.5" group="4" />
+    </default>
+  </default>
+  <asset>
+    <mesh name="table" file="table.obj" />
+    <mesh name="obj_01" file="obj_01.obj" />
+    <mesh name="obj_02_part0" file="obj_02_part0.obj" />
+    <mesh name="obj_02_part1" file="obj_02_part1.obj" />
+    <mesh name="obj_02_part2" file="obj_02_part2.obj" />
+    <mesh name="obj_02_part3" file="obj_02_part3.obj" />
+    <mesh name="obj_02_part4" file="obj_02_part4.obj" />
+    <mesh name="obj_02_part5" file="obj_02_part5.obj" />
+    <mesh name="obj_02_part6" file="obj_02_part6.obj" />
+    <mesh name="obj_02_part7" file="obj_02_part7.obj" />
+  </asset>
+  <worldbody>
+    <light name="key" pos="0.4 -0.6 1.6" dir="-0.25 0.37 -0.9" directional="true" />
+    <geom name="table" type="mesh" mesh="table" rgba="0.635 0.745 0.89 1" friction="1 0.005 0.0001" />
+    <geom name="floor" type="plane" size="5 5 0.1" pos="0 0 -0.75" rgba="0.2 0.21 0.23 1" />
+    <camera name="view" pos="0.0248 -0.2382 0.3559" quat="0.940035 0.339312 -0.0117711 -0.0326108" fovy="57.35" />
+    <camera name="capture_00" pos="0.07824 -0.2497 0.36452" quat="0.927031 0.372136 0.0425961 0.0177201" fovy="57.7" />
+    <camera name="capture_04" pos="0.05909 -0.24171 0.3602" quat="0.929287 0.368678 0.0210789 -0.00758726" fovy="57.7" />
+    <camera name="capture_08" pos="-0.01675 -0.23546 0.34864" quat="0.924337 0.352302 -0.0397748 -0.141075" fovy="57.7" />
+    <camera name="capture_12" pos="-0.09855 -0.21533 0.35207" quat="0.901832 0.340402 -0.0987618 -0.247127" fovy="57.7" />
+    <camera name="capture_17" pos="-0.14177 -0.10782 0.33172" quat="0.858751 0.283563 -0.169649 -0.391609" fovy="57.7" />
+    <camera name="capture_21" pos="-0.19661 -0.04676 0.33127" quat="0.791262 0.274639 -0.223112 -0.498698" fovy="57.7" />
+    <camera name="capture_25" pos="-0.27482 0.00856 0.34772" quat="0.700091 0.237517 -0.284101 -0.610529" fovy="57.7" />
+    <body name="obj_01" pos="0.0005 -0.0015 0.0416" quat="1 0 0 0">
+      <!-- white mug: ceramic, 263 g, estimated -->
+      <freejoint name="obj_01" />
+      <inertial pos="0.005 0.00281 -0.00111" mass="0.2634" fullinertia="0.000392634 0.000390793 0.000425159 6.91814e-05 -1.75888e-05 1.59607e-05" />
+      <geom name="obj_01" class="object" friction="0.5 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.494 0.565 0.667 1" type="mesh" mesh="obj_01" />
+      <site name="obj_01/grasp_0" class="grasp" pos="0.00846 0.00268 -0.00077" quat="0.0412922 0.813369 -0.579534 -0.0294206" />
+      <site name="obj_01/grasp_1" class="grasp" pos="0.00889 0.00159 0.00992" quat="0.0748445 -0.572741 -0.80943 0.105774" />
+      <site name="obj_01/grasp_2" class="grasp" pos="0.01341 -0.00747 -0.00052" quat="0.00784747 0.527063 0.849696 0.0126508" />
+      <site name="obj_01/grasp_3" class="grasp" pos="-0.00055 0.00616 -0.0003" quat="0.0197516 0.390088 -0.919388 -0.0465524" />
+      <site name="obj_01/grasp_4" class="grasp" pos="0.00177 0.01023 -0.0056" quat="0.0884916 0.892608 -0.439907 -0.0436115" />
+      <site name="obj_01/grasp_5" class="grasp" pos="0.00972 -0.00321 -0.00945" quat="0.0884916 0.892608 -0.439907 -0.0436115" />
+      <site name="obj_01/grasp_6" class="grasp" pos="0.00446 0.00346 -0.00077" quat="0.00987263 0.085567 0.989718 0.114192" />
+      <site name="obj_01/grasp_7" class="grasp" pos="0.01154 -0.00168 0.01641" quat="0.00977575 0.339026 0.940335 0.027114" />
+    </body>
+    <body name="obj_02" pos="0.0854 0.0492 0.0374" quat="1 0 0 0">
+      <!-- purple mug: ceramic, 232 g, estimated -->
+      <freejoint name="obj_02" />
+      <inertial pos="-0.00621 0.00475 0.00818" mass="0.2316" fullinertia="0.00039299 0.000322845 0.000455754 -1.59859e-05 -4.16999e-05 -2.47762e-05" />
+      <geom name="obj_02_part0" class="object" friction="0.5 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.314 0.196 0.329 1" type="mesh" mesh="obj_02_part0" />
+      <geom name="obj_02_part1" class="object" friction="0.5 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.314 0.196 0.329 1" type="mesh" mesh="obj_02_part1" />
+      <geom name="obj_02_part2" class="object" friction="0.5 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.314 0.196 0.329 1" type="mesh" mesh="obj_02_part2" />
+      <geom name="obj_02_part3" class="object" friction="0.5 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.314 0.196 0.329 1" type="mesh" mesh="obj_02_part3" />
+      <geom name="obj_02_part4" class="object" friction="0.5 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.314 0.196 0.329 1" type="mesh" mesh="obj_02_part4" />
+      <geom name="obj_02_part5" class="object" friction="0.5 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.314 0.196 0.329 1" type="mesh" mesh="obj_02_part5" />
+      <geom name="obj_02_part6" class="object" friction="0.5 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.314 0.196 0.329 1" type="mesh" mesh="obj_02_part6" />
+      <geom name="obj_02_part7" class="object" friction="0.5 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.314 0.196 0.329 1" type="mesh" mesh="obj_02_part7" />
+      <site name="obj_02/grasp_0" class="grasp" pos="-0.01541 -0.00185 0.01838" quat="0.00117097 -0.190838 0.981602 -0.00602384" />
+      <site name="obj_02/grasp_1" class="grasp" pos="-0.00269 0.01209 0.00557" quat="0.0103308 0.718392 0.69549 0.0100013" />
+      <site name="obj_02/grasp_2" class="grasp" pos="-0.00136 0.01294 0.01823" quat="0.0103308 0.718392 0.69549 0.0100013" />
+      <site name="obj_02/grasp_3" class="grasp" pos="-0.00437 0.00986 0.00792" quat="0.161913 -0.63538 -0.731652 0.186446" />
+      <site name="obj_02/grasp_4" class="grasp" pos="-0.00559 0.01419 0.01008" quat="0.0465786 0.532177 -0.842131 -0.0737081" />
+      <site name="obj_02/grasp_5" class="grasp" pos="-0.00516 0.014 -0.0063" quat="0.0752057 0.668655 -0.735125 -0.082682" />
+      <site name="obj_02/grasp_6" class="grasp" pos="-0.00211 0.01994 -0.00139" quat="0.0466203 0.84835 0.526585 0.0289376" />
+      <site name="obj_02/grasp_7" class="grasp" pos="-0.00081 0.02092 0.01954" quat="0.0466203 0.84835 0.526585 0.0289376" />
+    </body>
+  </worldbody>
+  <keyframe>
+    <key name="capture" qpos="0.0005 -0.0015 0.0416 1 0 0 0 0.0854 0.0492 0.0374 1 0 0 0" />
+  </keyframe>
+</mujoco>
