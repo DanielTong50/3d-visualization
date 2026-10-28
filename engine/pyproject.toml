@@ -23,6 +23,7 @@ darius = "darius.cli:main"
 dev = [
     "pytest==8.4.2",
     "ruff==0.14.2",
+    "uvicorn==0.54.0",
 ]
 
 [tool.pytest.ini_options]
