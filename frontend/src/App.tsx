@@ -1,9 +1,29 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { ApiError, createJob, jobSceneDir, saveAccessCode } from './api';
 import { Home } from './Home';
 import { navigate, routeFromUrl, SCENES_URL, type Route } from './navigation';
 import { JobScreen, UploadScreen } from './Processing';
-import { SimulatorView } from './SimulatorView';
+
+// The 3D engine (three.js, Rapier, Spark) is most of the app's weight: load it only for a scene,
+// so the home and processing screens appear at once.
+const SimulatorView = lazy(() => import('./SimulatorView').then((module) => ({ default: module.SimulatorView })));
+
+function Scene({ sceneDir, view }: { sceneDir: string; view?: string }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="sim">
+          <div className="center-message" role="status">
+            <span className="loader" aria-hidden="true" />
+            <span className="muted">Loading scene…</span>
+          </div>
+        </div>
+      }
+    >
+      <SimulatorView sceneDir={sceneDir} onHome={goHome} initialView={view} />
+    </Suspense>
+  );
+}
 
 export interface Upload {
   file: File;
@@ -62,14 +82,14 @@ export default function App() {
   }
   switch (route.page) {
     case 'scene':
-      return <SimulatorView key={route.sceneId} sceneDir={`${SCENES_URL}/${route.sceneId}`} onHome={goHome} />;
+      return <Scene key={route.sceneId} sceneDir={`${SCENES_URL}/${route.sceneId}`} view={route.view} />;
     case 'job':
       return (
         <JobScreen
           key={route.jobId}
           jobId={route.jobId}
           onHome={goHome}
-          renderScene={() => <SimulatorView sceneDir={jobSceneDir(route.jobId)} onHome={goHome} />}
+          renderScene={() => <Scene sceneDir={jobSceneDir(route.jobId)} />}
         />
       );
     case 'home':
