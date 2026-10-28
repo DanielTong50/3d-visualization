@@ -26,6 +26,7 @@ from ..perception.parts import (
     contact_series,
     fuse,
     held_contacts,
+    lookalikes,
     track_masks,
     track_parts,
 )
@@ -206,6 +207,7 @@ class TrackingScore(BaseModel):
     pieces: int
     grounded: int
     letters_right: int
+    letters_exact: int
     mean_iou: float
     frames_tracked: float
     contacts_precision: float
@@ -276,9 +278,12 @@ def match_tracks(tracks: PartTracks, frames: list[Masks], labels: np.ndarray, pa
 def score_tracking(
     tracks: PartTracks, plan: AssemblyPlan, truth: dict[str, Any], analysis: VideoAnalysis
 ) -> tuple[TrackingScore, dict[int, str], dict[int, float]]:
-    """The score, each track's matched part, and each track's mean overlap with that part."""
+    """The score, each track's matched part, and each track's mean overlap with that part. Letters are
+    right up to look-alikes (parts of the same size, which only their place in the build tells apart);
+    `letters_exact` counts the exact letter."""
     labels, part_ids, _ = load_ids(plan.id)
     letter = {p.id: p.label for p in plan.parts}
+    kind = lookalikes(plan)
     frames = track_masks(tracks)
     match = match_tracks(tracks, frames, labels, part_ids)
 
@@ -307,7 +312,10 @@ def score_tracking(
     score = TrackingScore(
         pieces=len(plan.parts),
         grounded=len(tracks.tracks),
-        letters_right=sum(1 for t in tracks.tracks if t.object in match and t.label == letter[match[t.object]]),
+        letters_right=sum(
+            1 for t in tracks.tracks if t.object in match and kind.get(t.label) == kind[letter[match[t.object]]]
+        ),
+        letters_exact=sum(1 for t in tracks.tracks if t.object in match and t.label == letter[match[t.object]]),
         mean_iou=round(statistics.mean(per_track.values()), 4) if per_track else 0.0,
         frames_tracked=round(sum(1 for v in every if v >= 0.5) / len(every), 4) if every else 0.0,
         contacts_precision=round(true_held / len(named), 4) if named else 0.0,

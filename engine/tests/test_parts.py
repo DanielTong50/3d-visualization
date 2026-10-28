@@ -26,6 +26,7 @@ from darius.perception.parts import (
     grid_to_pixels,
     held_contacts,
     joint_pairs,
+    lookalikes,
     polygon,
     rasterize,
     track_masks,
@@ -182,3 +183,15 @@ def test_each_piece_takes_the_letter_most_looks_give_it():
     voted = vote(looks)
     assert [p.label for p in voted] == ["C", "C", "A"]
     assert [p.box_2d for p in voted] == [p.box_2d for p in looks[0]]  # the first look's places
+
+
+def test_parts_no_camera_can_tell_apart_share_a_class():
+    # The bookcase's top and bottom are the same board, and its shelves are 20 mm shallower.
+    halden = lookalikes(CATALOG["halden-bookcase"]())
+    assert halden["B"] == halden["C"] == halden["D"] == halden["G"] == "B/C/D/G"
+    assert halden["A"] == "A" and halden["E"] == "E" and halden["F"] == "F"
+    varde = lookalikes(CATALOG["varde-nightstand"]())
+    assert varde["B"] == "B/C" and varde["F"] == varde["G"] == "F/G"
+    assert set(lookalikes(CATALOG["lund-side-table"]()).values()) == {"A", "B", "C"}
+    # Contacts are counted by class: the bookcase's first step joins a side to two look-alike boards.
+    assert joint_pairs(CATALOG["halden-bookcase"]())[0] == Counter({("A", "B/C/D/G"): 2})

@@ -14,7 +14,8 @@
    parts found again once more, and their new masks fill only the frames the first pass lost.
 4. Read contacts. A joint of the plan is two parts held together; once it is made, the two parts'
    masks touch. Pairs of objects whose masks have touched for a second without a break are counted
-   by pair of letters against the joints the plan says each step adds, which turns the tracks into
+   by pair of look-alike classes (a bookcase's top and bottom are the same board, and no camera
+   tells their letters apart) against the joints the plan says each step adds, which turns the tracks into
    plan-conditioned evidence of which steps are done: a second, independent source next to Muse
    Spark's step readings, fused in the tracker.
 
@@ -566,17 +567,47 @@ def held_contacts(
     return out
 
 
+LOOKALIKE = 0.1  # parts whose sorted sizes all agree within 10% (or 10 mm) look the same on camera
+
+
+def lookalikes(plan: AssemblyPlan) -> dict[str, str]:
+    """Each letter's look-alike class: the letters of parts no camera can tell apart by size (every
+    sorted dimension within 10%, or 10 mm), joined, as "B/C". A bookcase's top and bottom are the
+    same board; only where they go tells them apart, and grounding cannot know that yet."""
+    sizes: dict[str, list[float]] = {}
+    for part in plan.parts:
+        sizes.setdefault(part.label, sorted(part.size_mm))
+    letters = sorted(sizes)
+    parent = {letter: letter for letter in letters}
+
+    def find(letter: str) -> str:
+        while parent[letter] != letter:
+            letter = parent[letter]
+        return letter
+
+    for i, a in enumerate(letters):
+        for b in letters[i + 1 :]:
+            if all(abs(x - y) <= max(LOOKALIKE * max(x, y), 10.0) for x, y in zip(sizes[a], sizes[b], strict=True)):
+                parent[find(b)] = find(a)
+    groups: dict[str, list[str]] = {}
+    for letter in letters:
+        groups.setdefault(find(letter), []).append(letter)
+    return {letter: "/".join(groups[find(letter)]) for letter in letters}
+
+
 def joint_pairs(plan: AssemblyPlan) -> list[Counter[tuple[str, str]]]:
-    """Each step's joints as a multiset of letter pairs."""
-    label = {p.id: p.label for p in plan.parts}
+    """Each step's joints as a multiset of pairs of look-alike classes."""
+    kind = lookalikes(plan)
+    label = {p.id: kind[p.label] for p in plan.parts}
     return [Counter(tuple(sorted(label[x] for x in plan.joint(j).parts)) for j in s.joints) for s in plan.steps]  # type: ignore[misc]
 
 
 def contact_observation(plan: AssemblyPlan, seen: Counter[tuple[str, str]], time_s: float) -> Observation:
-    """Tracker evidence from contacts. Twins share a letter, so contacts are counted by pair of letters:
-    the plan says how many of each kind every step adds, contacts are credited to the steps in the
-    manual's order, and a step reads as done in proportion to its contacts seen, never with certainty
-    (masks touching in the image is not a fastened joint)."""
+    """Tracker evidence from contacts. Twins share a letter and look-alikes cannot be told apart, so
+    contacts are counted by pair of look-alike classes: the plan says how many of each kind every step
+    adds, contacts are credited to the steps in the manual's order, and a step reads as done in
+    proportion to its contacts seen, never with certainty (masks touching in the image is not a
+    fastened joint)."""
     before: Counter[tuple[str, str]] = Counter()
     step_done = {}
     for step, needed in zip(plan.steps, joint_pairs(plan), strict=True):
@@ -592,7 +623,8 @@ def contact_observations(
 ) -> list[Observation]:
     """Contact evidence at each time, from the pairs of objects that have held contact by then."""
     held = held_contacts(contact_series(frames), fps)
-    letter = {o: label for masks in frames for o, (label, _) in masks.items()}
+    kind = lookalikes(plan)
+    letter = {o: kind.get(label, label) for masks in frames for o, (label, _) in masks.items()}
     out = []
     for t in times:
         seen = Counter(tuple(sorted((letter[a], letter[b]))) for (a, b), at in held.items() if at <= t + 1e-6)
