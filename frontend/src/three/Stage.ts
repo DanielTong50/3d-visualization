@@ -724,6 +724,49 @@ export class Stage {
     this.renderer.shadowMap.autoUpdate = true;
   }
 
+  /**
+   * The parts at time t as a label map seen from the stage's camera: each pixel holds the index of
+   * the part it shows plus one (0 for anything else), rows from the top. Rendered flat, without
+   * lights, antialiasing or anything but the parts: exact ground truth for scoring part trackers.
+   */
+  renderIds(time: number, width: number, height: number): Uint8Array {
+    this.update(time, time);
+    const visible = new Map<THREE.Object3D, boolean>();
+    this.scene.traverse((o) => visible.set(o, o.visible));
+    this.scene.traverse((o) => (o.visible = o === this.scene));
+    const originals = new Map<THREE.Mesh, THREE.Material | THREE.Material[]>();
+    const flat: THREE.MeshBasicMaterial[] = [];
+    [...this.views.values()].forEach((view, i) => {
+      const material = new THREE.MeshBasicMaterial({ color: new THREE.Color((i + 1) / 255, 0, 0) });
+      material.toneMapped = false;
+      originals.set(view.mesh, view.mesh.material);
+      view.mesh.material = material;
+      view.mesh.visible = true;
+      flat.push(material);
+    });
+    const { background, fog } = this.scene;
+    this.scene.background = new THREE.Color(0, 0, 0);
+    this.scene.fog = null;
+    const target = new THREE.WebGLRenderTarget(width, height);
+    this.renderer.setRenderTarget(target);
+    this.renderer.render(this.scene, this.camera);
+    const pixels = new Uint8Array(width * height * 4);
+    this.renderer.readRenderTargetPixels(target, 0, 0, width, height, pixels);
+    this.renderer.setRenderTarget(null);
+    target.dispose();
+    flat.forEach((m) => m.dispose());
+    originals.forEach((material, mesh) => (mesh.material = material));
+    visible.forEach((v, o) => (o.visible = v));
+    this.scene.background = background;
+    this.scene.fog = fog;
+    const labels = new Uint8Array(width * height);
+    for (let y = 0; y < height; y++) {
+      const row = (height - 1 - y) * width; // WebGL rows start at the bottom
+      for (let x = 0; x < width; x++) labels[y * width + x] = pixels[(row + x) * 4];
+    }
+    return labels;
+  }
+
   /** Move the look-at point on screen (fractions of the viewport from its center), e.g. to clear the HUD. */
   frame(x: number, y: number): void {
     this.framing = { x, y };

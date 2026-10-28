@@ -949,6 +949,47 @@ code {
   }
 }
 
+/* The copilot behind the home page's headline: the graph and the step keep to the right, out of
+   the headline's way, and nothing on it takes clicks. */
+.ar.is-hero {
+  position: absolute;
+  pointer-events: none;
+  background: #f3f2ee;
+}
+
+.ar.is-hero .ar-vignette,
+.ar.is-hero .ar-hardware,
+.ar.is-hero .ar-belief {
+  display: none;
+}
+
+.ar.is-hero .ar-graph {
+  left: auto;
+  right: var(--gutter);
+  top: 96px;
+}
+
+.ar.is-hero .ar-step {
+  left: auto;
+  right: var(--gutter);
+  bottom: 124px;
+  width: min(520px, calc(100% - 32px));
+  transform: none;
+}
+
+@media (max-height: 820px) {
+  .ar.is-hero .ar-graph {
+    display: none;
+  }
+}
+
+@media (max-width: 1000px) {
+  .ar.is-hero .ar-graph,
+  .ar.is-hero .ar-step {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .ar-graph {
     width: 150px;
@@ -1389,6 +1430,78 @@ code {
 .hm-playhead {
   stroke: var(--red);
   stroke-width: 1.5;
+}
+
+/* SAM 3.1's masks over a video: the layer covers the video's 16:9 box. */
+.masks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  pointer-events: none;
+}
+
+.mask {
+  fill-opacity: 0.16;
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.mask-prompt path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 1px rgba(17, 17, 17, 0.7));
+}
+
+.mask-prompt circle {
+  fill: var(--yellow);
+  stroke: var(--text);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.mask-tag rect {
+  fill: #fff;
+}
+
+.mask-tag text {
+  font-family: var(--mono);
+  font-weight: 600;
+  fill: var(--text);
+  text-anchor: middle;
+}
+
+.mask-tag .mask-letter-text {
+  fill: #fff;
+}
+
+.video-hud button.chip {
+  cursor: pointer;
+}
+
+.video-hud button.chip.is-off {
+  color: var(--text-3);
+}
+
+.contact-runs {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  margin: 10px 0 2px;
+  font-size: 13px;
+}
+
+.contact-runs b {
+  font: 600 13px var(--mono);
+  text-align: right;
+}
+
+.contact-runs .is-bound {
+  color: var(--text-3);
 }
 
 .video-side {
@@ -1912,7 +2025,7 @@ code {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(243, 242, 238, 0.92) 0%, rgba(243, 242, 238, 0.66) 30%, rgba(243, 242, 238, 0) 52%),
+    linear-gradient(90deg, rgba(243, 242, 238, 0.94) 0%, rgba(243, 242, 238, 0.82) 34%, rgba(243, 242, 238, 0) 56%),
     linear-gradient(to bottom, rgba(243, 242, 238, 0.85) 0%, rgba(243, 242, 238, 0) 16%),
     linear-gradient(to top, #ffffff 0%, rgba(255, 255, 255, 0.85) 9%, rgba(255, 255, 255, 0) 26%);
 }
@@ -2282,6 +2395,34 @@ code {
   object-fit: cover;
 }
 
+/* A session video with its masks: the layer needs the video's whole 16:9 box, so a tile crops
+   the box rather than the video inside it. */
+.tracked-video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--bg-2);
+}
+
+.tracked-video video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.figure-video {
+  container-type: size;
+}
+
+.figure-video .tracked-video {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100cqw, 177.78cqh);
+  transform: translate(-50%, -50%);
+}
+
 .figure-heatmap {
   position: absolute;
   left: 10px;
@@ -2304,6 +2445,97 @@ code {
 .figure-split .graph {
   max-height: 100%;
   aspect-ratio: 1;
+}
+
+/* Models: the tracked video beside the pipeline, one row per stage with its number. */
+.models {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 56px);
+  align-items: start;
+}
+
+.models-figure {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.models-figure .tracked-video {
+  border-radius: 4px;
+}
+
+.models-figure figcaption {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+.models-figure figcaption b {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.pipeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-2);
+}
+
+.pipeline li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 128px;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.pipeline-index {
+  font: 13px/1.6 var(--mono);
+  color: var(--text-3);
+}
+
+.pipeline h3 {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.pipeline h3 span {
+  margin-left: 6px;
+  font: 12px var(--mono);
+  color: var(--text-3);
+}
+
+.pipeline p {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+.pipeline-value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  text-align: right;
+}
+
+.pipeline-value b {
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.pipeline-value span {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--text-3);
 }
 
 /* Method: three numbered columns. */
@@ -2523,7 +2755,8 @@ table.results {
 
   .method,
   .references,
-  .stack {
+  .stack,
+  .models {
     grid-template-columns: 1fr;
   }
 
@@ -2573,6 +2806,18 @@ table.results {
 
   .figure-split .belief {
     display: none;
+  }
+
+  .pipeline li {
+    grid-template-columns: 22px minmax(0, 1fr);
+  }
+
+  .pipeline-value {
+    grid-column: 2;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+    text-align: left;
   }
 }
 

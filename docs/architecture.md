@@ -2,7 +2,8 @@
 
 Darius has one data structure, the **assembly plan**, and three jobs that revolve around it: recover it from a
 manual, track a build's progress through it, and turn its geometry into guidance. This document follows the plan
-through each of them, with the algorithms and the numbers they use.
+through each of them, with the algorithms and the numbers they use. Perception runs on two Meta models through the
+Meta Model API: Muse Spark 1.3 reads manuals and frames and points at parts; SAM 3.1 tracks every part through video.
 
 ```
              ┌──────────── engine (Python) ────────────┐        ┌──────────── web (TypeScript) ─────────────┐
@@ -12,7 +13,9 @@ pages        (Muse Spark, schema)                          │    │  engine/tr
                                             AssemblyPlan (graph) ─►  (every instant of a build)   AR layer   │
 camera  ──►  perception.frames ──► Observation ──► Tracker ─┘    │  three/ManualArt.ts ──► ui/ManualPage.tsx  │
 frames       (Muse Spark + step pages)   P(step done)   HMM      │  (the plan drawn as a manual)              │
-                                                                 └───────────────────────────────────────────┘
+   │                                         ▲ fused             └───────────────────────────────────────────┘
+   └──►  perception.parts ──► masks ──► contacts
+         (Muse Spark grounds, SAM 3.1 tracks, Muse Spark re-finds)
 ```
 
 ## 1. The plan
@@ -82,7 +85,35 @@ The schema asks, per frame, for every step's `done` with a confidence, the lette
 orientation. `to_observation` turns a reading into tracker evidence: P(step *i* done) = confidence if done else
 1 − confidence, kept within [0.02, 0.98].
 
-## 5. Tracking
+## 5. Tracking parts
+
+`perception/parts.py` follows every physical piece through a build video with both models.
+
+1. **Ground.** On an anchor frame (1 s in, the parts on the floor), Muse Spark sees the frame and the manual's parts
+   page and returns, per piece, its letter, a box and a point on the piece (0–1000 grid). It looks once at the
+   whole frame, then three times at a close crop around everything it found (a 5 px leg spans 15 px there), and each
+   piece takes the letter most close looks give it. Without the point, SAM segmented the floor plank beside a thin
+   diagonal leg; without the crop, Muse Spark's points missed thin legs by ~15 px.
+2. **Track.** The video is re-encoded to 5 fps at 960×540 and uploaded once. One SAM 3.1 request carries every
+   piece's box and point as one object's prompt on the anchor frame and propagates all masks forward and backward
+   (up to 16 objects). Masks arrive box-local and are stored as simplified polygons.
+3. **Find again.** SAM drops a part that leaves the frame (the session camera comes in close to fasten) and does not
+   pick it up when it comes back. Every 4 s, for the parts with no mask, Muse Spark gets the anchor frame with every
+   part outlined and numbered plus the later frame (set-of-mark prompting) and returns a box and point for each lost
+   part it can see, off every mask SAM still holds. SAM tracks those parts once more from all their prompts, and the
+   new masks only fill frames the first pass lost: SAM propagates every prompt both ways, so a wrong later prompt
+   could otherwise rewrite frames the first pass had right.
+4. **Contacts.** Two parts' masks that touch (within a cell at 320×180) for 1 s without a break are a held contact.
+   Twins share a letter, and parts of the same size are told apart only by where they go (a bookcase's top and
+   bottom are the same board), so letters whose parts agree within 10% (or 10 mm) on every sorted dimension form a
+   look-alike class, and held contacts are counted by pair of classes against the joints each step adds, in the
+   manual's order: P(step *i* done) = 0.2 + 0.6 · (its joints matched). That is tracker evidence independent of Muse
+   Spark's readings; the two are fused per step as a product of experts (logits add, the contacts at weight 0.5).
+
+Everything downstream of the polygons (contacts, scores) is computed from the stored file, so `--check` re-scores a
+stored run exactly.
+
+## 6. Tracking progress
 
 The build's state is *k*, the number of completed steps (0 … N). `assembly/tracking.py` (mirrored by
 `frontend/src/engine/tracking.ts`) is a hidden Markov model:
@@ -101,7 +132,7 @@ The build's state is *k*, the number of completed steps (0 … N). `assembly/tra
 
 Given the plan, the decoded path *is* the graph's history: the joints of step *k* were made when step *k* finished.
 
-## 6. Guidance
+## 7. Guidance
 
 `frontend/src/engine/choreography.ts` turns a plan into a timeline that can be evaluated at any instant:
 
@@ -124,7 +155,7 @@ layer: ghost boxes at target poses, tube arcs whose dashes flow toward the targe
 screen-sized fastener sprites. It also returns **detections**: every part's projected box, with loose parts and parts
 being placed boxed one by one and each (sub)assembly as a single object, which is how a part tracker reports them.
 
-## 7. Manuals from geometry
+## 8. Manuals from geometry
 
 `three/ManualArt.ts` draws a plan as a manual: an orthographic three-quarter view, white faces with polygon offset
 under heavy screen-space outlines (hidden lines removed by the depth buffer), new parts white and parts in place gray.
@@ -143,21 +174,29 @@ A step's drawing shows the component the step works on, in the step's orientatio
 The drawing's callouts and arrows are returned in image coordinates and laid out as SVG over it by
 `ui/ManualPage.tsx`, which also composes the cover, the parts page (all parts at one scale) and the hardware page.
 
-## 8. Measuring
+## 9. Measuring
 
 `frontend/scripts/capture.mjs` renders each product's manual pages and films its build in clean mode (no AR layer)
-at 1280×720, 15 fps, with the moment of every frame recorded in `truth.json`. `darius eval` then:
+at 1280×720, 15 fps, with the moment of every frame recorded in `truth.json`, and renders every part's exact mask
+(a label map per frame at 5 fps, 320×180, `ids.bin.gz`) by drawing each part in a flat color of its index.
+`darius eval` then:
 
 - reads each manual and scores the recovered plan with `compare`;
 - samples each session at 1 fps, verifies the frames with the step pages, decodes them, and scores the timeline:
   **frame accuracy** (the decoded *k* equals the truth), the same for each frame alone (argmax of its emission),
   **steps found**, and the **timing error** of each step's decoded completion against the moment its parts were in
-  place (in a rendered session nothing visible happens during fastening, so that is the moment a video can show).
+  place (in a rendered session nothing visible happens during fastening, so that is the moment a video can show);
+- tracks each session's parts (`--tracking`) and scores the tracks against the exact masks: each track is matched to
+  the part it covers on the anchor frame, then **mask IoU** (per track, over every frame where its part is visible,
+  0 when the track has no mask there), **part-frames held** (IoU ≥ 0.5), **letters right** (up to look-alikes), the
+  share of the plan's joints seen as held contacts, and the frame accuracy of the timeline decoded from the contacts
+  alone, from the contacts fused with Muse Spark's readings, and from contacts of the exact masks (what perfect
+  tracks would give).
 
 Every output is stored next to its inputs; `--replay` re-scores stored outputs and `--check` (run by CI) fails when a
 stored score no longer matches.
 
-## 9. Serving
+## 10. Serving
 
 `engine/darius/service/api.py` (FastAPI, deployed by `engine/modal_app.py` as one CPU function that scales to zero):
 

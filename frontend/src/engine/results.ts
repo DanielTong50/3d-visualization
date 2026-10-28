@@ -99,6 +99,61 @@ export interface SessionTruth {
   completed: number[];
 }
 
+export interface TrackingScore {
+  pieces: number;
+  grounded: number;
+  /** Letters right up to look-alikes (parts of the same size, told apart only by where they go). */
+  letters_right: number;
+  letters_exact: number;
+  /** Mean over tracks of each track's mean IoU with its part's exact mask, wherever the part is visible. */
+  mean_iou: number;
+  /** Share of visible part-frames where the part's track overlaps it by IoU 0.5 or more. */
+  frames_tracked: number;
+  contacts_precision: number;
+  contacts_recall: number;
+  frames_right_spark: number;
+  frames_right_contacts: number;
+  frames_right_fused: number;
+  frames_right_exact_contacts: number;
+  step_error_fused_s: number | null;
+}
+
+export interface TrackFrame {
+  frame: number;
+  box: [number, number, number, number];
+  area: number;
+  confidence: number | null;
+  /** Outline in clip pixels: x0, y0, x1, y1, ... */
+  polygon: number[];
+}
+
+export interface PartPrompt {
+  object: number;
+  label: string;
+  frame: number;
+  box: [number, number, number, number];
+  point: [number, number] | null;
+}
+
+/** Muse Spark's prompts and SAM 3.1's part tracks through a session (session/tracks.json). */
+export interface TrackingResult {
+  score: TrackingScore;
+  /** Each object's matched part (by overlap on the anchor frame) and its mean IoU with it. */
+  parts: Record<string, { part: string; iou: number | null }>;
+  /** Pairs of objects whose masks touched for a second without a break, and when that was. */
+  contacts: { objects: [number, number]; letters: [string, string]; at: number }[];
+  plan: string;
+  model: string;
+  grounding_model: string;
+  fps: number;
+  size: [number, number];
+  anchor_frame: number;
+  frames: number;
+  prompts: PartPrompt[];
+  tracks: { object: number; label: string; frames: TrackFrame[] }[];
+  seconds: number;
+}
+
 export interface Benchmarks {
   model: string | null;
   date: string;
@@ -109,6 +164,11 @@ export interface Benchmarks {
   sessions: {
     items: Record<string, SessionScore & { seconds: number; duration_s: number }>;
     mean: Partial<SessionScore>;
+  };
+  tracking?: {
+    models: { segmentation: string; grounding: string } | null;
+    items: Record<string, TrackingScore & { seconds: number; frames: number; prompts?: number; refound?: number }>;
+    mean: Partial<TrackingScore>;
   };
 }
 
@@ -124,7 +184,24 @@ export const sessionVideoUrl = (id: string) => `${ASSEMBLIES_URL}/${id}/session/
 export const loadManualResult = (id: string) => json<ManualResult>(`${ASSEMBLIES_URL}/${id}/manual/reading.json`);
 export const loadSessionResult = (id: string) => json<SessionResult>(`${ASSEMBLIES_URL}/${id}/session/analysis.json`);
 export const loadSessionTruth = (id: string) => json<SessionTruth>(`${ASSEMBLIES_URL}/${id}/session/truth.json`);
+export const loadTrackingResult = (id: string) => json<TrackingResult>(`${ASSEMBLIES_URL}/${id}/session/tracks.json`);
 export const loadBenchmarks = () => json<Benchmarks>(`${ASSEMBLIES_URL}/benchmarks.json`);
+
+/** The plan's joints SAM 3.1's contacts have shown by a time, and contacts between parts no joint joins. */
+export function contactGraph(plan: AssemblyPlan, tracks: TrackingResult, time: number) {
+  const byPair = new Map(plan.joints.map((j) => [[...j.parts].sort().join('|'), j.id]));
+  const seen = new Set<string>();
+  const extra: { id: string; parts: [string, string] }[] = [];
+  for (const contact of tracks.contacts) {
+    if (contact.at > time) continue;
+    const [a, b] = contact.objects.map((o) => tracks.parts[String(o)]?.part);
+    if (!a || !b || a === b) continue;
+    const joint = byPair.get([a, b].sort().join('|'));
+    if (joint) seen.add(joint);
+    else extra.push({ id: `c-${contact.objects.join('-')}`, parts: [a, b] });
+  }
+  return { seen, extra };
+}
 
 export interface Matched {
   /** Truth joints matched by each recovered step. */

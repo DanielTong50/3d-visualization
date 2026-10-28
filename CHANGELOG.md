@@ -6,6 +6,40 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-28: every part tracked, with SAM 3.1
+
+### Added
+- Part tracking (`perception/parts.py`, `darius parts`). Muse Spark grounds every piece on the first frame (its
+  letter, a box and a point on it, from the manual's parts page), looking once at the whole frame and three times at
+  a close crop for thin parts, each piece taking its majority letter. SAM 3.1 tracks every piece through the video in
+  one request from its box and point, forward and backward. Every 4 s Muse Spark looks again for the parts SAM lost,
+  given the first frame with every part outlined and numbered (set-of-mark prompting), and a second SAM pass picks
+  them up, filling only the frames the first pass lost.
+- Mask contacts as evidence: masks that touch for a second without a break are counted by pair of look-alike classes
+  (parts no camera tells apart by size) against the joints each step adds, in the manual's order, and fused with
+  Muse Spark's frame readings as a product of experts.
+- Exact part masks for every session: the renderer draws each part in a flat color of its index, and `capture.mjs`
+  stores a label map per frame (5 fps, 320×180) beside the video.
+- `darius eval --tracking`: mask IoU against the exact masks, part-frames held, letters, joints seen as contacts,
+  and the frames right from contacts alone, fused, and from the exact masks' contacts; stored in
+  `session/tracks.json` and re-scored by `--check` in CI. One run per product: mask IoU 56.6%, 57.1%, 68.2% and
+  86.4% (bookcase, nightstand, side table, desk); contacts alone get 61.1% of frames right, and would get 92.8% from
+  perfect tracks.
+- Video analyzer: SAM 3.1's mask on every part over the video, Muse Spark's prompts where it gave them, the graph
+  the contacts show as the video plays, and the tracking scores.
+- Home page: a Models section (a tracked video beside what each Meta model does, with its number), masks on the
+  analyzer figure, part-tracking columns in the results, and five references (Segment Anything, SAM 2, SAM 3,
+  set-of-mark prompting, products of experts).
+
+### Changed
+- The home page's hero is the copilot itself, live in the browser: the build with tags on the parts in play, the
+  guidance arcs, the assembly graph and the current step beside the headline; the next product starts when a build
+  is done.
+- The sessions are re-rendered with the hardware and the camera's close-ups while fastening, and re-read by Muse
+  Spark: 18/18 steps found, 89.6% of frames right, 1.16 s mean timing error.
+- The SAM 3.1 client is back in `models/meta_api.py`: box-local masks (a video of full-frame rasters did not fit in
+  memory), box and point prompts on one frame or several, and a retry when a stream drops.
+
 ## [1.2.0] - 2026-10-28: a quieter front page, and no more crashes
 
 ### Fixed
@@ -195,7 +229,8 @@ Initial release.
 - CI: lint, tests and build for both halves, freshness of generated scene files, and a check that
   exported scenes settle in MuJoCo. GitHub Pages deployment of the simulator.
 
-[Unreleased]: https://github.com/DanielTong50/3d-visualization/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/DanielTong50/3d-visualization/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/DanielTong50/3d-visualization/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/DanielTong50/3d-visualization/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/DanielTong50/3d-visualization/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/DanielTong50/3d-visualization/compare/v0.2.0...v1.0.0

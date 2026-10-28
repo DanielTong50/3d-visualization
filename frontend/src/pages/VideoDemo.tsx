@@ -1,18 +1,29 @@
 import { ArrowLeft, Pause, Play } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { loadPlan, type AssemblyPlan } from '../engine/plan';
-import { loadSessionResult, loadSessionTruth, sessionVideoUrl, type SessionResult, type SessionTruth } from '../engine/results';
+import {
+  contactGraph,
+  loadSessionResult,
+  loadSessionTruth,
+  loadTrackingResult,
+  sessionVideoUrl,
+  type SessionResult,
+  type SessionTruth,
+  type TrackingResult,
+} from '../engine/results';
 import { navigate } from '../navigation';
 import { AssemblyGraph } from '../ui/AssemblyGraph';
 import { BeliefBars } from '../ui/BeliefBars';
 import { EvidenceHeatmap } from '../ui/EvidenceHeatmap';
 import { FurniturePicker } from '../ui/FurniturePicker';
+import { MaskLayer } from '../ui/MaskLayer';
 
 /**
- * The video analyzer, replayed: a rendered build session plays while what Muse Spark read on
- * each sampled frame (stored by `darius eval`) and the tracker's decoding of the whole video
- * follow it. The heatmap is the raw evidence (P(step done) per frame), the line through it the
- * decoded path, the ticks the ground truth; the graph fills in as the video reaches each joint.
+ * The video analyzer, replayed: a rendered build session plays while what the models made of it
+ * (stored by `darius eval`) follows it. Over the video, SAM 3.1's mask for every part, tracked
+ * from Muse Spark's prompts. Below, what Muse Spark read on each sampled frame: the heatmap is
+ * the raw evidence (P(step done) per frame), the line through it the decoded path, the ticks the
+ * ground truth. At the side, the graph as built, and the graph SAM 3.1's contacts show.
  */
 
 const ORIENTATION: Record<string, string> = {
@@ -37,12 +48,15 @@ export function VideoDemo({ furniture }: { furniture: string }) {
   const [plan, setPlan] = useState<AssemblyPlan | null>(null);
   const [result, setResult] = useState<SessionResult | null | undefined>(undefined);
   const [truth, setTruth] = useState<SessionTruth | null>(null);
+  const [tracks, setTracks] = useState<TrackingResult | null>(null);
+  const [masks, setMasks] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [time, setTime] = useState(0);
   const [playing, setPlaying] = useState(true);
   const video = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
+    setTracks(null);
     Promise.all([loadPlan(furniture), loadSessionResult(furniture), loadSessionTruth(furniture)])
       .then(([p, r, t]) => {
         setPlan(p);
@@ -50,6 +64,10 @@ export function VideoDemo({ furniture }: { furniture: string }) {
         setTruth(t);
       })
       .catch((e: Error) => setError(e.message));
+    // The tracks are large and optional: they arrive after the page is up.
+    loadTrackingResult(furniture)
+      .then((t) => t?.plan === furniture && setTracks(t))
+      .catch(() => setTracks(null));
   }, [furniture]);
 
   useEffect(() => {
@@ -87,6 +105,8 @@ export function VideoDemo({ furniture }: { furniture: string }) {
         }
       : null;
   const truthDone = [...placed.values()].filter((t) => t <= time).length;
+  const contacts = tracks && tracks.plan === plan.id ? contactGraph(plan, tracks, time) : null;
+  const refound = tracks ? tracks.prompts.filter((p) => p.frame !== tracks.anchor_frame).length : 0;
   const seek = (t: number) => {
     if (video.current) video.current.currentTime = Math.max(0, Math.min(duration - 0.05, t));
   };
@@ -109,6 +129,7 @@ export function VideoDemo({ furniture }: { furniture: string }) {
         </div>
         <div className="demo-actions">
           {result && <span className="chip mono">{result.model}</span>}
+          {tracks && <span className="chip mono">{tracks.model}</span>}
           <FurniturePicker current={furniture} onPick={(id) => navigate({ page: 'video', furniture: id })} />
         </div>
       </header>
@@ -127,6 +148,7 @@ export function VideoDemo({ furniture }: { furniture: string }) {
               onPause={() => setPlaying(false)}
               onClick={toggle}
             />
+            {tracks && masks && tracks.plan === plan.id && <MaskLayer tracks={tracks} time={time} />}
             <div className="video-hud">
               <span className="chip">
                 <span className="rec" /> <b>{time.toFixed(1)}</b> s
@@ -135,6 +157,11 @@ export function VideoDemo({ furniture }: { furniture: string }) {
                 <span className={`chip ${completed === truthDone ? 'done' : 'guide'}`}>
                   <b>{`${completed}/${steps}`}</b> decoded · <b>{`${truthDone}/${steps}`}</b> true
                 </span>
+              )}
+              {tracks && (
+                <button type="button" className={`chip${masks ? '' : ' is-off'}`} onClick={() => setMasks((m) => !m)} aria-pressed={masks}>
+                  <b>{tracks.tracks.length}</b> parts · masks {masks ? 'on' : 'off'}
+                </button>
               )}
             </div>
             {reading && (
@@ -212,6 +239,67 @@ export function VideoDemo({ furniture }: { furniture: string }) {
                 <span className="faint mono">forward-backward · {Math.round(belief.confidence * 100)}%</span>
               </div>
               <BeliefBars plan={plan} belief={belief} />
+            </div>
+          )}
+          {tracks && contacts && (
+            <div className="glass panel-pad">
+              <div className="panel-head">
+                <span className="eyebrow track">Graph from SAM 3.1 contacts</span>
+                <span className="faint mono">
+                  {contacts.seen.size}/{plan.joints.length} joints
+                </span>
+              </div>
+              <AssemblyGraph plan={plan} completed={steps} known={contacts.seen} extra={contacts.extra} />
+              <p className="panel-note">
+                An edge appears once two parts' masks have touched for a second without a break. Red: parts touching in the image that no
+                joint joins. Tracks are named by the part they cover on the first frame.
+              </p>
+            </div>
+          )}
+          {tracks && (
+            <div className="glass panel-pad scorecard">
+              <div className="panel-head">
+                <span className="eyebrow done">Part tracking, scored</span>
+                <span className="faint mono">
+                  {tracks.frames} frames · {tracks.seconds.toFixed(0)} s
+                </span>
+              </div>
+              <div className="scores">
+                <div>
+                  <b>{percent(tracks.score.mean_iou)}</b>
+                  <span>mask IoU</span>
+                </div>
+                <div>
+                  <b>{percent(tracks.score.frames_tracked)}</b>
+                  <span>part-frames held</span>
+                </div>
+                <div>
+                  <b className="plain">
+                    {tracks.score.letters_right}/{tracks.score.pieces}
+                  </b>
+                  <span>letters right*</span>
+                </div>
+                <div>
+                  <b>{percent(tracks.score.contacts_recall)}</b>
+                  <span>joints touched</span>
+                </div>
+              </div>
+              <div className="contact-runs">
+                <span>Muse Spark readings alone</span>
+                <b>{percent(tracks.score.frames_right_spark)}%</b>
+                <span>SAM 3.1 contacts alone</span>
+                <b>{percent(tracks.score.frames_right_contacts)}%</b>
+                <span>Both, fused</span>
+                <b>{percent(tracks.score.frames_right_fused)}%</b>
+                <span className="is-bound">Contacts of exact masks</span>
+                <b className="is-bound">{percent(tracks.score.frames_right_exact_contacts)}%</b>
+              </div>
+              <p className="panel-note">
+                Muse Spark grounded {tracks.score.grounded} parts on the first frame
+                {refound > 0 ? ` and found lost ones again ${refound} times later` : ''}; SAM 3.1 tracked them. Masks are scored against the
+                renderer's exact part masks wherever a part is visible; frames right compare the timeline decoded from each source of
+                evidence. *Up to look-alikes: parts of the same size, which only where they go tells apart.
+              </p>
             </div>
           )}
           {result && (

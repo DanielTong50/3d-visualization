@@ -7,6 +7,8 @@
     darius schema                          print the AssemblyPlan JSON Schema
     darius manual PAGE...  [--truth PLAN]  read manual pages into a plan (Meta Model API)
     darius track VIDEO --plan PLAN         decode a build video into a timeline (Meta Model API)
+    darius parts VIDEO --plan PLAN         ground and track every part through a video (Muse Spark + SAM 3.1)
+    darius eval [--tracking] [--replay]    benchmark the models on the library sessions
 
 PLAN is a library id (e.g. halden-bookcase) or a path to a plan.json.
 """
@@ -166,6 +168,25 @@ def _track(args: argparse.Namespace) -> int:
     return 0
 
 
+def _parts(args: argparse.Namespace) -> int:
+    from dotenv import load_dotenv
+    from PIL import Image
+
+    from .perception import parts
+
+    load_dotenv(REPO / ".env")
+    page = Image.open(args.parts_page).convert("RGB") if args.parts_page else None
+    result = parts.track_parts(Path(args.video), load_plan(args.plan), parts_page=page, anchor_s=args.anchor)
+    text = result.model_dump_json(indent=1)
+    if args.out:
+        Path(args.out).write_text(text + "\n")
+    else:
+        print(text)
+    labels = " ".join(t.label for t in result.tracks)
+    print(f"{len(result.tracks)} parts ({labels}), {result.frames} frames, {result.seconds} s", file=sys.stderr)
+    return 0
+
+
 def _eval(args: argparse.Namespace) -> int:
     from dotenv import load_dotenv
 
@@ -180,18 +201,26 @@ def _eval(args: argparse.Namespace) -> int:
             print(problem, file=sys.stderr)
         print(f"{len(ids)} plans: stored results {'match' if not problems else 'DO NOT match'} their re-scored values")
         return 1 if problems else 0
-    both = not args.manuals and not args.sessions
+    every = not (args.manuals or args.sessions or args.tracking)
     for plan_id in ids:
-        if args.manuals or both:
+        if args.manuals or every:
             score = benchmark.eval_manual(plan_id, replay=args.replay)["score"]
             print(f"{plan_id:18} manual   edges F1 {score['edges_f1']:.3f}  parts F1 {score['parts_f1']:.3f}  "
                   f"exact steps {score['steps_exact']:.2f}  hardware {score['hardware_accuracy']:.2f}")  # fmt: skip
-        if args.sessions or both:
+        if args.sessions or every:
             print(f"{plan_id:18} session  reading frames…", file=sys.stderr)
             score = benchmark.eval_session(plan_id, every_s=args.every, replay=args.replay)["score"]
             print(f"{plan_id:18} session  frame accuracy {score['frame_accuracy']:.3f} (one frame alone "
                   f"{score['raw_frame_accuracy']:.3f})  steps found {score['steps_found']}/{score['steps']}  "
                   f"step error {score['step_error_s']} s")  # fmt: skip
+        if args.tracking or every:
+            print(f"{plan_id:18} tracking grounding and tracking the parts…", file=sys.stderr)
+            score = benchmark.eval_tracking(plan_id, replay=args.replay)["score"]
+            print(f"{plan_id:18} tracking mask IoU {score['mean_iou']:.3f}  tracked {score['frames_tracked']:.2f}  "
+                  f"letters {score['letters_right']}/{score['pieces']}  "
+                  f"frames right: Muse Spark {score['frames_right_spark']:.3f}  "
+                  f"contacts {score['frames_right_contacts']:.3f}  "
+                  f"fused {score['frames_right_fused']:.3f}")  # fmt: skip
     benchmark.summarize()
     return 0
 
@@ -224,9 +253,17 @@ def main(argv: list[str] | None = None) -> int:
     command.add_argument("--every", type=float, default=1.0, help="seconds between analyzed frames")
     command.add_argument("--out")
     command.set_defaults(run=_track)
+    command = commands.add_parser("parts", help="ground and track every part through a video (Muse Spark + SAM 3.1)")
+    command.add_argument("video")
+    command.add_argument("--plan", required=True)
+    command.add_argument("--parts-page", help="the manual's parts page, to name the parts by")
+    command.add_argument("--anchor", type=float, default=1.0, help="seconds in, where every part lies apart")
+    command.add_argument("--out")
+    command.set_defaults(run=_parts)
     command = commands.add_parser("eval", help="benchmark the perception models on the library (Meta Model API)")
     command.add_argument("--manuals", action="store_true", help="only read the manuals")
     command.add_argument("--sessions", action="store_true", help="only watch the session videos")
+    command.add_argument("--tracking", action="store_true", help="only track the sessions' parts (SAM 3.1)")
     command.add_argument("--only", nargs="+", help="plan ids")
     command.add_argument("--every", type=float, default=1.0, help="seconds between analyzed frames")
     command.add_argument("--replay", action="store_true", help="re-score the stored model outputs, no API calls")
