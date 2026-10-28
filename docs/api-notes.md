@@ -215,3 +215,16 @@ Not used: objects render as point clouds. Moving groups of splats per rigid body
   re-raise as `RuntimeError("HTTP 404: ...")` (`modal_app._run_stage`).
 - SAM 3.1 box-prompt video tracking held every object in every keyframe for the two-mug clip
   (26 frames, mean confidence 0.985).
+
+**2026-10-28: part tracking on the four rendered sessions (`perception/parts.py`)**
+- Box **and point** prompts on one object work together (`FramePrompt(box=..., points=[PromptPoint(x, y)])`). A box
+  alone around a thin bar lying diagonally is mostly floor, and SAM 3.1 segmented the floor plank inside it.
+- One object can have prompts on **several frames** in one request; the builder rejects only the same frame twice.
+- SAM 3.1 drops an object that leaves the frame and did not pick it up again when it came back in these videos
+  (white panels that look alike). It also swaps identities between look-alike panels once they are joined.
+- Muse Spark's grounding on the 0–1000 grid missed 5–8 px-wide parts by ~15 px on a 640×360 frame; a close crop
+  (upscaled to 1280 px) fixed it. Its letters among same-looking parts vary from run to run; a majority over three
+  looks is steadier.
+- A streamed SAM 3.1 video response dropped once mid-stream (`ResponsesStreamSourceError`); sent again, it completed.
+  `_stream_sam` now retries twice. A 60 s clip at 5 fps (300 frames, 9–10 objects, 960×540) takes 60–110 s.
+- Keep masks box-local: full-frame rasters for 10 objects × 300 frames at 960×540 are ~1.5 GB.
