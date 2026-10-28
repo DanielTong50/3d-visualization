@@ -200,9 +200,11 @@ cd engine && uv run modal deploy modal_app.py
 - **"Done" means the parts are in place.** Nothing visible happens in a rendered session while a step is fastened,
   so a step counts as done in video once its parts sit where they belong; the copilot's verify phase is where the
   fastening is checked with the person.
-- **On these sessions the tracker does not raise frame accuracy**: the model's readings were already consistent from
-  frame to frame. What it adds is a monotone build history with a confidence for every moment, and robustness when a
-  frame is misread, which the tests and the copilot demo exercise with injected misreads.
+- **The tracker's gain on these sessions is modest**: decoding raises the frames with the right progress from 87.2%
+  (each frame alone) to 89.6%, all of it on the bookcase and the nightstand; on the other two the model's readings
+  were already consistent from frame to frame. What it adds beyond that is a monotone build history with a confidence
+  for every moment, and robustness when a frame is misread, which the tests and the copilot demo exercise with
+  injected misreads.
 - **SAM 3.1 loses parts the way trackers do.** It drops a part that leaves the frame (the session camera comes in
   close to fasten) and, without the second look, did not find it again; once panels that look alike are joined, it
   can swap them. Masks touch in the image without the parts touching in space, so contacts carry false edges.
