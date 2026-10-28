@@ -1,44 +1,21 @@
-"""Darius: compile a phone video of a tabletop into a simulation-ready digital twin.
+"""Darius: an assembly copilot. It reads a manual into an assembly graph, tracks a build from a
+phone camera, and shows the next move in AR.
 
-Layers, lowest first. A layer may import from the layers listed before it, never after:
+Layers, lowest first. A layer imports only from the layers listed before it:
 
-    darius.core         geometry, coordinate frames, materials, cross-process errors
-    darius.scene        the scene package contract: schema, asset I/O, loading
-    darius.models       clients for the foundation models the pipeline calls
-    darius.robotics     mass properties, grasp synthesis, MJCF / URDF / USD export, MuJoCo env
-    darius.pipeline     the video-to-scene compiler: a graph of resumable stages
-    darius.calibration  real-to-sim calibration: friction measured from a filmed push
-    darius.service      the HTTP API and "what if" planning
-    darius.eval         benchmark readers (Objectron ground truth)
-    darius.tools        repository maintenance (the demo gallery)
+    darius.core         cross-process errors
+    darius.assembly     the assembly plan (parts, hardware, joints, steps) as a graph; validation,
+                        comparison, plan-conditioned progress tracking, guidance
+    darius.furniture    a procedural flat-pack library with exact geometry: ground truth
+    darius.models       clients for the foundation models perception calls
+    darius.perception   manual pages -> plan; camera frame -> observation; video -> timeline
+    darius.pipeline     job folders and the stage graph that runs perception in the cloud
+    darius.service      the HTTP API: manuals, live sessions, videos
+    darius.eval         benchmarks against the furniture library's ground truth
 
-Importing `darius` is cheap: subpackages load on first use, because each cloud
-image installs only what its own stages need (the GPU images have no Pydantic).
-
-    >>> import darius
-    >>> scene = darius.load_scene("scenes/objectron-mugs")
-    >>> [(o.label, o.mass_kg) for o in scene.objects]
+    >>> from darius.furniture import catalog
+    >>> plan = catalog.build("halden-bookcase")
+    >>> [step.title for step in plan.steps]
 """
 
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
-__version__ = "0.2.0"
-__all__ = ["Scene", "ScenePackage", "__version__", "load_scene"]
-
-if TYPE_CHECKING:
-    from .scene.io import ScenePackage, load_scene
-    from .scene.schema import Scene
-
-
-def __getattr__(name: str):
-    if name == "Scene":
-        from .scene.schema import Scene
-
-        return Scene
-    if name in ("ScenePackage", "load_scene"):
-        from .scene import io
-
-        return getattr(io, name)
-    raise AttributeError(f"module 'darius' has no attribute {name!r}")
+__version__ = "1.0.0"
