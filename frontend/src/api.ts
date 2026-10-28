@@ -4,7 +4,7 @@
  * GET /jobs/{id}/scene/{file}.
  */
 export const API_URL: string = (
-  (import.meta.env.VITE_API_URL as string | undefined) ?? 'https://danieltong12345--scan2sim-api.us-east.modal.run'
+  (import.meta.env.VITE_API_URL as string | undefined) ?? 'https://danieltong12345--darius-api.us-east.modal.run'
 ).replace(/\/+$/, '');
 
 export type StageState = 'pending' | 'running' | 'done' | 'failed';
@@ -34,6 +34,7 @@ export const DEFAULT_STAGES: JobStage[] = [
   'Finding the objects',
   'Separating objects in 3D',
   'Identifying objects and their physics',
+  'Rendering photo-real appearance',
   'Building your world',
 ].map((label) => ({ name: label, label, state: 'pending', seconds: null }));
 
@@ -74,7 +75,7 @@ export async function accessCodeRequired(): Promise<boolean> {
   }
 }
 
-const ACCESS_CODE_KEY = 'scan2sim.accessCode';
+const ACCESS_CODE_KEY = 'darius.accessCode';
 
 export function savedAccessCode(): string | null {
   try {

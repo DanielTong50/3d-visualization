@@ -1,7 +1,7 @@
-import table from '../../../pipeline/scan2sim/data/materials.json';
+import table from '../../../pipeline/darius/data/materials.json';
 import type { SceneObject } from './scene';
 
-/** Bulk properties of a material. The table is shared with the pipeline: pipeline/scan2sim/data/materials.json. */
+/** Bulk properties of a material. The table is shared with the pipeline: pipeline/darius/data/materials.json. */
 export interface Material {
   density_kg_m3: number;
   /** Friction against a wooden table. */
