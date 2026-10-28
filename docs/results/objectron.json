@@ -19,10 +19,10 @@
       "detected": 24,
       "separated": 24,
       "label_accuracy": 1.0,
-      "median_size_ratio": 0.9855868657372897,
-      "median_abs_log2_size_ratio": 0.13945444720952155,
-      "within_25pct_size": 0.8333333333333334,
-      "median_dims_rel_error": 0.1700484599327159
+      "median_size_ratio": 0.9492482670159483,
+      "median_abs_log2_size_ratio": 0.16914472872144853,
+      "within_25pct_size": 0.9166666666666666,
+      "median_dims_rel_error": 0.16472222072251064
     }
   },
   "clips": [
@@ -40,7 +40,32 @@
         "segment": 58.0,
         "lift": 33.4,
         "physics": 16.0,
-        "package": 9.3
+        "splat": 178.2,
+        "package": 77.2
+      },
+      "splats": {
+        "gaussians": 756891,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 135.7,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA A100-SXM4-40GB",
+        "focal_correction": 1.0621,
+        "mean_camera_rotation_correction_deg": 1.937,
+        "test_psnr": 20.81,
+        "train_psnr": 22.78
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.954,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -71,7 +96,7 @@
         "objects": [
           {
             "label": "metal cup",
-            "category": "metal cup",
+            "category": "metal tumbler",
             "label_correct": true,
             "gt_dims_m": [
               0.07,
@@ -80,15 +105,15 @@
             ],
             "pred_dims_m": [
               0.091,
-              0.1,
-              0.096
+              0.099,
+              0.095
             ],
-            "size_ratio": 1.1746485662765473,
-            "sorted_dims_rel_error": 0.25411254867937305,
-            "mass_kg": 0.12
+            "size_ratio": 1.16664074975893,
+            "sorted_dims_rel_error": 0.25238094698446506,
+            "mass_kg": 0.21813925800017223
           }
         ],
-        "scale": 0.28674657337844817
+        "scale": 0.28449928126497365
       }
     },
     {
@@ -105,7 +130,32 @@
         "segment": 68.0,
         "lift": 29.0,
         "physics": 12.3,
-        "package": 8.5
+        "splat": 152.5,
+        "package": 47.0
+      },
+      "splats": {
+        "gaussians": 724442,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 125.6,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA A100-SXM4-40GB",
+        "focal_correction": 1.0426,
+        "mean_camera_rotation_correction_deg": 0.723,
+        "test_psnr": 29.75,
+        "train_psnr": 30.24
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.761,
+          "used_parts": true
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -136,7 +186,7 @@
         "objects": [
           {
             "label": "plastic cup",
-            "category": "plastic party cup",
+            "category": "red plastic party cup",
             "label_correct": true,
             "gt_dims_m": [
               0.0993,
@@ -150,7 +200,7 @@
             ],
             "size_ratio": 1.0720492948383058,
             "sorted_dims_rel_error": 0.0768415640958431,
-            "mass_kg": 0.033825523954667217
+            "mass_kg": 0.015
           }
         ],
         "scale": 0.26767789426723176
@@ -170,7 +220,32 @@
         "segment": 64.2,
         "lift": 38.2,
         "physics": 10.0,
-        "package": 7.4
+        "splat": 207.9,
+        "package": 44.9
+      },
+      "splats": {
+        "gaussians": 955261,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 143.4,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA A100-SXM4-40GB",
+        "focal_correction": 1.06,
+        "mean_camera_rotation_correction_deg": 2.112,
+        "test_psnr": 27.95,
+        "train_psnr": 28.54
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.916,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -215,10 +290,10 @@
             ],
             "size_ratio": 0.9423853188614737,
             "sorted_dims_rel_error": 0.06934472476600412,
-            "mass_kg": 0.3554844365010366
+            "mass_kg": 0.35596314962698977
           }
         ],
-        "scale": 0.3363605785401951
+        "scale": 0.33651149747616377
       }
     },
     {
@@ -235,7 +310,32 @@
         "segment": 97.8,
         "lift": 33.7,
         "physics": 15.1,
-        "package": 4.6
+        "splat": 110.9,
+        "package": 50.1
+      },
+      "splats": {
+        "gaussians": 1398440,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 81.3,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0184,
+        "mean_camera_rotation_correction_deg": 0.796,
+        "test_psnr": 21.51,
+        "train_psnr": 20.64
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.834,
+          "used_parts": true
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -266,7 +366,7 @@
         "objects": [
           {
             "label": "plastic mug",
-            "category": "kids plastic mug",
+            "category": "plastic kids mug",
             "label_correct": true,
             "gt_dims_m": [
               0.11,
@@ -274,16 +374,16 @@
               0.08
             ],
             "pred_dims_m": [
-              0.12,
-              0.07,
-              0.079
+              0.11,
+              0.064,
+              0.072
             ],
-            "size_ratio": 0.9102092336957396,
-            "sorted_dims_rel_error": 0.14196969634481263,
-            "mass_kg": 0.07491046222914853
+            "size_ratio": 0.8320335327899595,
+            "sorted_dims_rel_error": 0.15999999942201534,
+            "mass_kg": 0.057700130339697175
           }
         ],
-        "scale": 0.23554351666470377
+        "scale": 0.2159148902759785
       }
     },
     {
@@ -300,7 +400,32 @@
         "segment": 156.0,
         "lift": 43.0,
         "physics": 32.4,
-        "package": 5.0
+        "splat": 164.4,
+        "package": 58.8
+      },
+      "splats": {
+        "gaussians": 2313081,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 130.1,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0098,
+        "mean_camera_rotation_correction_deg": 0.476,
+        "test_psnr": 24.28,
+        "train_psnr": 22.23
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 7,
+          "hull_coverage": 0.955,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -365,7 +490,32 @@
         "segment": 106.9,
         "lift": 55.8,
         "physics": 15.0,
-        "package": 5.8
+        "splat": 179.1,
+        "package": 28.4
+      },
+      "splats": {
+        "gaussians": 1530114,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 149.4,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA A100-SXM4-40GB",
+        "focal_correction": 1.0221,
+        "mean_camera_rotation_correction_deg": 0.724,
+        "test_psnr": 27.39,
+        "train_psnr": 26.87
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 5,
+          "hull_coverage": 1.0,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -404,16 +554,16 @@
               0.12
             ],
             "pred_dims_m": [
-              0.17,
-              0.042,
-              0.149
+              0.175,
+              0.043,
+              0.153
             ],
-            "size_ratio": 1.071824253044867,
-            "sorted_dims_rel_error": 0.11574077032460461,
-            "mass_kg": 0.39536340901545847
+            "size_ratio": 1.100427406898388,
+            "sorted_dims_rel_error": 0.1259259563123369,
+            "mass_kg": 0.43128450441526994
           }
         ],
-        "scale": 0.23829214617120592
+        "scale": 0.2453007387056531
       }
     },
     {
@@ -430,7 +580,32 @@
         "segment": 59.9,
         "lift": 24.6,
         "physics": 19.6,
-        "package": 8.6
+        "splat": 175.8,
+        "package": 38.7
+      },
+      "splats": {
+        "gaussians": 745663,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 129.5,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA A100-SXM4-40GB",
+        "focal_correction": 1.1039,
+        "mean_camera_rotation_correction_deg": 1.223,
+        "test_psnr": 24.21,
+        "train_psnr": 24.7
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.656,
+          "used_parts": true
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -461,7 +636,7 @@
         "objects": [
           {
             "label": "book",
-            "category": "hardcover grammar book",
+            "category": "hardcover textbook",
             "label_correct": true,
             "gt_dims_m": [
               0.25,
@@ -495,7 +670,32 @@
         "segment": 85.6,
         "lift": 29.9,
         "physics": 8.6,
-        "package": 4.2
+        "splat": 120.8,
+        "package": 59.9
+      },
+      "splats": {
+        "gaussians": 1616109,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 41,
+        "test_views": 6,
+        "train_seconds": 91.2,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0178,
+        "mean_camera_rotation_correction_deg": 0.339,
+        "test_psnr": 23.08,
+        "train_psnr": 23.22
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.643,
+          "used_parts": true
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -526,7 +726,7 @@
         "objects": [
           {
             "label": "book",
-            "category": "paperback book",
+            "category": "paperback programming book",
             "label_correct": true,
             "gt_dims_m": [
               0.23,
@@ -534,16 +734,16 @@
               0.21
             ],
             "pred_dims_m": [
-              0.23,
-              0.199,
-              0.116
+              0.214,
+              0.185,
+              0.108
             ],
-            "size_ratio": 1.3002910958533138,
-            "sorted_dims_rel_error": 0.45746030212157734,
-            "mass_kg": 2.626009101423332
+            "size_ratio": 1.2097548552451887,
+            "sorted_dims_rel_error": 0.4495375978754567,
+            "mass_kg": 2.1009925630389237
           }
         ],
-        "scale": 0.41313407098721083
+        "scale": 0.38353097271747244
       }
     },
     {
@@ -560,7 +760,52 @@
         "segment": 155.3,
         "lift": 34.4,
         "physics": 48.0,
-        "package": 10.0
+        "splat": 201.6,
+        "package": 126.9
+      },
+      "splats": {
+        "gaussians": 2879105,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 163.1,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0054,
+        "mean_camera_rotation_correction_deg": 0.405,
+        "test_psnr": 27.27,
+        "train_psnr": 22.95
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.682,
+          "used_parts": true
+        },
+        "obj_02": {
+          "parts": 8,
+          "hull_coverage": 0.29,
+          "used_parts": true
+        },
+        "obj_03": {
+          "parts": 8,
+          "hull_coverage": 0.739,
+          "used_parts": true
+        },
+        "obj_04": {
+          "parts": 7,
+          "hull_coverage": 0.798,
+          "used_parts": true
+        },
+        "obj_05": {
+          "parts": 8,
+          "hull_coverage": 0.537,
+          "used_parts": true
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -591,7 +836,7 @@
         "objects": [
           {
             "label": "liquor bottle",
-            "category": "rum bottle",
+            "category": "liquor bottle",
             "label_correct": true,
             "gt_dims_m": [
               0.08,
@@ -599,16 +844,16 @@
               0.08
             ],
             "pred_dims_m": [
-              0.109,
-              0.263,
-              0.056
+              0.095,
+              0.229,
+              0.049
             ],
-            "size_ratio": 0.9881108367186822,
-            "sorted_dims_rel_error": 0.2246795044831673,
-            "mass_kg": 1.798512392492792
+            "size_ratio": 0.8620529856769016,
+            "sorted_dims_rel_error": 0.23141024992553239,
+            "mass_kg": 1.1
           }
         ],
-        "scale": 0.6970954356846473
+        "scale": 0.6076257025672186
       }
     },
     {
@@ -625,7 +870,32 @@
         "segment": 78.8,
         "lift": 29.9,
         "physics": 15.0,
-        "package": 4.8
+        "splat": 74.6,
+        "package": 28.6
+      },
+      "splats": {
+        "gaussians": 882189,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 57.4,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0325,
+        "mean_camera_rotation_correction_deg": 0.969,
+        "test_psnr": 18.24,
+        "train_psnr": 19.47
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.816,
+          "used_parts": true
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -690,7 +960,32 @@
         "segment": 99.2,
         "lift": 37.5,
         "physics": 10.3,
-        "package": 5.7
+        "splat": 128.4,
+        "package": 42.0
+      },
+      "splats": {
+        "gaussians": 1504043,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 94.5,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0075,
+        "mean_camera_rotation_correction_deg": 0.519,
+        "test_psnr": 24.79,
+        "train_psnr": 24.13
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 7,
+          "hull_coverage": 0.876,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 0,
@@ -717,7 +1012,32 @@
         "segment": 78.3,
         "lift": 31.0,
         "physics": 11.2,
-        "package": 9.1
+        "splat": 112.6,
+        "package": 37.8
+      },
+      "splats": {
+        "gaussians": 1428478,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 81.7,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.009,
+        "mean_camera_rotation_correction_deg": 0.409,
+        "test_psnr": 24.17,
+        "train_psnr": 22.64
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.726,
+          "used_parts": true
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -762,7 +1082,7 @@
             ],
             "size_ratio": 1.0729514606051869,
             "sorted_dims_rel_error": 0.1694444420230059,
-            "mass_kg": 0.5
+            "mass_kg": 0.55
           }
         ],
         "scale": 0.2427072257408349
@@ -782,7 +1102,72 @@
         "segment": 134.8,
         "lift": 27.3,
         "physics": 40.8,
-        "package": 13.3
+        "splat": 120.6,
+        "package": 179.2
+      },
+      "splats": {
+        "gaussians": 1517689,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 96.6,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0104,
+        "mean_camera_rotation_correction_deg": 1.091,
+        "test_psnr": 22.36,
+        "train_psnr": 21.83
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.915,
+          "used_parts": false
+        },
+        "obj_02": {
+          "parts": 8,
+          "hull_coverage": 0.961,
+          "used_parts": false
+        },
+        "obj_03": {
+          "parts": 8,
+          "hull_coverage": 0.472,
+          "used_parts": true
+        },
+        "obj_04": {
+          "parts": 6,
+          "hull_coverage": 0.998,
+          "used_parts": false
+        },
+        "obj_05": {
+          "parts": 8,
+          "hull_coverage": 0.839,
+          "used_parts": true
+        },
+        "obj_06": {
+          "parts": 4,
+          "hull_coverage": 0.999,
+          "used_parts": false
+        },
+        "obj_07": {
+          "parts": 6,
+          "hull_coverage": 0.994,
+          "used_parts": false
+        },
+        "obj_08": {
+          "parts": 8,
+          "hull_coverage": 0.887,
+          "used_parts": false
+        },
+        "obj_09": {
+          "parts": 8,
+          "hull_coverage": 0.87,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -821,16 +1206,16 @@
               0.04
             ],
             "pred_dims_m": [
-              0.147,
-              0.061,
+              0.149,
+              0.062,
               0.048
             ],
-            "size_ratio": 1.1433134594259278,
-            "sorted_dims_rel_error": 0.14722224786463767,
-            "mass_kg": 0.5379492463523324
+            "size_ratio": 1.1547170511607008,
+            "sorted_dims_rel_error": 0.1583333592241015,
+            "mass_kg": 0.590433968263155
           }
         ],
-        "scale": 0.3554656926689277
+        "scale": 0.3597492034124782
       }
     },
     {
@@ -847,7 +1232,62 @@
         "segment": 141.7,
         "lift": 30.1,
         "physics": 26.3,
-        "package": 4.5
+        "splat": 101.8,
+        "package": 98.8
+      },
+      "splats": {
+        "gaussians": 1201414,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 41,
+        "test_views": 6,
+        "train_seconds": 79.8,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.032,
+        "mean_camera_rotation_correction_deg": 0.675,
+        "test_psnr": 21.11,
+        "train_psnr": 21.88
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.831,
+          "used_parts": true
+        },
+        "obj_02": {
+          "parts": 8,
+          "hull_coverage": 0.559,
+          "used_parts": true
+        },
+        "obj_03": {
+          "parts": 8,
+          "hull_coverage": 0.844,
+          "used_parts": true
+        },
+        "obj_04": {
+          "parts": 8,
+          "hull_coverage": 0.727,
+          "used_parts": true
+        },
+        "obj_05": {
+          "parts": 8,
+          "hull_coverage": 0.849,
+          "used_parts": true
+        },
+        "obj_06": {
+          "parts": 8,
+          "hull_coverage": 0.962,
+          "used_parts": false
+        },
+        "obj_07": {
+          "parts": 8,
+          "hull_coverage": 0.882,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -878,7 +1318,7 @@
         "objects": [
           {
             "label": "digital camera",
-            "category": "compact digital camera",
+            "category": "digital camera",
             "label_correct": true,
             "gt_dims_m": [
               0.11,
@@ -886,16 +1326,16 @@
               0.03
             ],
             "pred_dims_m": [
-              0.146,
-              0.06,
-              0.077
+              0.134,
+              0.055,
+              0.071
             ],
-            "size_ratio": 1.4293139109654291,
-            "sorted_dims_rel_error": 0.475757591494985,
-            "mass_kg": 0.45209204078856824
+            "size_ratio": 1.3133222104576852,
+            "sorted_dims_rel_error": 0.3552669696872031,
+            "mass_kg": 0.3476083442004591
           }
         ],
-        "scale": 0.34933480830252395
+        "scale": 0.3200341369746106
       }
     },
     {
@@ -912,7 +1352,42 @@
         "segment": 77.0,
         "lift": 30.6,
         "physics": 25.1,
-        "package": 7.8
+        "splat": 91.7,
+        "package": 79.4
+      },
+      "splats": {
+        "gaussians": 1097381,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 69.3,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0151,
+        "mean_camera_rotation_correction_deg": 1.09,
+        "test_psnr": 21.46,
+        "train_psnr": 22.21
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 7,
+          "hull_coverage": 0.899,
+          "used_parts": false
+        },
+        "obj_02": {
+          "parts": 8,
+          "hull_coverage": 0.387,
+          "used_parts": true
+        },
+        "obj_03": {
+          "parts": 8,
+          "hull_coverage": 0.827,
+          "used_parts": true
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -943,7 +1418,7 @@
         "objects": [
           {
             "label": "camera",
-            "category": "digital camera",
+            "category": "mirrorless digital camera",
             "label_correct": true,
             "gt_dims_m": [
               0.12,
@@ -977,7 +1452,32 @@
         "segment": 67.3,
         "lift": 31.8,
         "physics": 11.6,
-        "package": 11.5
+        "splat": 84.8,
+        "package": 24.4
+      },
+      "splats": {
+        "gaussians": 923041,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 64.8,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0106,
+        "mean_camera_rotation_correction_deg": 0.776,
+        "test_psnr": 26.25,
+        "train_psnr": 25.73
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.943,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -1022,7 +1522,7 @@
             ],
             "size_ratio": 0.9195813571819211,
             "sorted_dims_rel_error": 0.17065247784242588,
-            "mass_kg": 0.8
+            "mass_kg": 0.84
           }
         ],
         "scale": 0.23920011481605508
@@ -1042,7 +1542,32 @@
         "segment": 348.2,
         "lift": 20.5,
         "physics": 8.9,
-        "package": 5.0
+        "splat": 80.6,
+        "package": 23.6
+      },
+      "splats": {
+        "gaussians": 678320,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 41,
+        "test_views": 6,
+        "train_seconds": 54.6,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0023,
+        "mean_camera_rotation_correction_deg": 0.602,
+        "test_psnr": 21.57,
+        "train_psnr": 19.97
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.997,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -1081,16 +1606,16 @@
               0.05
             ],
             "pred_dims_m": [
-              0.334,
-              0.032,
-              0.14
+              0.191,
+              0.019,
+              0.08
             ],
-            "size_ratio": 0.9830628947558973,
-            "sorted_dims_rel_error": 0.3390476511413187,
-            "mass_kg": 0.643899872975943
+            "size_ratio": 0.5691133793849142,
+            "sorted_dims_rel_error": 0.3923809518671264,
+            "mass_kg": 0.42
           }
         ],
-        "scale": 0.8921175046198944
+        "scale": 0.5097814312113682
       }
     },
     {
@@ -1107,7 +1632,32 @@
         "segment": 171.4,
         "lift": 18.0,
         "physics": 10.2,
-        "package": 4.1
+        "splat": 70.4,
+        "package": 23.7
+      },
+      "splats": {
+        "gaussians": 548663,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 41,
+        "test_views": 6,
+        "train_seconds": 55.2,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0014,
+        "mean_camera_rotation_correction_deg": 0.513,
+        "test_psnr": 23.4,
+        "train_psnr": 23.21
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 3,
+          "hull_coverage": 0.966,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -1146,16 +1696,16 @@
               0.05
             ],
             "pred_dims_m": [
-              0.924,
-              0.03,
-              0.19
+              0.729,
+              0.024,
+              0.15
             ],
-            "size_ratio": 1.5552716614551472,
-            "sorted_dims_rel_error": 1.459047597154063,
-            "mass_kg": 0.45
+            "size_ratio": 1.233012065071281,
+            "sorted_dims_rel_error": 1.0788095065682723,
+            "mass_kg": 0.42
           }
         ],
-        "scale": 1.6040523427606586
+        "scale": 1.2663571127057829
       }
     },
     {
@@ -1172,7 +1722,32 @@
         "segment": 209.2,
         "lift": 45.5,
         "physics": 13.9,
-        "package": 6.3
+        "splat": 243.4,
+        "package": 53.1
+      },
+      "splats": {
+        "gaussians": 3318042,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 191.5,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0047,
+        "mean_camera_rotation_correction_deg": 0.39,
+        "test_psnr": 22.0,
+        "train_psnr": 21.7
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 7,
+          "hull_coverage": 0.958,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -1211,16 +1786,16 @@
               0.05
             ],
             "pred_dims_m": [
-              0.27,
-              0.053,
-              0.262
+              0.22,
+              0.044,
+              0.214
             ],
-            "size_ratio": 1.1156441955496428,
-            "sorted_dims_rel_error": 0.12333333480689224,
-            "mass_kg": 0.35
+            "size_ratio": 0.9154650711010387,
+            "sorted_dims_rel_error": 0.12506173824393163,
+            "mass_kg": 0.782348319887242
           }
         ],
-        "scale": 0.31862166627330657
+        "scale": 0.25961765400047204
       }
     },
     {
@@ -1237,7 +1812,32 @@
         "segment": 93.9,
         "lift": 41.8,
         "physics": 10.5,
-        "package": 9.8
+        "splat": 114.1,
+        "package": 27.5
+      },
+      "splats": {
+        "gaussians": 1450066,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 40,
+        "test_views": 6,
+        "train_seconds": 88.5,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0046,
+        "mean_camera_rotation_correction_deg": 0.411,
+        "test_psnr": 22.92,
+        "train_psnr": 23.53
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.883,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -1268,7 +1868,7 @@
         "objects": [
           {
             "label": "cereal box",
-            "category": "cereal box",
+            "category": "baby cereal box",
             "label_correct": true,
             "gt_dims_m": [
               0.15,
@@ -1302,7 +1902,37 @@
         "segment": null,
         "lift": 58.4,
         "physics": 10.3,
-        "package": 6.8
+        "splat": 215.0,
+        "package": 70.0
+      },
+      "splats": {
+        "gaussians": 2810851,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 170.2,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0045,
+        "mean_camera_rotation_correction_deg": 0.411,
+        "test_psnr": 18.61,
+        "train_psnr": 19.18
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.84,
+          "used_parts": true
+        },
+        "obj_02": {
+          "parts": 8,
+          "hull_coverage": 0.802,
+          "used_parts": true
+        }
       },
       "physics.json": {
         "separated": 2,
@@ -1365,7 +1995,7 @@
             ],
             "size_ratio": 0.9300467885630275,
             "sorted_dims_rel_error": 0.12406424874550659,
-            "mass_kg": 0.22034058794964945
+            "mass_kg": 0.19279801445594325
           },
           {
             "label": "sneaker",
@@ -1403,7 +2033,32 @@
         "segment": 66.8,
         "lift": 23.6,
         "physics": 5.2,
-        "package": 4.4
+        "splat": 69.2,
+        "package": 20.8
+      },
+      "splats": {
+        "gaussians": 482484,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 42,
+        "test_views": 6,
+        "train_seconds": 50.4,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0634,
+        "mean_camera_rotation_correction_deg": 1.296,
+        "test_psnr": 22.72,
+        "train_psnr": 25.0
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.774,
+          "used_parts": true
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -1442,16 +2097,16 @@
               0.27
             ],
             "pred_dims_m": [
-              0.202,
-              0.085,
-              0.109
+              0.241,
+              0.101,
+              0.13
             ],
-            "size_ratio": 0.7444597908053886,
-            "sorted_dims_rel_error": 0.2549823690526964,
-            "mass_kg": 0.2607823442874286
+            "size_ratio": 0.8868896181733817,
+            "sorted_dims_rel_error": 0.11238977759280216,
+            "mass_kg": 0.3750064518298604
           }
         ],
-        "scale": 0.3882519526789385
+        "scale": 0.4613346731832092
       }
     },
     {
@@ -1468,7 +2123,32 @@
         "segment": 39.7,
         "lift": 18.4,
         "physics": 4.4,
-        "package": 4.7
+        "splat": 61.2,
+        "package": 43.9
+      },
+      "splats": {
+        "gaussians": 395775,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 41,
+        "test_views": 6,
+        "train_seconds": 48.1,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.1423,
+        "mean_camera_rotation_correction_deg": 2.132,
+        "test_psnr": 23.88,
+        "train_psnr": 23.96
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.91,
+          "used_parts": false
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -1499,7 +2179,7 @@
         "objects": [
           {
             "label": "sneaker",
-            "category": "sneaker",
+            "category": "sneaker shoe",
             "label_correct": true,
             "gt_dims_m": [
               0.1,
@@ -1507,16 +2187,16 @@
               0.28
             ],
             "pred_dims_m": [
-              0.282,
-              0.08,
-              0.135
+              0.29,
+              0.082,
+              0.138
             ],
-            "size_ratio": 0.9677827182054782,
-            "sorted_dims_rel_error": 0.11071429664053695,
-            "mass_kg": 0.1963254702398916
+            "size_ratio": 0.9921649640526159,
+            "sorted_dims_rel_error": 0.1219047730760714,
+            "mass_kg": 0.18669453100479025
           }
         ],
-        "scale": 0.7748184019370461
+        "scale": 0.7966157565102736
       }
     },
     {
@@ -1533,7 +2213,32 @@
         "segment": 94.3,
         "lift": 44.1,
         "physics": 6.0,
-        "package": 5.5
+        "splat": 91.7,
+        "package": 36.4
+      },
+      "splats": {
+        "gaussians": 1167368,
+        "iterations": 6000,
+        "sh_degree": 1,
+        "train_views": 41,
+        "test_views": 6,
+        "train_seconds": 71.0,
+        "resolution": [
+          768,
+          1024
+        ],
+        "gpu": "NVIDIA L40S",
+        "focal_correction": 1.0326,
+        "mean_camera_rotation_correction_deg": 1.009,
+        "test_psnr": 29.88,
+        "train_psnr": 30.42
+      },
+      "colliders": {
+        "obj_01": {
+          "parts": 8,
+          "hull_coverage": 0.821,
+          "used_parts": true
+        }
       },
       "physics.json": {
         "separated": 1,
@@ -1578,7 +2283,7 @@
             ],
             "size_ratio": 1.2076825378802258,
             "sorted_dims_rel_error": 0.2169612782448405,
-            "mass_kg": 0.6911486744538239
+            "mass_kg": 0.5924131495318491
           }
         ],
         "scale": 0.3730812961910176

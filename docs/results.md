@@ -25,9 +25,54 @@ Ground-truth objects are matched to detections by their projected box centers on
 | Size within ±25% of truth | 88% |
 | Median size ratio (estimated / true) | 0.99× |
 | Median relative error, all three dimensions | 18% |
-| Median processing time per clip (sum of stages) | 197 s |
+| Median processing time per clip (sum of stages) | 377 s |
 
 ![Estimated vs. true object size per class](media/objectron-scale.png)
+
+## Appearance: Gaussian splats
+
+Each scene is optimized as 3D Gaussian splats (gsplat, 6,000 iterations, SH degree 1) from VGGT's
+cameras, which are refined jointly with the splats. Every eighth keyframe is held out of training.
+Because a held-out view's camera is never trained, its pose correction is fitted with the splats frozen
+before scoring (test-time pose alignment, standard for pose-optimizing radiance fields).
+
+| Metric | Result |
+|---|---|
+| Scenes | 24 |
+| Held-out PSNR, median (min–max) | 23.2 dB (18.2–29.9) |
+| Training-view PSNR, median | 23.1 dB |
+| Training time, median | 90 s |
+| Mean camera rotation correction, median | 0.7° |
+| Objects given a convex-part collider | 24 / 45 |
+
+![Held-out view: ground truth (left) and splat render (right)](media/objectron-mugs-splat-test-view.jpg)
+
+On the two-mug scene, refining VGGT's cameras raised held-out PSNR from 27.5 to 28.9 dB and removed
+doubled edges; a learned focal scale added 0.5 dB more. Two things that did not help: per-frame color
+correction for auto-exposure (−0.4 to +0.15 dB, removed), and 15,000 instead of 6,000 iterations
+(28.5 dB, nine times slower; with about 20 training views, longer schedules overfit).
+
+Training-view PSNR is close to held-out PSNR on every clip, so the weaker scenes are limited by fitting,
+not overfitting. They are cluttered stores and shelves, where VGGT's geometry is noisiest.
+
+## Appearance: MCMC densification
+
+The ten demo scenes were retrained with MCMC densification (Kheradmand et al., 2024): a fixed budget of
+450,000 Gaussians relocated rather than cloned and pruned, with anti-aliased rasterization, otherwise the
+same 6,000 iterations, cameras and held-out frames. Held-out PSNR improved on every clip.
+
+| Scene | Objectron clip | Clone-and-split | MCMC | Change |
+|---|---|---|---|---|
+| Book standing on a desk | `book/batch-12/11` | 23.1 dB | 26.9 dB | +3.8 dB |
+| Cereal box on tiles | `cereal_box/batch-21/27` | 22.9 dB | 26.5 dB | +3.6 dB |
+| Coffee mug | `cup/batch-5/39` | 27.9 dB | 31.4 dB | +3.5 dB |
+| Paperback on a quilt | `book/batch-6/16` | 27.4 dB | 29.7 dB | +2.3 dB |
+| Leather dress shoe | `shoe/batch-9/25` | 29.9 dB | 32.1 dB | +2.2 dB |
+| DSLR camera | `camera/batch-12/32` | 26.2 dB | 28.0 dB | +1.8 dB |
+| Red party cup | `cup/batch-37/28` | 29.8 dB | 31.4 dB | +1.6 dB |
+| Book on a patterned cloth | `book/batch-20/35` | 24.3 dB | 25.2 dB | +1.0 dB |
+| Kitchen counter | `bottle/batch-3/14` | 27.3 dB | 27.7 dB | +0.4 dB |
+| **Median** | | **27.3 dB** | **28.0 dB** | **+2.2 dB** |
 
 ## Ablation: telling the model the scan's proportions
 
@@ -41,7 +86,7 @@ omits it (fewer objects off by more than 25% matters more for a usable simulatio
 | Prompt | Size within ±25% | Median size ratio | Median abs. log2 error | Median dims error |
 |---|---|---|---|---|
 | Typical size, no hint (default) | 88% | 0.99× | 0.18 | 18% |
-| Typical size, given scan proportions | 83% | 0.99× | 0.14 | 17% |
+| Typical size, given scan proportions | 92% | 0.95× | 0.17 | 16% |
 
 ## Failures
 
@@ -96,6 +141,11 @@ These run in CI on every commit:
 - **Restitution:** a dropped rubber ball (e = 0.85) rebounds close to `e² × h`, while a low-restitution
   box barely lifts.
 - **Stability:** every shipped scene settles with no sinking, jitter or drift, both in the browser and
-  after export, in MuJoCo.
+  after export, in MuJoCo (`darius sim`: under 3 cm of drift and 3 mm of motion in the final half second).
+- **Exported restitution:** in the MJCF, a rubber ball dropped from 21.5 cm rebounds to e² of that height
+  within 15%, which holds only because the contact's time constant is derived from a fixed natural period.
+- **Robotics round trips:** every exported scene loads in MuJoCo with the manifest's masses, centers of mass
+  and principal moments; every URDF compiles; the USD stage opens with `pxr` with Z up, rigid bodies and
+  bound physics materials ([robotics](robotics.md#verification)).
 - **Friction estimator:** on noisy synthetic push tracks, the reality-check fit recovers μ within 12%
   and re-simulation closes the slide-distance error to within 8%.

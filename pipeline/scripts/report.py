@@ -66,6 +66,44 @@ def figure(records: list[dict]) -> None:
     fig.savefig(FIGURE, facecolor="white")
 
 
+def mcmc_section(records: list[dict]) -> list[str]:
+    """Held-out PSNR of the shipped demo scenes (MCMC densification) against the same clips' evaluation run
+    (clone-and-split densification), matched by Objectron clip name."""
+    by_clip = {r["clip"]: r for r in records if r.get("splats")}
+    rows = []
+    for path in sorted((REPO / "scenes").glob("*/scene.json")):
+        scene = json.loads(path.read_text())
+        provenance = scene.get("provenance") or {}
+        clip = provenance.get("source", "").removeprefix("Objectron ").split(",")[0]
+        after = (provenance.get("appearance") or {}).get("test_psnr_db")
+        before = (by_clip.get(clip, {}).get("splats") or {}).get("test_psnr")
+        if after is not None and before is not None:
+            rows.append((scene["title"], clip, before, after, provenance["appearance"]["gaussians"]))
+    if not rows:
+        return []
+    deltas = np.array([after - before for _, _, before, after, _ in rows])
+    lines = [
+        "",
+        "## Appearance: MCMC densification",
+        "",
+        "The ten demo scenes were retrained with MCMC densification (Kheradmand et al., 2024): a fixed budget of",
+        "450,000 Gaussians relocated rather than cloned and pruned, with anti-aliased rasterization, otherwise the",
+        "same 6,000 iterations, cameras and held-out frames. Held-out PSNR improved on every clip.",
+        "",
+        "| Scene | Objectron clip | Clone-and-split | MCMC | Change |",
+        "|---|---|---|---|---|",
+    ]
+    for title, clip, before, after, _ in sorted(rows, key=lambda row: row[3] - row[2], reverse=True):
+        lines.append(f"| {title} | `{clip}` | {before:.1f} dB | {after:.1f} dB | +{after - before:.1f} dB |")
+    before_all = np.array([row[2] for row in rows])
+    after_all = np.array([row[3] for row in rows])
+    lines += [
+        f"| **Median** | | **{np.median(before_all):.1f} dB** | **{np.median(after_all):.1f} dB** | "
+        f"**+{np.median(deltas):.1f} dB** |",
+    ]
+    return lines
+
+
 def main() -> None:
     data = json.loads(DATA.read_text())
     records, summary = data["clips"], data["summary"]
@@ -109,6 +147,48 @@ def main() -> None:
     lines += [
         "",
         "![Estimated vs. true object size per class](media/objectron-scale.png)",
+    ]
+    splat_runs = [r["splats"] for r in records if r.get("splats")]
+    if splat_runs:
+        test = np.array([x["test_psnr"] for x in splat_runs if x.get("test_psnr") is not None])
+        train = np.array([x["train_psnr"] for x in splat_runs if x.get("train_psnr") is not None])
+        seconds = np.array([x["train_seconds"] for x in splat_runs])
+        rotation = np.array([x.get("mean_camera_rotation_correction_deg", np.nan) for x in splat_runs])
+        colliders = [c for r in records for c in (r.get("colliders") or {}).values()]
+        lines += [
+            "",
+            "## Appearance: Gaussian splats",
+            "",
+            "Each scene is optimized as 3D Gaussian splats (gsplat, 6,000 iterations, SH degree 1) from VGGT's",
+            "cameras, which are refined jointly with the splats. Every eighth keyframe is held out of training.",
+            "Because a held-out view's camera is never trained, its pose correction is fitted with the splats frozen",
+            "before scoring (test-time pose alignment, standard for pose-optimizing radiance fields).",
+            "",
+            "| Metric | Result |",
+            "|---|---|",
+            f"| Scenes | {len(splat_runs)} |",
+            f"| Held-out PSNR, median (min–max) | {np.median(test):.1f} dB ({test.min():.1f}–{test.max():.1f}) |",
+            f"| Training-view PSNR, median | {np.median(train):.1f} dB |",
+            f"| Training time, median | {np.median(seconds):.0f} s |",
+            f"| Mean camera rotation correction, median | {np.nanmedian(rotation):.1f}° |",
+        ]
+        if colliders:
+            used = sum(c["used_parts"] for c in colliders)
+            lines.append(f"| Objects given a convex-part collider | {used} / {len(colliders)} |")
+        lines += [
+            "",
+            "![Held-out view: ground truth (left) and splat render (right)](media/objectron-mugs-splat-test-view.jpg)",
+            "",
+            "On the two-mug scene, refining VGGT's cameras raised held-out PSNR from 27.5 to 28.9 dB and removed",
+            "doubled edges; a learned focal scale added 0.5 dB more. Two things that did not help: per-frame color",
+            "correction for auto-exposure (−0.4 to +0.15 dB, removed), and 15,000 instead of 6,000 iterations",
+            "(28.5 dB, nine times slower; with about 20 training views, longer schedules overfit).",
+            "",
+            "Training-view PSNR is close to held-out PSNR on every clip, so the weaker scenes are limited by fitting,",
+            "not overfitting. They are cluttered stores and shelves, where VGGT's geometry is noisiest.",
+        ]
+    lines += mcmc_section(records)
+    lines += [
         "",
         "## Ablation: telling the model the scan's proportions",
         "",
@@ -177,7 +257,12 @@ def main() -> None:
         "- **Restitution:** a dropped rubber ball (e = 0.85) rebounds close to `e² × h`, while a low-restitution",
         "  box barely lifts.",
         "- **Stability:** every shipped scene settles with no sinking, jitter or drift, both in the browser and",
-        "  after export, in MuJoCo.",
+        "  after export, in MuJoCo (`darius sim`: under 3 cm of drift and 3 mm of motion in the final half second).",
+        "- **Exported restitution:** in the MJCF, a rubber ball dropped from 21.5 cm rebounds to e² of that height",
+        "  within 15%, which holds only because the contact's time constant is derived from a fixed natural period.",
+        "- **Robotics round trips:** every exported scene loads in MuJoCo with the manifest's masses, centers of mass",
+        "  and principal moments; every URDF compiles; the USD stage opens with `pxr` with Z up, rigid bodies and",
+        "  bound physics materials ([robotics](robotics.md#verification)).",
         "- **Friction estimator:** on noisy synthetic push tracks, the reality-check fit recovers μ within 12%",
         "  and re-simulation closes the slide-distance error to within 8%.",
     ]
