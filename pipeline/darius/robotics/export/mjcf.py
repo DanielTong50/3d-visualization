@@ -1,24 +1,41 @@
-"""Export a scene package as MuJoCo MJCF, for robot learning and evaluation stacks.
+"""MuJoCo MJCF: the scene as free rigid bodies on a static table, ready for MuJoCo, MJX and
+the learning stacks built on them.
 
-    uv run python -m scan2sim.export ../scenes/objectron-mugs            # writes scene.xml there
+What each part of the scene becomes:
 
-Each object becomes a free body with its convex hull (or primitive) as the
-collision geom and the estimated mass; the table is a static box. Friction maps
-directly onto MuJoCo's sliding coefficient. MuJoCo has no restitution
-coefficient; contacts get a soft `solref` whose damping ratio is derived from
-restitution, which is the usual approximation and is documented here rather
-than hidden.
+- object  a body with a free joint, an explicit <inertial> (mass, center of mass and
+          the full inertia tensor from `darius.robotics.mass`), and one geom per convex
+          collision part. Grasp candidates are <site>s (frame: +z approach, +y closing).
+- table   a static convex mesh geom (the scanned outline, 4 cm thick), top at z = 0.
+- cameras the opening view and capture cameras along the filmed path.
+
+Contacts. scene.json gives each object's friction and restitution against the table.
+Object geoms have `priority` 1 and the table 0, so a table contact uses exactly the
+object's parameters; between two objects MuJoCo takes the larger friction, as the
+browser simulator does.
+
+MuJoCo has no restitution coefficient; a contact is a damped spring set by solref =
+(time constant, damping ratio). The damping ratio follows from restitution, zeta =
+-ln e / sqrt(pi^2 + ln^2 e). The time constant must then be chosen with care: MuJoCo's
+contact stiffness grows as 1 / (time constant * zeta)^2, so a bouncy object (rubber, zeta
+~ 0.05) with the usual 0.01 s gets a contact that oscillates faster than the 2 ms step
+can resolve, and gains energy (a dropped ball left the table at 24 m/s). The time
+constant is therefore set so the contact's natural period is CONTACT_PERIOD_STEPS
+timesteps for every object; a ball dropped in the exported scene rebounds to e^2 of its
+drop height (tests/test_export.py).
 """
 
 from __future__ import annotations
 
-import argparse
-import json
 import math
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-from .schema import Scene
+from ...core import frames
+from ..model import Body, RobotScene
+
+TIMESTEP = 0.002
+CONTACT_PERIOD_STEPS = 8  # the contact spring's natural period, in timesteps
 
 
 def damping_ratio(restitution: float) -> float:
@@ -31,109 +48,124 @@ def damping_ratio(restitution: float) -> float:
     return -log_e / math.sqrt(math.pi**2 + log_e**2)
 
 
-def _vec(values) -> str:
-    return " ".join(f"{v:.5g}" for v in values)
+def contact_solref(restitution: float) -> tuple[float, float]:
+    """MuJoCo solref (time constant, damping ratio) for a contact with this restitution."""
+    zeta = damping_ratio(restitution)
+    omega = 2 * math.pi / (CONTACT_PERIOD_STEPS * TIMESTEP)  # natural frequency of the contact
+    return max(2 * TIMESTEP, 1 / (omega * zeta)), zeta
 
 
-# scene.json is y-up; MuJoCo is z-up. R_UP rotates +90 degrees about x: (x, y, z) -> (x, -z, y).
-R_UP = (math.sqrt(0.5), math.sqrt(0.5), 0.0, 0.0)  # w, x, y, z
+def vec(values) -> str:
+    return " ".join(f"{float(v):.6g}" for v in values)
 
 
-def _qmul(a, b):
-    aw, ax, ay, az = a
-    bw, bx, by, bz = b
-    return (
-        aw * bw - ax * bx - ay * by - az * bz,
-        aw * bx + ax * bw + ay * bz - az * by,
-        aw * by - ax * bz + ay * bw + az * bx,
-        aw * bz + ax * by - ay * bx + az * bw,
-    )
+def mesh_file(name: str) -> str:
+    return f"{name}.obj"
 
 
-def z_up(point) -> list[float]:
-    x, y, z = point
-    return [x, -z, y]
-
-
-def z_up_rotation(quat_xyzw) -> tuple[float, ...]:
-    """Conjugate a y-up rotation into the z-up frame: R_UP * q * R_UP^-1 (wxyz)."""
-    qx, qy, qz, qw = quat_xyzw
-    inverse = (R_UP[0], -R_UP[1], -R_UP[2], -R_UP[3])
-    return _qmul(_qmul(R_UP, (qw, qx, qy, qz)), inverse)
-
-
-def to_mjcf(scene: Scene) -> ET.Element:
+def to_mjcf(scene: RobotScene, meshdir: str = "meshes") -> ET.Element:
     root = ET.Element("mujoco", model=scene.scene_id)
-    ET.SubElement(root, "compiler", angle="radian", meshdir=".")
-    ET.SubElement(root, "option", timestep="0.002", gravity=_vec(z_up(scene.gravity)))
-    asset = ET.SubElement(root, "asset")
-    world = ET.SubElement(root, "worldbody")
-    ET.SubElement(world, "light", pos="0 0 1.5", dir="0 0 -1", directional="true")
-
-    plane = scene.background.table_plane
-    sx, sz = plane.size_m
-    center = z_up(plane.point)
-    ET.SubElement(
-        world,
-        "geom",
-        name="table",
-        type="box",
-        size=_vec([sx / 2, sz / 2, 0.02]),
-        pos=_vec([center[0], center[1], -0.02]),
-        friction="1 0.005 0.0001",
-        rgba="0.6 0.45 0.3 1",
+    root.append(
+        ET.Comment(
+            f" {scene.title}. Written by {scene.generator} from {scene.source}. "
+            "World frame: +z up, meters, the table top is z = 0. "
+        )
     )
-    if scene.background.floor_depth_m is not None:
+    ET.SubElement(root, "compiler", angle="radian", meshdir=meshdir, autolimits="true")
+    ET.SubElement(root, "option", timestep=f"{TIMESTEP}", gravity=vec(scene.gravity), integrator="implicitfast")
+    visual = ET.SubElement(root, "visual")
+    ET.SubElement(visual, "global", offwidth="1280", offheight="960")
+
+    default = ET.SubElement(root, "default")
+    objects = ET.SubElement(default, "default", {"class": "object"})
+    ET.SubElement(objects, "geom", condim="4", priority="1")
+    grasp = ET.SubElement(default, "default", {"class": "grasp"})
+    ET.SubElement(grasp, "site", type="box", size="0.002 0.004 0.012", rgba="0.1 0.6 1 0.5", group="4")
+
+    asset = ET.SubElement(root, "asset")
+    ET.SubElement(asset, "mesh", name="table", file=mesh_file("table"))
+    for body in scene.bodies:
+        for shape in body.shapes:
+            if shape.kind == "mesh":
+                ET.SubElement(asset, "mesh", name=shape.name, file=mesh_file(shape.name))
+
+    world = ET.SubElement(root, "worldbody")
+    ET.SubElement(world, "light", name="key", pos="0.4 -0.6 1.6", dir="-0.25 0.37 -0.9", directional="true")
+    ET.SubElement(
+        world, "geom", name="table", type="mesh", mesh="table", rgba=vec(scene.table_rgba), friction="1 0.005 0.0001"
+    )
+    if scene.floor_depth_m is not None:
         ET.SubElement(
-            world, "geom", name="floor", type="plane", size="5 5 0.1", pos=_vec([0, 0, -scene.background.floor_depth_m])
-        )
-    for obj in scene.objects:
-        body = ET.SubElement(
             world,
-            "body",
-            name=obj.id,
-            pos=_vec(z_up(obj.pose.position)),
-            quat=_vec(z_up_rotation(obj.pose.rotation_quat)),
+            "geom",
+            name="floor",
+            type="plane",
+            size="5 5 0.1",
+            pos=vec([0, 0, -scene.floor_depth_m]),
+            rgba="0.2 0.21 0.23 1",
         )
-        body.append(ET.Comment(f" {obj.label}: {obj.material}, {obj.mass_kg * 1000:.0f} g "))
-        ET.SubElement(body, "freejoint")
-        geom = {
-            "name": f"{obj.id}_geom",
-            "mass": f"{obj.mass_kg:.5g}",
-            "friction": f"{obj.friction:.4g} 0.005 0.0001",
-            "solref": f"0.01 {damping_ratio(obj.restitution):.4g}",
-        }
-        collider = obj.collider
-        if collider.type == "convex_hull":
-            # Hull vertices are y-up object-local; the geom frame rotates them upright.
-            ET.SubElement(asset, "mesh", name=f"{obj.id}_hull", file=collider.file)
-            geom |= {"type": "mesh", "mesh": f"{obj.id}_hull", "quat": _vec(R_UP)}
-        elif collider.type == "box":
-            hx, hy, hz = collider.half_extents
-            geom |= {"type": "box", "size": _vec([hx, hz, hy])}
-        elif collider.type == "sphere":
-            geom |= {"type": "sphere", "size": f"{collider.radius:.5g}"}
-        else:  # y-aligned cylinder in scene.json is z-aligned here, MuJoCo's native axis
-            geom |= {"type": "cylinder", "size": _vec([collider.radius, collider.half_height])}
-        ET.SubElement(body, "geom", geom)
+    for camera in scene.cameras:
+        ET.SubElement(
+            world,
+            "camera",
+            name=camera.name,
+            pos=vec(camera.position),
+            quat=vec(frames.wxyz(camera.quat)),
+            fovy=f"{camera.fovy_deg:.4g}",
+        )
+    for body in scene.bodies:
+        world.append(body_element(body))
+
+    keyframe = ET.SubElement(root, "keyframe")
+    qpos = [v for body in scene.bodies for v in (*body.position, *frames.wxyz(body.quat))]
+    ET.SubElement(keyframe, "key", name="capture", qpos=vec(qpos))
     return root
 
 
-def export(scene_dir: Path, out: Path | None = None) -> Path:
-    scene = Scene.model_validate(json.loads((scene_dir / "scene.json").read_text()))
-    tree = ET.ElementTree(to_mjcf(scene))
+def body_element(body: Body) -> ET.Element:
+    element = ET.Element("body", name=body.id, pos=vec(body.position), quat=vec(frames.wxyz(body.quat)))
+    element.append(
+        ET.Comment(f" {body.label}: {body.material}, {body.mass.mass_kg * 1000:.0f} g, {body.physics_source} ")
+    )
+    ET.SubElement(element, "freejoint", name=body.id)
+    ET.SubElement(
+        element, "inertial", pos=vec(body.mass.com_m), mass=f"{body.mass.mass_kg:.6g}", fullinertia=vec(body.mass.six())
+    )
+    contact = {
+        "class": "object",
+        "friction": f"{body.friction:.4g} 0.005 0.0001",
+        "solref": vec(contact_solref(body.restitution)),
+        "rgba": vec(body.rgba),
+    }
+    for shape in body.shapes:
+        geom = {"name": shape.name, **contact}
+        if shape.kind == "mesh":
+            geom |= {"type": "mesh", "mesh": shape.name}
+        elif shape.kind == "box":
+            geom |= {"type": "box", "size": vec(shape.size)}
+        elif shape.kind == "sphere":
+            geom |= {"type": "sphere", "size": vec(shape.size)}
+        else:
+            geom |= {"type": "cylinder", "size": vec(shape.size)}
+        ET.SubElement(element, "geom", geom)
+    for k, g in enumerate(body.grasps):
+        ET.SubElement(
+            element,
+            "site",
+            {
+                "name": f"{body.id}/grasp_{k}",
+                "class": "grasp",
+                "pos": vec(g.position),
+                "quat": vec(frames.wxyz(g.quat())),
+            },
+        )
+    return element
+
+
+def write(scene: RobotScene, path: Path, meshdir: str = "meshes") -> Path:
+    tree = ET.ElementTree(to_mjcf(scene, meshdir))
     ET.indent(tree)
-    out = out or scene_dir / "scene.xml"
-    tree.write(out, encoding="unicode", xml_declaration=False)
-    return out
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Export a scene package to MuJoCo MJCF.")
-    parser.add_argument("scene_dir", type=Path)
-    parser.add_argument("--out", type=Path)
-    print(export(**vars(parser.parse_args())))
-
-
-if __name__ == "__main__":
-    main()
+    tree.write(path, encoding="unicode", xml_declaration=False)
+    with Path(path).open("a") as handle:
+        handle.write("\n")
+    return Path(path)
