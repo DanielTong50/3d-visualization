@@ -1,3 +1,4 @@
+import { X } from 'lucide-react';
 import { useEffect, useRef, useState, type PointerEvent } from 'react';
 
 /**
@@ -19,9 +20,10 @@ export interface PushTest {
 }
 
 const G = 9.81;
-// Categorical slots 1–3 of the dataviz reference palette (validated on white; aqua needs the
-// direct labels and table that this panel always shows).
-const COLOR = { real: '#2a78d6', before: '#eb6834', after: '#1baf7a' };
+// Categorical slots 1–3 of the dataviz reference palette, dark-mode steps (validated on the
+// panel's #121418; the direct labels and table back up the colors).
+const COLOR = { real: '#3987e5', before: '#d95926', after: '#199e70' };
+const SURFACE = '#121418'; // the ring around each dot, so overlapping marks stay apart
 
 const isNum = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 
@@ -154,7 +156,7 @@ function PushChart({ test }: { test: PushTest }) {
         <path d={curve(test.predicted_distance_before_m)} fill="none" stroke={COLOR.before} strokeWidth="2" strokeDasharray="5 4" />
         <path d={curve(test.predicted_distance_after_m)} fill="none" stroke={COLOR.after} strokeWidth="2" />
         {test.track.t.map((t, i) => (
-          <circle key={i} cx={x(t)} cy={y(test.track.s_m[i])} r={i === nearest ? 5.5 : 4} fill={COLOR.real} stroke="#ffffff" strokeWidth="2" />
+          <circle key={i} cx={x(t)} cy={y(test.track.s_m[i])} r={i === nearest ? 5.5 : 4} fill={COLOR.real} stroke={SURFACE} strokeWidth="2" />
         ))}
         {/* Direct labels at the curves' ends, in text ink with the series color as a tick mark. */}
         {(
@@ -213,11 +215,14 @@ export function RealityCheck({ tests, sceneDir, labelOf, onClose }: RealityCheck
   const after = mean(tests.map((t) => Math.abs(t.error_after_m)));
   const closer = before > 0 ? Math.round((1 - after / before) * 100) : 0;
   return (
-    <section className="reality-panel" aria-labelledby="reality-title">
+    <section className="reality panel" aria-labelledby="reality-title">
       <div className="reality-head">
-        <h2 id="reality-title">Reality check</h2>
-        <button type="button" className="icon-button" onClick={onClose} aria-label="Close">
-          ×
+        <div>
+          <p className="eyebrow">Simulation vs. reality</p>
+          <h2 id="reality-title">Reality check</h2>
+        </div>
+        <button type="button" className="icon-btn plain" onClick={onClose} aria-label="Close">
+          <X size={18} aria-hidden="true" />
         </button>
       </div>
       <p className="hero-number">
