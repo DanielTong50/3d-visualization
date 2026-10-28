@@ -1,5 +1,5 @@
 import { ArrowUpRight } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import type { Moment } from '../engine/choreography';
 import { loadLibrary, loadPlan, type AssemblyPlan, type PlanSummary } from '../engine/plan';
@@ -17,23 +17,23 @@ import {
 } from '../engine/results';
 import { Wordmark } from '../Logo';
 import { navigate, type Route } from '../navigation';
-import { Stage } from '../three/Stage';
 import { AssemblyGraph } from '../ui/AssemblyGraph';
 import { BeliefBars } from '../ui/BeliefBars';
 import { EvidenceHeatmap } from '../ui/EvidenceHeatmap';
 import { TrackedVideo } from '../ui/TrackedVideo';
+import { ArDemo } from './ArDemo';
 
 /**
- * The front page. The copilot builds each product of the library in the background, full bleed;
- * the page over it is plain: a statement, the numbers, the demos as captioned figures, the method,
- * the results, and the references. Every number comes from assemblies/benchmarks.json, written by
- * `darius eval`.
+ * The front page. The copilot builds each product of the library behind the headline, full bleed
+ * and live, HUD and all; when a build is done the next product starts.
+ * The page over it is plain: a statement, the numbers, the demos as captioned figures, the models
+ * and what each one does, the method, the results, and the references. Every number comes from
+ * assemblies/benchmarks.json, written by `darius eval`.
  */
 
 const REPO = 'https://github.com/DanielTong50/3d-visualization';
 const SOURCE = `${REPO}/blob/main`;
 const POSTERS = ['copilot-fasten', 'copilot', 'copilot-turn'].map((name) => `${import.meta.env.BASE_URL}posters/${name}.jpg`);
-const SHOWROOM_SECONDS = 26;
 const FADE_MS = 700;
 const SHUFFLE_MS = 5000;
 const PHASE_TEXT: Record<string, string> = {
@@ -60,51 +60,6 @@ function Github({ size = 16 }: { size?: number }) {
       <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
     </svg>
   );
-}
-
-/** The copilot building one product, filling the hero, from its first step. Pauses off screen. */
-function Showroom({ plan, onMoment }: { plan: AssemblyPlan; onMoment: (moment: Moment) => void }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const report = useRef(onMoment);
-  report.current = onMoment;
-
-  useEffect(() => {
-    const container = ref.current!;
-    const stage = new Stage(container, plan, 'hero');
-    const frame = () => (container.clientWidth > 900 ? stage.frame(0.24, 0.02) : stage.frame(0, 0.24));
-    frame();
-    window.addEventListener('resize', frame);
-    let visible = true;
-    const observer = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting));
-    observer.observe(container);
-    let raf = 0;
-    let clock = stage.choreography.stepStarts()[0] ?? 0;
-    let last = performance.now();
-    let reported = 0;
-    const loop = (now: number) => {
-      const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
-      last = now;
-      if (visible) {
-        clock += dt;
-        const { moment } = stage.update(clock % stage.choreography.duration, clock);
-        stage.render();
-        if (now - reported > 150) {
-          reported = now;
-          report.current(moment);
-        }
-      }
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-    return () => {
-      cancelAnimationFrame(raf);
-      observer.disconnect();
-      window.removeEventListener('resize', frame);
-      stage.dispose();
-    };
-  }, [plan]);
-
-  return <div ref={ref} className="hero-scene" aria-hidden="true" />;
 }
 
 /** A small loop of time, for figures that animate on their own. */
@@ -463,6 +418,8 @@ export function Home() {
   const [index, setIndex] = useState(0);
   const [fading, setFading] = useState(false);
   const [moment, setMoment] = useState<Moment | null>(null);
+  const [buildSeconds, setBuildSeconds] = useState(60);
+  const shown = useRef<string | null>(null);
   const [benchmarks, setBenchmarks] = useState<Benchmarks | null>(null);
   // A product's stored run, kept with the product it belongs to: during a switch the new plan
   // must never be drawn with the previous product's data.
@@ -485,20 +442,25 @@ export function Home() {
       .catch(() => setBenchmarks(null));
   }, []);
 
-  // The background moves on to the next product every so often, through a fade.
+  // The background moves on to the next product when a build is done, through a fade.
   const show = (next: number) => {
     setFading(true);
     window.setTimeout(() => {
       setIndex(next);
       setMoment(null);
+      shown.current = null;
       setFading(false);
     }, FADE_MS);
   };
-  useEffect(() => {
-    if (plans.length < 2) return;
-    const timer = window.setTimeout(() => show((index + 1) % plans.length), SHOWROOM_SECONDS * 1000);
-    return () => window.clearTimeout(timer);
-  }, [index, plans.length]);
+  // The copilot reports many times a second; the caption only needs each new step and phase.
+  const onMoment = useCallback((next: Moment, duration: number) => {
+    const key = `${next.step}:${next.phase}`;
+    if (shown.current !== key) {
+      shown.current = key;
+      setMoment(next);
+    }
+    setBuildSeconds(duration);
+  }, []);
 
   const plan = plans[index] ?? null;
   useEffect(() => {
@@ -529,7 +491,15 @@ export function Home() {
     <div className="home">
       <header className="hero">
         <div className={`hero-layer${fading ? ' is-fading' : ''}`}>
-          {plan && <Showroom key={plan.id} plan={plan} onMoment={setMoment} />}
+          {plan && (
+            <ArDemo
+              key={plan.id}
+              furniture={plan.id}
+              variant="hero"
+              onMoment={onMoment}
+              onLoop={() => plans.length > 1 && show((index + 1) % plans.length)}
+            />
+          )}
         </div>
         <div className="hero-scrim" aria-hidden="true" />
 
@@ -570,13 +540,13 @@ export function Home() {
                 <b>{plan.title}</b>
                 {step ? `, step ${step.index} of ${plan.steps.length}: ${step.title.toLowerCase()}` : ''}
               </span>
-              <span>Rendered live from the plan · {moment ? PHASE_TEXT[moment.phase] : 'loading'}</span>
+              <span>The copilot, live in your browser · {moment ? PHASE_TEXT[moment.phase] : 'loading'}</span>
             </p>
             <div className="hero-products" role="tablist" aria-label="Products">
               {library.map((p, i) => (
                 <button key={p.id} type="button" role="tab" aria-selected={i === index} onClick={() => i !== index && show(i)}>
                   {p.title.split(' ')[0]}
-                  {i === index && !fading && <i key={index} style={{ animationDuration: `${SHOWROOM_SECONDS}s` }} />}
+                  {i === index && !fading && <i key={index} style={{ animationDuration: `${buildSeconds}s` }} />}
                 </button>
               ))}
             </div>

@@ -949,6 +949,47 @@ code {
   }
 }
 
+/* The copilot behind the home page's headline: the graph and the step keep to the right, out of
+   the headline's way, and nothing on it takes clicks. */
+.ar.is-hero {
+  position: absolute;
+  pointer-events: none;
+  background: #f3f2ee;
+}
+
+.ar.is-hero .ar-vignette,
+.ar.is-hero .ar-hardware,
+.ar.is-hero .ar-belief {
+  display: none;
+}
+
+.ar.is-hero .ar-graph {
+  left: auto;
+  right: var(--gutter);
+  top: 96px;
+}
+
+.ar.is-hero .ar-step {
+  left: auto;
+  right: var(--gutter);
+  bottom: 124px;
+  width: min(520px, calc(100% - 32px));
+  transform: none;
+}
+
+@media (max-height: 820px) {
+  .ar.is-hero .ar-graph {
+    display: none;
+  }
+}
+
+@media (max-width: 1000px) {
+  .ar.is-hero .ar-graph,
+  .ar.is-hero .ar-step {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .ar-graph {
     width: 150px;
@@ -1984,7 +2025,7 @@ code {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(243, 242, 238, 0.92) 0%, rgba(243, 242, 238, 0.66) 30%, rgba(243, 242, 238, 0) 52%),
+    linear-gradient(90deg, rgba(243, 242, 238, 0.94) 0%, rgba(243, 242, 238, 0.82) 34%, rgba(243, 242, 238, 0) 56%),
     linear-gradient(to bottom, rgba(243, 242, 238, 0.85) 0%, rgba(243, 242, 238, 0) 16%),
     linear-gradient(to top, #ffffff 0%, rgba(255, 255, 255, 0.85) 9%, rgba(255, 255, 255, 0) 26%);
 }

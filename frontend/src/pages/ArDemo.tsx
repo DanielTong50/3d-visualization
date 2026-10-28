@@ -27,13 +27,26 @@ function closeUpRect(width: number) {
   return { right: 16, top: 336, width: w, height: Math.round(w * 0.68) };
 }
 
+interface ArDemoProps {
+  furniture: string;
+  /** 'hero': behind the home page's headline. No controls, the HUD on the right, from the first step. */
+  variant?: 'page' | 'hero';
+  /** Hero: the moment on screen, a few times a second. */
+  onMoment?: (moment: Moment, duration: number) => void;
+  /** Hero: the build has finished and is about to start again. */
+  onLoop?: () => void;
+}
+
 /**
  * The copilot in a simulated session: a choreographed build of a library product, seen through a
  * handheld camera, with the full AR layer and the tracking stack running live on simulated
  * perception. Everything on screen is computed from the plan's geometry and the tracker; nothing
  * is pre-rendered.
  */
-export function ArDemo({ furniture }: { furniture: string }) {
+export function ArDemo({ furniture, variant = 'page', onMoment, onLoop }: ArDemoProps) {
+  const hero = variant === 'hero';
+  const report = useRef({ onMoment, onLoop });
+  report.current = { onMoment, onLoop };
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Stage | null>(null);
   const timeRef = useRef(0);
@@ -63,39 +76,53 @@ export function ArDemo({ furniture }: { furniture: string }) {
     const container = containerRef.current;
     if (!plan || !container) return;
     const stage = new Stage(container, plan, 'ar');
-    stage.frame(0, 0.1);
-    const place = () => (stage.inset = container.clientWidth > 1000 ? closeUpRect(container.clientWidth) : null);
+    const place = () => {
+      // In the hero the headline takes the left; the build sits right of center.
+      if (hero) stage.frame(container.clientWidth > 1000 ? 0.12 : 0, container.clientWidth > 1000 ? 0.05 : 0.2);
+      else stage.frame(0, 0.1);
+      stage.inset = container.clientWidth > 1000 && !hero ? closeUpRect(container.clientWidth) : null;
+    };
     place();
     window.addEventListener('resize', place);
     stageRef.current = stage;
     setTrack(simulateTrack(stage.choreography));
-    timeRef.current = 0;
+    timeRef.current = hero ? (stage.choreography.stepStarts()[0] ?? 0) : 0;
+    let visible = true;
+    const observer = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting));
+    observer.observe(container);
     let last = performance.now();
     let hudAt = 0;
     let raf = 0;
     const loop = (now: number) => {
       const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
       last = now;
-      if (playingRef.current) {
-        timeRef.current += dt * speedRef.current;
-        if (timeRef.current >= stage.choreography.duration) timeRef.current = 0;
-      }
-      const info = stage.update(timeRef.current, now / 1000);
-      stage.render();
-      if (now - hudAt > HUD_MS) {
-        hudAt = now;
-        setFrame(info);
+      if (visible) {
+        if (playingRef.current) {
+          timeRef.current += dt * speedRef.current;
+          if (timeRef.current >= stage.choreography.duration) {
+            timeRef.current = 0;
+            report.current.onLoop?.();
+          }
+        }
+        const info = stage.update(timeRef.current, now / 1000);
+        stage.render();
+        if (now - hudAt > HUD_MS) {
+          hudAt = now;
+          setFrame(info);
+          report.current.onMoment?.(info.moment, stage.choreography.duration);
+        }
       }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
     return () => {
       cancelAnimationFrame(raf);
+      observer.disconnect();
       window.removeEventListener('resize', place);
       stage.dispose();
       stageRef.current = null;
     };
-  }, [plan]);
+  }, [plan, hero]);
 
   const choreography = stageRef.current?.choreography ?? null;
   const starts = useMemo(() => choreography?.stepStarts() ?? [], [choreography]);
@@ -120,29 +147,31 @@ export function ArDemo({ furniture }: { furniture: string }) {
   };
 
   return (
-    <div className="ar">
+    <div className={`ar${hero ? ' is-hero' : ''}`} aria-hidden={hero || undefined}>
       <div ref={containerRef} className="ar-viewport" />
-      {frame && <DetectionLayer detections={frame.detections} />}
+      {frame && <DetectionLayer detections={hero ? frame.detections.filter((d) => d.role !== 'loose') : frame.detections} />}
       <div className="ar-vignette" aria-hidden="true" />
 
-      <header className="ar-top">
-        <button type="button" className="icon-btn" onClick={() => navigate({ page: 'home' })} aria-label="Back">
-          <ArrowLeft size={17} />
-        </button>
-        <div className="ar-title">
-          <span className="eyebrow">Copilot · simulated session</span>
-          <strong>{plan?.title ?? 'Loading…'}</strong>
-        </div>
-        <div className="ar-status">
-          <span className="chip">
-            <span className="rec" /> <b>LIVE</b>
-          </span>
-          <span className="chip">
-            <b>{tracked}</b> {tracked === 1 ? 'part' : 'parts'} tracked
-          </span>
-          <FurniturePicker current={furniture} onPick={(id) => navigate({ page: 'ar', furniture: id })} />
-        </div>
-      </header>
+      {!hero && (
+        <header className="ar-top">
+          <button type="button" className="icon-btn" onClick={() => navigate({ page: 'home' })} aria-label="Back">
+            <ArrowLeft size={17} />
+          </button>
+          <div className="ar-title">
+            <span className="eyebrow">Copilot · simulated session</span>
+            <strong>{plan?.title ?? 'Loading…'}</strong>
+          </div>
+          <div className="ar-status">
+            <span className="chip">
+              <span className="rec" /> <b>LIVE</b>
+            </span>
+            <span className="chip">
+              <b>{tracked}</b> {tracked === 1 ? 'part' : 'parts'} tracked
+            </span>
+            <FurniturePicker current={furniture} onPick={(id) => navigate({ page: 'ar', furniture: id })} />
+          </div>
+        </header>
+      )}
 
       {plan && moment && (
         <aside className="ar-graph glass">
@@ -286,7 +315,7 @@ export function ArDemo({ furniture }: { furniture: string }) {
         </section>
       )}
 
-      {choreography && moment && (
+      {!hero && choreography && moment && (
         <footer className="ar-timeline">
           <button type="button" className="icon-btn" onClick={() => setPlaying((p) => !p)} aria-label={playing ? 'Pause' : 'Play'}>
             {playing ? <Pause size={16} /> : <Play size={16} />}
