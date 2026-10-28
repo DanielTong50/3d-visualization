@@ -581,7 +581,7 @@ export class Stage {
     const step = this.plan.steps[moment.step - 1];
     const fastening = step && moment.phase === 'fasten';
     const lean = fastening ? (this.mode === 'hero' ? 0.22 : 0.42) * smooth(moment.u / 0.18) * smooth((1 - moment.u) / 0.18) : 0;
-    const radius = (1.45 + reach * 1.45) * (this.mode === 'hero' ? 1.22 : 1) * (1 - lean);
+    const radius = (1.45 + reach * 1.45) * (this.mode === 'hero' ? 1.08 : 1) * (1 - lean);
     let azimuth: number;
     let height: number;
     if (this.mode === 'hero') {

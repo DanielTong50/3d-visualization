@@ -1985,7 +1985,7 @@ code {
 
 .hero-stage {
   position: relative;
-  min-height: 560px;
+  min-height: clamp(540px, 66vh, 700px);
   background: #f3f2ee;
 }
 
@@ -2270,6 +2270,7 @@ code {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 55% 35%;
   opacity: 0;
   transform: scale(1.04);
   transition:
@@ -2285,16 +2286,17 @@ code {
 .tile-paper {
   position: absolute;
   inset: 0 0 50px;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
 }
 
 .tile-paper img {
   width: auto;
-  height: 92%;
+  height: auto;
   max-width: 92%;
-  object-fit: contain;
+  max-height: 92%;
   border: 1px solid var(--line-2);
   box-shadow: var(--shadow);
 }
@@ -2322,12 +2324,14 @@ code {
 .tile-fill {
   position: absolute;
   inset: 8px 12px 56px;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tile-fill .graph {
   height: 100%;
+  max-height: 100%;
   aspect-ratio: 1;
   max-width: 100%;
 }
@@ -2362,19 +2366,24 @@ code {
 
 .tile-fittings {
   position: absolute;
-  inset: 12px 12px 56px;
+  inset: 10px 12px 56px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
   align-content: center;
-  gap: 8px;
+  gap: 6px;
+}
+
+.tile-fittings .hw-icon {
+  width: 36px;
+  height: 36px;
 }
 
 .tile-fittings div {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 6px 4px;
+  gap: 1px;
+  padding: 4px;
   border: 1px solid var(--line);
   border-radius: 4px;
   background: #fff;

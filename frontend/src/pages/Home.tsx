@@ -362,8 +362,14 @@ const RESEARCH: { venue: string; title: string; authors: string; use: string }[]
 ];
 
 const STACK: { layer: string; items: string[] }[] = [
-  { layer: 'Perception', items: ['Muse Spark 1.3 (Meta Model API)', 'JSON-schema-constrained decoding', 'manual step pages as visual references'] },
-  { layer: 'Engine', items: ['Python 3.11', 'Pydantic 2 schema → JSON Schema', 'NumPy HMM in log space', 'OpenCV frame sampling', 'FastAPI'] },
+  {
+    layer: 'Perception',
+    items: ['Muse Spark 1.3 (Meta Model API)', 'JSON-schema-constrained decoding', 'manual step pages as visual references'],
+  },
+  {
+    layer: 'Engine',
+    items: ['Python 3.11', 'Pydantic 2 schema → JSON Schema', 'NumPy HMM in log space', 'OpenCV frame sampling', 'FastAPI'],
+  },
   { layer: 'Serving', items: ['Modal (CPU, scale to zero)', 'stateless /frames', 'access-code gating'] },
   { layer: 'Web', items: ['React 19', 'TypeScript 6', 'three.js 0.186 (instancing, custom shaders)', 'Vite 8'] },
   { layer: 'Test data', items: ['Playwright renders manuals and sessions', 'ffmpeg (H.264)', 'frame-exact ground truth'] },
@@ -540,8 +546,8 @@ export function Home() {
             <span className="how-index mono">01 · perception/manual.py</span>
             <h3>Read the manual</h3>
             <p className="muted">
-              All pages go to Muse Spark in one request, decoding constrained to a JSON schema. <code>to_plan</code> resolves repeated letters
-              to instances, brings in parts drawn without an arrow, and validates the graph.
+              All pages go to Muse Spark in one request, decoding constrained to a JSON schema. <code>to_plan</code> resolves repeated
+              letters to instances, brings in parts drawn without an arrow, and validates the graph.
             </p>
             <pre className="how-code">{`parts    A ×2, B, C, D, E, F, G ×2
 joints   16 edges, compared by letter pair
@@ -551,8 +557,8 @@ steps    5 · each: adds, joins, orientation`}</pre>
             <span className="how-index mono">02 · assembly/tracking.py</span>
             <h3>Track the build</h3>
             <p className="muted">
-              Frames are checked against the plan with the manual's step pages as references. An HMM over k steps done filters them: stay .86,
-              advance .11, skip .02, back .01; evidence capped to [.15, .85] and tempered by .7.
+              Frames are checked against the plan with the manual's step pages as references. An HMM over k steps done filters them: stay
+              .86, advance .11, skip .02, back .01; evidence capped to [.15, .85] and tempered by .7.
             </p>
             <pre className="how-code">{`log P(obs | k) = 0.7 Σ[i≤k] log pᵢ
                + 0.7 Σ[i>k] log(1 − pᵢ)`}</pre>
@@ -616,8 +622,8 @@ ${plan ? plan.hardware.reduce((n, h) => n + h.count, 0) : 72} fittings, seated f
             <span className="tag">Results</span>
             <h2>Measured, not claimed.</h2>
             <p className="muted">
-              {benchmarks.model}, {benchmarks.date}. Each manual is generated from a procedural plan and read back by the model; each session is
-              a rendered build with frame-exact ground truth. CI re-scores the stored outputs on every commit.
+              {benchmarks.model}, {benchmarks.date}. Each manual is generated from a procedural plan and read back by the model; each
+              session is a rendered build with frame-exact ground truth. CI re-scores the stored outputs on every commit.
             </p>
           </header>
           <div className="table-wrap">
