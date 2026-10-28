@@ -1,0 +1,64 @@
+<mujoco model="93c737398bd9">
+  <!-- Leather dress shoe. Written by Darius 0.2.0 from Objectron shoe/batch-9/25, Google. World frame: +z up, meters, the table top is z = 0. -->
+  <compiler angle="radian" meshdir="meshes" autolimits="true" />
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast" />
+  <visual>
+    <global offwidth="1280" offheight="960" />
+  </visual>
+  <default>
+    <default class="object">
+      <geom condim="4" priority="1" />
+    </default>
+    <default class="grasp">
+      <site type="box" size="0.002 0.004 0.012" rgba="0.1 0.6 1 0.5" group="4" />
+    </default>
+  </default>
+  <asset>
+    <mesh name="table" file="table.obj" />
+    <mesh name="obj_01_part0" file="obj_01_part0.obj" />
+    <mesh name="obj_01_part1" file="obj_01_part1.obj" />
+    <mesh name="obj_01_part2" file="obj_01_part2.obj" />
+    <mesh name="obj_01_part3" file="obj_01_part3.obj" />
+    <mesh name="obj_01_part4" file="obj_01_part4.obj" />
+    <mesh name="obj_01_part5" file="obj_01_part5.obj" />
+    <mesh name="obj_01_part6" file="obj_01_part6.obj" />
+    <mesh name="obj_01_part7" file="obj_01_part7.obj" />
+  </asset>
+  <worldbody>
+    <light name="key" pos="0.4 -0.6 1.6" dir="-0.25 0.37 -0.9" directional="true" />
+    <geom name="table" type="mesh" mesh="table" rgba="0.224 0.263 0.322 1" friction="1 0.005 0.0001" />
+    <geom name="floor" type="plane" size="5 5 0.1" pos="0 0 -0.75" rgba="0.2 0.21 0.23 1" />
+    <camera name="view" pos="-0.0662 -0.089 0.3283" quat="0.942301 0.25959 -0.0561405 -0.203787" fovy="58.38" />
+    <camera name="capture_00" pos="-0.22616 -0.07018 0.24826" quat="0.883592 0.296138 -0.256094 -0.256872" fovy="58.44" />
+    <camera name="capture_08" pos="-0.10546 -0.15741 0.26767" quat="0.922298 0.332243 -0.131911 -0.146902" fovy="58.44" />
+    <camera name="capture_15" pos="-0.06648 -0.10275 0.32734" quat="0.965389 0.188055 -0.0773078 -0.163348" fovy="58.44" />
+    <camera name="capture_23" pos="-0.03929 -0.07074 0.33651" quat="0.965664 0.178156 -0.00130108 -0.189081" fovy="58.44" />
+    <camera name="capture_31" pos="0.04265 -0.08595 0.30113" quat="0.957966 0.158512 0.137857 -0.195373" fovy="58.44" />
+    <camera name="capture_38" pos="0.08638 -0.08676 0.2919" quat="0.952327 0.164311 0.183247 -0.180263" fovy="58.44" />
+    <camera name="capture_46" pos="0.0845 -0.06564 0.29584" quat="0.951759 0.174493 0.193804 -0.161701" fovy="58.44" />
+    <body name="obj_01" pos="0.0015 0.0602 0.0535" quat="1 0 0 0">
+      <!-- dress shoe: leather, 512 g, estimated -->
+      <freejoint name="obj_01" />
+      <inertial pos="0.00121 0.00707 -0.00561" mass="0.5117" fullinertia="0.00359496 0.00149224 0.00393883 -0.000493362 -1.24113e-05 -0.000480182" />
+      <geom name="obj_01_part0" class="object" friction="0.6 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.847 0.62 0.42 1" type="mesh" mesh="obj_01_part0" />
+      <geom name="obj_01_part1" class="object" friction="0.6 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.847 0.62 0.42 1" type="mesh" mesh="obj_01_part1" />
+      <geom name="obj_01_part2" class="object" friction="0.6 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.847 0.62 0.42 1" type="mesh" mesh="obj_01_part2" />
+      <geom name="obj_01_part3" class="object" friction="0.6 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.847 0.62 0.42 1" type="mesh" mesh="obj_01_part3" />
+      <geom name="obj_01_part4" class="object" friction="0.6 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.847 0.62 0.42 1" type="mesh" mesh="obj_01_part4" />
+      <geom name="obj_01_part5" class="object" friction="0.6 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.847 0.62 0.42 1" type="mesh" mesh="obj_01_part5" />
+      <geom name="obj_01_part6" class="object" friction="0.6 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.847 0.62 0.42 1" type="mesh" mesh="obj_01_part6" />
+      <geom name="obj_01_part7" class="object" friction="0.6 0.005 0.0001" solref="0.00430763 0.591155" rgba="0.847 0.62 0.42 1" type="mesh" mesh="obj_01_part7" />
+      <site name="obj_01/grasp_0" class="grasp" pos="-0.00086 0.00549 -0.01172" quat="0.0211602 -0.730937 -0.681831 0.0197389" />
+      <site name="obj_01/grasp_1" class="grasp" pos="0.00471 0.00656 0.01608" quat="0.0658288 0.677697 -0.728958 -0.0708083" />
+      <site name="obj_01/grasp_2" class="grasp" pos="0.0015 0.03219 -0.00358" quat="0.0658288 0.677697 -0.728958 -0.0708083" />
+      <site name="obj_01/grasp_3" class="grasp" pos="-0.00499 -0.02101 -0.01502" quat="0.0211602 -0.730937 -0.681831 0.0197389" />
+      <site name="obj_01/grasp_4" class="grasp" pos="-0.00239 0.00258 -0.03831" quat="0.0330318 0.768962 0.637853 0.0274004" />
+      <site name="obj_01/grasp_5" class="grasp" pos="-0.00598 -0.00949 -0.01537" quat="0.000375474 -0.518678 0.854969 -0.000618719" />
+      <site name="obj_01/grasp_6" class="grasp" pos="0.00196 0.03023 -0.0345" quat="0.0330318 0.768962 0.637853 0.0274004" />
+      <site name="obj_01/grasp_7" class="grasp" pos="-0.00688 -0.02117 -0.01364" quat="0.11402 0.575737 -0.794221 -0.157289" />
+    </body>
+  </worldbody>
+  <keyframe>
+    <key name="capture" qpos="0.0015 0.0602 0.0535 1 0 0 0" />
+  </keyframe>
+</mujoco>
