@@ -1,312 +1,172 @@
 # Architecture
 
-Darius compiles a 20–60 second phone video of a tabletop into a *simulation-ready* scene: every object
-separated, named, metrically scaled, given mass, inertia, friction and restitution, annotated with grasp candidates
-and a 3D scene graph, and written for a browser simulator and for robot simulators. This document explains how,
-and why each design decision was made. The robotics layer has its own reference: [robotics.md](robotics.md).
+Darius has one data structure, the **assembly plan**, and three jobs that revolve around it: recover it from a
+manual, track a build's progress through it, and turn its geometry into guidance. This document follows the plan
+through each of them, with the algorithms and the numbers they use.
 
-```mermaid
-flowchart LR
-    V[Phone video] --> I[1 · Ingest<br/>sharp keyframes]
-    I --> R[2 · Reconstruct<br/>VGGT · GPU]
-    I --> S[3 · Segment<br/>Muse Spark boxes → SAM 3.1 tracks]
-    R --> L[4 · Lift<br/>plane fit · voxel vote]
-    S --> L
-    L --> P[5 · Physics<br/>Muse Spark · scale · mass]
-    L --> G[6 · Appearance<br/>gsplat · MCMC · per-object labels]
-    P --> K[7 · Package<br/>scene.json · SPZ · colliders]
-    G --> K
-    K --> RB[Robotics layer<br/>inertia · grasps · scene graph<br/>MJCF · URDF · USD]
-    K --> W[Browser simulator<br/>three.js · Spark · Rapier]
+```
+             ┌──────────── engine (Python) ────────────┐        ┌──────────── web (TypeScript) ─────────────┐
+manual  ──►  perception.manual ──► to_plan ──► validate  ──┐    │  engine/plan.ts      (schema mirror)       │
+pages        (Muse Spark, schema)                          │    │  engine/tracking.ts  (tracker mirror)      │
+                                                           ▼    │  engine/choreography.ts ──► three/Stage.ts │
+                                            AssemblyPlan (graph) ─►  (every instant of a build)   AR layer   │
+camera  ──►  perception.frames ──► Observation ──► Tracker ─┘    │  three/ManualArt.ts ──► ui/ManualPage.tsx  │
+frames       (Muse Spark + step pages)   P(step done)   HMM      │  (the plan drawn as a manual)              │
+                                                                 └───────────────────────────────────────────┘
 ```
 
-<p align="center"><img src="media/objectron-mugs-pipeline.png" alt="Keyframe, SAM 3.1 masks, VGGT reconstruction, separated objects with collision hulls and estimated physics"></p>
+## 1. The plan
 
-## The package, in layers
+`engine/darius/assembly/schema.py` defines `AssemblyPlan`:
 
-The Python package ([`pipeline/darius`](../pipeline/darius)) is layered: a layer imports only from the layers above
-it in this list, never below, so the contract and the robotics layer stay usable without any of the cloud machinery.
+| Field | Meaning |
+|---|---|
+| `parts` | one entry per physical piece: `id` (unique, `A1`), `label` (the printed letter, `A`), `name`, `kind`, `size_mm`, optional `assembled` pose and floor `layout` pose |
+| `hardware` | the inventory: article number, name, kind, count, size |
+| `joints` | edges: two part ids, a kind (`dowel`, `cam_lock`, `screw`, `bolt`, `nail`, `slot`, `pin`, `glue`), the hardware it uses, and its fasteners (position and insertion axis in the furniture frame) |
+| `steps` | the manual's order: the parts each step brings in, the joints it makes, its hardware, actions, tools, and the `orientation` the piece lies in while you work (`upright`, `on_back`, `on_front`, `on_side`, `upside_down`) |
 
-| Layer | Contents | Depends on |
+Units are millimeters; +y is up, the floor is y = 0 and the front faces +z. Geometry is optional: a plan read from a
+manual has none, and every graph operation works without it.
+
+`assembly/graph.py` holds the graph operations: `validate` (joints reference parts, steps bring parts in before
+joining them, hardware within the inventory, the finished piece is one connected component), `subassemblies(plan, k)`
+(union-find over the joints of steps 1..k), and `compare(predicted, truth)`. Scores are **by letter**, since which of
+two identical side panels is `A1` is arbitrary: parts are compared as multisets of letters, joints as multisets of
+sorted letter pairs, steps exactly (the multiset of a step's joint letter pairs), and hardware by count per article.
+
+## 2. The library: ground truth from geometry
+
+`furniture/builder.py` compiles a product declared as boxes into a plan:
+
+1. **Contacts.** For two parts, their axis-aligned boxes in the assembled frame touch when the gap along one axis is
+   within 0.6 mm and they overlap on the other two; the shared face gives the contact normal and its rectangle.
+2. **Hardware patterns.** A joint's fasteners are spread along the contact rectangle's long axis: a cam-lock joint is
+   dowel, cam bolt, cam bolt, dowel (each cam bolt with a cam lock); dowel joints two dowels; screws two; bolts one;
+   shelf pins two per shelf end; nails one per ~150 mm (2 to 8); slots none.
+3. **Floor layout.** Parts lie flat in rows in front of the work area, in the order the steps use them, so the
+   first parts needed are nearest.
+
+`catalog.py` declares four products. Their plans are exported to `assemblies/<id>/plan.json` (`darius export`) and
+are the ground truth for everything measured.
+
+## 3. Reading a manual
+
+`perception/manual.py` sends all pages to Muse Spark in **one request** with a JSON schema (`ManualReading`): the title
+and category; parts by letter with name, count and printed size; hardware by article number with kind and count; and
+per step its title, the letters brought in (one entry per piece), the hardware box, the orientation drawn, the tools,
+and every connection as two letters and a joint kind. Reasoning effort is `high`; a manual takes 35 to 70 s.
+
+`to_plan(reading)` builds the graph deterministically:
+
+- **Instances.** A letter printed with count *n* becomes `A1 … An` (or `A` alone); a step's `adds` takes the next
+  unused instance of each letter.
+- **Implicit base parts.** Manuals draw the part a step builds on lying there, without an arrow, so readers often
+  leave it out of `adds`. A connection that needs a part no step has brought in yet brings in its next instance.
+- **Resolving connections.** Each letter in a connection resolves to the instance that minimizes, in order: not
+  brought in by this step, already paired with the other side, joints made in this step, joints made in total,
+  then the id. This gives a part on two sides two different panels (bottom `C` joins `A1` and `A2`, not `A1` twice).
+- **Hardware.** A step's hardware is shared among its joints by kind (dowels among dowel and cam-lock joints, cam bolts
+  and locks among cam-lock joints, …) for display; scoring uses the step totals.
+- **Validation.** `validate` runs on the result and its problems are returned as notes, never silently dropped.
+
+## 4. Verifying frames
+
+`perception/frames.py` sends consecutive frames (4 per request, 6 requests at a time) with:
+
+- the parts list and, for every step, its instruction and what the build looks like once it is done (which letters
+  are joined, how the piece lies), generated from the plan by `describe_plan`;
+- the manual's **step pages** as reference images, first in every request.
+
+The schema asks, per frame, for every step's `done` with a confidence, the letters joined and loose, and the
+orientation. `to_observation` turns a reading into tracker evidence: P(step *i* done) = confidence if done else
+1 − confidence, kept within [0.02, 0.98].
+
+## 5. Tracking
+
+The build's state is *k*, the number of completed steps (0 … N). `assembly/tracking.py` (mirrored by
+`frontend/src/engine/tracking.ts`) is a hidden Markov model:
+
+- **Transitions**, normalized per row: P(k→k) = .86, P(k→k+1) = .11, P(k→k+2) = .02, P(k→k−1) = .01.
+- **Emissions.** State *k* predicts steps 1..k done and k+1..N not. Each observed p<sub>i</sub> is first capped to
+  [0.15, 0.85] (one image is never conclusive), then
+
+  &nbsp;&nbsp;&nbsp;&nbsp;log P(obs | k) = 0.7 · Σ<sub>i ≤ k</sub> log p<sub>i</sub> + 0.7 · Σ<sub>i > k</sub> log(1 − p<sub>i</sub>)
+
+  where the 0.7 tempers evidence from the same image, whose per-step readings are correlated.
+- **Live** (`Tracker`): the forward algorithm, one update per observation; the belief is P(k), its argmax the
+  current step.
+- **Video** (`decode`): Viterbi for the most likely path (starting at k = 0) and forward-backward, in log space, for
+  the posterior at every frame. Step *k*'s completion time is the first frame where the path reaches *k*.
+
+Given the plan, the decoded path *is* the graph's history: the joints of step *k* were made when step *k* finished.
+
+## 6. Guidance
+
+`frontend/src/engine/choreography.ts` turns a plan into a timeline that can be evaluated at any instant:
+
+| Phase | Seconds | What moves |
 |---|---|---|
-| `core` | point-cloud geometry, coordinate frames, the material table, cross-process errors | NumPy, SciPy |
-| `scene` | the scene package contract: Pydantic schema, asset I/O (OBJ, PLY, primitives), compact JSON | `core` |
-| `models` | Meta Model API clients: Muse Spark (structured JSON), SAM 3.1 (streamed masks) | `core` |
-| `robotics` | mass properties, grasp synthesis, scene graph, MJCF / URDF / USD writers, MuJoCo environment | `core`, `scene` |
-| `pipeline` | the seven stages, the stage graph, previews, packaging | all of the above |
-| `calibration` | friction measured from a filmed push, written back into the scene | `models` |
-| `service` | the FastAPI service and "what if" planning | `pipeline`, `models` |
-| `eval`, `tools` | Objectron ground truth; gallery rebuild and validation | — |
+| intro | 1.6 | nothing: the parts lie in their floor layout |
+| reorient | 2.4 | when a step's orientation differs from the last one, the main assembly rotates about its center, lifted off the floor |
+| locate | 2.2 | the step's parts are highlighted where they lie |
+| place | 3.4 + 0.35 per extra part | each part travels on an arc (lifted mid-way, rotation slerped) from the floor to its pose; staggered |
+| fasten | 2.0 | fastener markers appear one by one at each joint's hole positions |
+| verify | 1.6 | the markers turn green; the step counts as done at the end |
 
-Importing `darius` is cheap (subpackages load on first use), because each cloud image installs only what its own
-stages need: the VGGT image has no Pydantic, the splat image no OpenCV.
+Poses come from the plan: a part's assembled pose composed with the transform of the component it belongs to after
+*k* steps (`subassemblies`). The main component lies in the step's orientation and rests on the floor at the work
+area; a subassembly built on the side (the nightstand's drawer) stands upright beside it until the step that joins
+it, when it travels as one piece.
 
-## Design principles
+`three/Stage.ts` renders a moment: the room or the studio, rounded flat-pack parts with procedural wood, and the AR
+layer: ghost boxes at target poses, tube arcs whose dashes flow toward the target, a rotation ring for turns, and
+screen-sized fastener sprites. It also returns **detections**: every part's projected box, with loose parts and parts
+being placed boxed one by one and each (sub)assembly as a single object, which is how a part tracker reports them.
 
-1. **One contract.** The compiler and every consumer share nothing but the
-   [scene package format](scene-format.md). The simulator was built and tested against a hand-written
-   scene before the pipeline existed, and that scene still runs in CI.
-2. **Every stage is a pure function of a folder.** A stage reads earlier outputs from the job folder
-   and writes its own, ending with a marker file ([`jobs.py`](../pipeline/darius/pipeline/jobs.py)). A failed or
-   changed stage re-runs alone (`--start physics`) without paying for the GPU stage again, and stages whose
-   inputs are ready run at the same time.
-3. **Models propose, geometry decides.** Foundation models are used where they are strong (recognition,
-   segmentation, priors about the world); everything that can be *measured* from the reconstruction is
-   measured. Mass is computed from volume, not guessed; model outputs are schema-constrained, then
-   range-checked.
-4. **Measure everything that can be measured.** The pipeline is evaluated against metric ground truth
-   ([results](results.md)), and the physics engines against closed-form mechanics (tests).
-5. **Derived data is computed once.** Mass properties and grasps are written into scene.json; every exporter works
-   from one robotics model built from it, so MJCF, URDF, USD and the browser cannot disagree.
+## 7. Manuals from geometry
 
-## Stage by stage
+`three/ManualArt.ts` draws a plan as a manual: an orthographic three-quarter view, white faces with polygon offset
+under heavy screen-space outlines (hidden lines removed by the depth buffer), new parts white and parts in place gray.
+A step's drawing shows the component the step works on, in the step's orientation, with the parts it adds pulled out:
 
-### 1 · Ingest ([`frames.py`](../pipeline/darius/pipeline/ingest.py))
+1. **Direction.** Away from the part it joins, along the axis where their boxes touch (the axis with the largest
+   gap − half-sizes).
+2. **Free way in.** That direction is kept only if sweeping the part's box along it 4 m clears every part already in
+   place (boxes shrunk by 1.5 mm, so touching is not hitting); otherwise the first free one of front, up, down, right,
+   left, back. Shelves between two sides therefore come in from the front.
+3. **Depth.** Breadth-first from the parts in place over the step's joints: a part two joints away is pulled twice as
+   far. Parts that would land on or hide each other (boxes closer than 10 cm) push the outer one further.
+4. **Subassemblies.** A step that joins a side subassembly pulls all of it out together, along a free way, with one
+   arrow.
 
-Candidates are decoded at 12 fps, split into 48 equal time bins, and the sharpest frame (variance of
-the Laplacian) wins each bin. Bins whose best frame is under 30% of the median sharpness are dropped
-rather than polluting reconstruction. Too-short, too-dark and mostly-blurry videos are rejected with
-an actionable message (`InputError`), which the processing screen shows verbatim.
+The drawing's callouts and arrows are returned in image coordinates and laid out as SVG over it by
+`ui/ManualPage.tsx`, which also composes the cover, the parts page (all parts at one scale) and the hardware page.
 
-The selected frames are re-encoded as a short H.264 clip. **Frame *i* of the clip SAM tracks is frame
-*i* that VGGT reconstructs**: that one-to-one correspondence turns lifting 2D masks into 3D from a
-search problem into a lookup.
+## 8. Measuring
 
-### 2 · Reconstruct ([`reconstruct.py`](../pipeline/darius/pipeline/reconstruct.py))
+`frontend/scripts/capture.mjs` renders each product's manual pages and films its build in clean mode (no AR layer)
+at 1280×720, 15 fps, with the moment of every frame recorded in `truth.json`. `darius eval` then:
 
-[VGGT](https://github.com/facebookresearch/vggt) (Wang et al., CVPR 2025) predicts camera poses, depth
-and confidence for all keyframes in a single feed-forward pass: no feature matching, no bundle
-adjustment. On an L40S, 26–48 frames take about 2 s of inference and 8 GB peak memory. World points
-come from depth + cameras, which the VGGT authors report as more accurate than the point-map head.
+- reads each manual and scores the recovered plan with `compare`;
+- samples each session at 1 fps, verifies the frames with the step pages, decodes them, and scores the timeline:
+  **frame accuracy** (the decoded *k* equals the truth), the same for each frame alone (argmax of its emission),
+  **steps found**, and the **timing error** of each step's decoded completion against the moment its parts were in
+  place (in a rendered session nothing visible happens during fastening, so that is the moment a video can show).
 
-Details that matter:
+Every output is stored next to its inputs; `--replay` re-scores stored outputs and `--check` (run by CI) fails when a
+stored score no longer matches.
 
-- Frames are resized to a 518 px long side with both sides multiples of the 14 px ViT patch, **without
-  cropping**. VGGT's own loader center-crops portrait images, which discards a third of a phone video's
-  field of view.
-- The model runs in a warm Modal class (`Reconstructor`): weight loading is ~45 s, inference ~2 s, so
-  a container stays up for 5 minutes between jobs.
-- Weights: `facebook/VGGT-1B-Commercial` (the original `VGGT-1B` weights are CC BY-NC).
+## 9. Serving
 
-### 3 · Segment ([`segment.py`](../pipeline/darius/pipeline/segment.py))
+`engine/darius/service/api.py` (FastAPI, deployed by `engine/modal_app.py` as one CPU function that scales to zero):
 
-The sharpest frame in the middle half of the video is the keyframe. **Muse Spark** lists each movable
-object on the table with a short label and a box on its 0–1000 grid (structured JSON output).
-**SAM 3.1** receives those boxes as *box prompts* on the keyframe and propagates masks forward and
-backward through the clip under our own object ids.
+| Endpoint | In | Out |
+|---|---|---|
+| `GET /library`, `GET /library/{id}` | | plan summaries, a plan |
+| `POST /manuals` | page images (1–50) | the reading, the plan built from it, notes |
+| `POST /frames` | 1–8 frames with times, a library `plan_id` (its step pages are used) or a plan as JSON (+ optional reference pages) | per-frame readings and tracker evidence |
+| `POST /videos` | a video (≤ 300 MB) and a plan | the decoded timeline and every joint's date |
 
-Why boxes rather than SAM's text prompts: live testing showed SAM 3.1's concept prompts are very
-sensitive to wording ("mandarin orange" finds nothing where "orange" finds all six) and cannot take a
-generic prompt ("object" finds nothing), while Muse Spark's labels vary between runs. Box prompts make
-the handoff wording-independent. Masks are rasterized at reconstruction resolution into per-frame
-label maps; where masks overlap, the more confident one wins.
-
-### 4 · Lift ([`lift.py`](../pipeline/darius/pipeline/lift.py), [`geometry.py`](../pipeline/darius/core/geometry.py))
-
-Each VGGT point comes from exactly one pixel of one keyframe, so it arrives already labeled. The
-problem is noise, not association:
-
-1. **Confidence filter:** drop the lowest 30% of VGGT depth confidence.
-2. **Gravity.** RANSAC fits the table plane to *background points near the objects* (within 2.5× the
-   objects' 90th-percentile radius), so a wall or the floor cannot win. The normal is oriented toward
-   the mean camera center, because cameras filming a tabletop are above it, and the scene is rotated
-   so the table is y = 0 with +y up. Diagnostics record the inlier RMS and the fraction of cameras
-   above the table (should be 1.0).
-3. **Multi-view voting.** Points are voxelized (0.4% of the median camera distance) and each voxel
-   takes a label by majority vote over every point that fell in it, from every frame. It needs at least
-   half the votes. A mask that bleeds onto the table in one view is outvoted by the views where it
-   didn't.
-4. **Cleanup per object:** discard points within 2× the plane threshold of the table, remove
-   statistical outliers (16-NN), keep the largest 26-connected voxel component. Objects with fewer
-   than 300 points stay in the background rather than becoming junk rigid bodies.
-
-### 5 · Physics ([`physics.py`](../pipeline/darius/pipeline/physics.py))
-
-For each object, Muse Spark sees three crops from well-separated frames with everything outside the
-mask dimmed, and returns (JSON-schema constrained): category, material, **typical dimensions**,
-typical mass, hollowness, fill fraction, friction, restitution, fragility, and confidence.
-
-**Metric scale.** VGGT reconstructs up to an unknown scale. Each confidently recognized object votes
-for one: `scale = median(sorted expected dims / sorted measured dims)`. Matching by rank sidesteps
-"which side is the length", and the median of three ignores one badly measured side. The scene scale
-is the confidence-weighted median of the votes, so one misrecognized object can't capture it. On the
-two-mug scene the two independent votes agree to within 2.5%; across 24 Objectron clips the median
-size error is 1% (see [results](results.md)).
-
-**Mass** is computed, not guessed: `convex-hull volume × material density × fill fraction`, with
-density from the shared [material table](../pipeline/darius/data/materials.json). The model's direct
-mass guess is only a sanity check: if they disagree by more than 2.5×, the typical mass wins and
-`physics_notes` says why.
-
-**Supporting base.** Cameras circling above a table barely see an object's lower edge, and
-reconstructions are sparse and one-sided there. Projecting only the lowest ring of points made a
-scanned mug's base coin-sized, and it tipped over in MuJoCo. The collider now gets the footprint of
-the object's lower half projected onto the table, which is the physically sensible support prior
-(`geometry.complete_bottom`).
-
-### 6 · Appearance ([`splats.py`](../pipeline/darius/pipeline/splats.py))
-
-Appearance comes from 3D Gaussian splatting with [gsplat](https://github.com/nerfstudio-project/gsplat),
-optimized jointly over the whole scene at full keyframe resolution (6,000 iterations, L1 + SSIM, SH
-degree 1, about two minutes on an L40S).
-
-- **MCMC densification, anti-aliased rasterization.** Densification uses MCMC (Kheradmand et al., 2024): a fixed
-  budget of 450,000 Gaussians that are relocated rather than cloned and pruned, with no opacity resets. A budget
-  matters twice: training time, and the browser, which pays for every splat on every frame. Rasterization is
-  anti-aliased (gsplat's Mip-Splatting-style 2D filter), so splats stay correct at the resolutions the viewer
-  renders at. Retraining the demo scenes this way raised held-out PSNR on every clip, by 0.4 to 3.8 dB
-  (median +2.2 dB; [results](results.md#appearance-mcmc-densification)).
-- **An initialization budget.** Gaussians start from the lifted points: at most 300,000, of which objects get up to
-  half in proportion to their size and the background the rest. A close-up clip can lift a million points on one
-  object; keeping them all once left no budget for the background, so the table had no Gaussians of its own.
-
-- **Separation by construction.** Gaussians are initialized from the lifted, labeled points, and each
-  carries its point's label (0 = background, *k* = object *k*) as a non-trainable parameter. gsplat's
-  densification clones, splits and prunes every parameter by index, so labels follow their Gaussians
-  through training. Objects and background are optimized together, so lighting and occlusion between
-  them stay consistent, and afterwards each object's splats lift out cleanly.
-- **Camera refinement.** VGGT's cameras come from a 518 px pass, and at 1024 px their small errors
-  show up as doubled edges. Each camera gets a learnable rigid correction (Rodrigues rotation plus
-  translation), and all share one focal-length scale. gsplat provides no gradient for intrinsics, so the
-  focal scale is learned as what it is geometrically: a zoom of the rendered image about the principal
-  point, which `grid_sample` makes differentiable. On the two-mug scene, pose refinement took held-out
-  PSNR from 27.5 to 28.9 dB and the focal scale (+0.7%) to 29.4 dB.
-- **What didn't help.** A per-frame affine color correction for auto-exposure changed held-out PSNR by
-  −0.4 to +0.15 dB, so it was removed. Training 15,000 instead of 6,000 iterations was worse (28.5 dB)
-  and nine times slower: with about 20 training views, longer schedules overfit.
-- **Honest evaluation.** Every eighth keyframe is held out. Its camera is never trained, so before
-  scoring, its own correction is fit with the splats frozen (test-time pose alignment).
-- **Clean-up at packaging**, so nothing is left behind when an object moves. These rules were
-  developed by rendering the scene with every object removed and fixing what showed up
-  (`modal_app.background_preview`):
-  - object splats outside their object's box, needle-shaped ones, and ones over 1 cm (or 8% of the object's
-    size) are dropped. MCMC draws with fewer, larger Gaussians than clone-and-split: at the earlier 5 mm limit, 16%
-    of a scanned mug was dropped and it rendered see-through;
-  - background splats whose extent overlaps an object's box (grown 1.5 cm) are dropped, along with
-    those just below the table inside a footprint, which the optimizer parks there to help draw the
-    object from above;
-  - the table under each object was never seen and got painted with the object's colors, so each
-    footprint (+1.5 cm) is cleared at table level and re-covered with flat, opaque splats whose colors
-    are interpolated from the visible table around it.
-
-  ![A keyframe next to the scene rendered with every object removed](media/objectron-mugs-objects-removed.jpg)
-
-  A rule that dropped "floaters" far from reconstructed background points was tried and reverted: the
-  reference points had already been height-filtered, so it deleted the wall.
-- **Format.** Splats are written as [SPZ](https://github.com/nianticlabs/spz) v3 with Niantic's reference
-  library (about 10× smaller than PLY), each object in its own local frame, round-trip tested in CI.
-
-### 7 · Package ([`package.py`](../pipeline/darius/pipeline/package.py))
-
-**Colliders.** A single convex hull fills every concavity. [CoACD](https://github.com/SarahWeiii/CoACD)
-(approximate convex decomposition) runs on a watertight voxel surface of each object, but parts are kept
-only if they remove at least 15% of the hull's volume, measured by Monte Carlo. Otherwise the single
-hull is cheaper and just as accurate. In practice this matters for handles and L-shapes, not cavities:
-VGGT's depth noise fills a mug's interior, so no decomposition can recover a hollow the scan doesn't
-contain. The single hull is always kept as `pick_hull` for raycasts.
-
-**Table.** The visible table top becomes a convex polygon (`table_plane.polygon_m`): table-plane points
-are binned on a 2 cm grid, and the largest dense region is outlined, so stray coplanar points can't
-stretch it. The outline is then grown to cover every object's footprint (plus 3 cm): the support surface must reach
-under everything resting on it, and on a kitchen counter filmed at a grazing angle the dense region covered only
-42 × 28 cm, so three of five objects fell off it in simulation. Its bounding box is the `size_m` fallback.
-
-**Backdrop.** Background splats over the table outline (up to 1.5× the tallest object) are the table layer; the rest
-(walls, floor, the room) go to `backdrop.spz`, which viewers fade out away from the filmed path, where it was never
-trained.
-
-**Robotics.** Finally the robotics layer annotates every object with its mass distribution and grasp candidates,
-and writes the robotics bundle (MJCF, URDF, USD, `world.json`, the scene graph) and `export.zip`
-([robotics.md](robotics.md)). A `pipeline/` folder with the stage outputs (keyframe sheet, labeled point cloud,
-masks, held-out render, per-stage diagnostics) lets the web app replay how the scene was built.
-
-Everything is converted to meters once. Each object's points and hull are written in object-local
-coordinates (origin at the bounding-box center) so a simulator can attach them to a rigid body
-directly. Hulls are capped at 32 vertices by farthest-point sampling: at 96, a scanned mug's many tiny
-near-coplanar faces kept it rocking forever in Rapier; at 32 it settles and sleeps within 3 s.
-The clean keyframe becomes the gallery thumbnail.
-
-## Runtime
-
-```mermaid
-sequenceDiagram
-    participant B as Browser
-    participant A as API (FastAPI on Modal)
-    participant J as run_job (CPU)
-    participant G as GPU workers (VGGT warm, gsplat)
-    participant V as Volume
-    B->>A: POST /jobs (video, X-Access-Code)
-    A->>V: input.mov, meta.json, status.json
-    A-->>J: spawn
-    loop while stages remain: start every stage whose inputs are done
-        J->>G: reconstruct ∥ segment, then physics ∥ splat
-        G->>V: stage outputs + preview artifacts
-        J->>V: status.json (only the orchestrator writes it)
-    end
-    B->>A: GET /jobs/{id} (poll)
-    B->>A: GET /jobs/{id}/artifacts/preview/points.bin, ... (live pipeline view)
-    B->>A: GET /jobs/{id}/scene/scene.json, *.spz, robotics/...
-```
-
-- **Concurrency:** the orchestrator (`run_job`) runs the stage graph with a thread pool of remote calls: each
-  stage starts as soon as the stages it reads from are done, so reconstruction (GPU) overlaps segmentation (API
-  calls), and physical estimation overlaps splat training. Physics calls Muse Spark once per object, in parallel.
-
-- **Compute:** stages are separate Modal functions with their own images: VGGT pins torch 2.3.1 and
-  numpy < 2, so it is isolated from the CPU image. Every function has a timeout. The GPU request is a
-  fallback list (`L40S → A100-40GB → L4`).
-- **State:** a Modal Volume holds job folders; weights are cached in a second volume.
-- **Errors:** third-party exceptions don't survive pickling between containers, so stages re-raise
-  them as plain `RuntimeError` messages, and the processing screen shows which stage failed and why.
-- **Cost controls:** endpoints that spend GPU time or API credits (`POST /jobs`, `POST /what-if`) can
-  require a shared access code (`DARIUS_ACCESS_CODE`); read-only endpoints are open and cacheable.
-- **Live artifacts:** `GET /jobs/{id}/artifacts/{name}` serves each stage's output from an allow-list (traversal
-  attempts are tested), so the processing screen draws the keyframes, the point cloud and the masks as they appear.
-
-## Simulator
-
-The browser simulator (`frontend/`) loads a scene package and runs Rapier (WASM) at a fixed 120 Hz,
-decoupled from rendering. Object-vs-table contacts use exactly the manifest's coefficients (table
-coefficients 0, `Max` combine rule), which is what makes estimated and measured friction meaningful
-in simulation.
-
-- **Rendering.** Spark renders the splats straight to the canvas. An earlier post-processing chain rendered into a
-  multisampled half-float target: Spark then blended in linear light (the splats were trained in sRGB, so they
-  looked washed out) and the target cost most of the frame. A CSS vignette replaces the grade pass.
-- **On demand.** A frame is drawn only when something changed: a body that is awake, the camera (OrbitControls
-  `change`), a finished splat sort (Spark's `onDirty`), a view or selection change. A resting scene costs nothing.
-- **Adaptive resolution.** The pixel ratio starts at 1.5× at most and steps down by 0.25 after eight slow frames
-  (over 22 ms), and back up after 240 fast ones; splat rendering is fill-rate bound, so this is the lever that works.
-- **Real time.** Up to 24 physics steps per frame keep the simulation in real time down to 5 fps. At the earlier
-  cap of 8, an 8 fps frame rate ran physics at half speed, which read as weak gravity.
-- **Holding.** The grabbed point follows the pointer on a spring that Rapier solves implicitly, with stiffness
-  m ω² (ω = 31 rad/s) and critical damping: every object sags the same g / ω² ≈ 1 cm, where a fixed 400 N/m spring let
-  a 23 kg toaster hang half a meter below the pointer. Carried objects keep their rotation locked (Q / E turn them);
-  releasing throws at the hand's velocity over the last 80 ms; a ring marks where a carried object will land.
-- **Table collider.** The outline is a closed triangle-mesh slab with Rapier's internal-edge fix, so objects slide
-  across the fan's seams as on a flat table, at Rapier's default 1 m length unit: at 0.1 the internal-edge fix let
-  a 3 cm scanned book fall straight through the slab.
-- **Views.** Scene, Colliders, Physics, and Robot: the exported model's centers of mass, equivalent inertia
-  ellipsoids (semi-axes √(5/2m (I₂ + I₃ − I₁)), …) and grasp candidates, over the +z-up robot frame.
-
-**"What if"** turns plain English into simulation actions with Muse Spark *tool calling*
-([`whatif.py`](../pipeline/darius/service/whatif.py)): the model sees a compact scene description and returns
-calls such as `apply_impulse(obj_02, [1,0,0], 1.5)` or `bump_table([0,0,-1], "hard")`. It never touches
-the simulation; the browser validates every argument (model output is untrusted input) and executes
-the calls.
-
-## Reality check
-
-Real-to-sim needs a way to *measure* physics, not only estimate it. Film a flick of one object from a
-fixed phone; SAM 3.1 tracks it; pixels are converted to meters with the object's known footprint.
-After release, Coulomb friction gives constant deceleration, so the path distance obeys
-
-$$s(t) = s_0 + v_0 t - \tfrac{1}{2}\,\mu g\, t^2$$
-
-which is linear in $(s_0, v_0, \mu)$ and solved by least squares on the sliding segment
-([`reality_check.py`](../pipeline/darius/calibration/reality_check.py)). Re-simulating the same push with the
-estimated and the measured μ gives the slide-distance error before and after correction, and the
-measured value is written back into the scene with `physics_source: "measured"`. The estimator is
-validated on synthetic tracks with noise (it recovers μ within 12% and closes the distance error to
-within 8%). See [limitations](../README.md#limitations) for what has not been validated on real
-footage yet.
+The tracker runs in the client, so `/frames` is stateless. Model calls can be gated with `DARIUS_ACCESS_CODE` (the
+`X-Access-Code` header).

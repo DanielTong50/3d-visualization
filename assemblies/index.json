@@ -1,0 +1,58 @@
+[
+  {
+    "id": "halden-bookcase",
+    "title": "Halden bookcase",
+    "category": "bookcase",
+    "dimensions_mm": [
+      800.0,
+      1060.0,
+      283.0
+    ],
+    "parts": 9,
+    "joints": 16,
+    "steps": 5,
+    "hardware": 72
+  },
+  {
+    "id": "varde-nightstand",
+    "title": "Varde nightstand",
+    "category": "nightstand",
+    "dimensions_mm": [
+      450.0,
+      560.0,
+      419.0
+    ],
+    "parts": 10,
+    "joints": 15,
+    "steps": 6,
+    "hardware": 41
+  },
+  {
+    "id": "lund-side-table",
+    "title": "Lund side table",
+    "category": "table",
+    "dimensions_mm": [
+      500.0,
+      450.0,
+      500.0
+    ],
+    "parts": 9,
+    "joints": 12,
+    "steps": 4,
+    "hardware": 16
+  },
+  {
+    "id": "ostra-desk",
+    "title": "Ostra desk",
+    "category": "desk",
+    "dimensions_mm": [
+      1200.0,
+      750.0,
+      600.0
+    ],
+    "parts": 5,
+    "joints": 7,
+    "steps": 3,
+    "hardware": 31
+  }
+]

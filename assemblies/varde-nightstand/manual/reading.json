@@ -1,0 +1,948 @@
+{
+ "plan": "varde-nightstand",
+ "model": "muse-spark-1.3",
+ "pages": 9,
+ "seconds": 58.52,
+ "usage": {
+  "completion_tokens": 13386,
+  "prompt_tokens": 13467,
+  "total_tokens": 26853,
+  "completion_tokens_details": {
+   "accepted_prediction_tokens": null,
+   "audio_tokens": null,
+   "reasoning_tokens": 12245,
+   "rejected_prediction_tokens": null,
+   "text_tokens": null
+  },
+  "prompt_tokens_details": {
+   "audio_tokens": null,
+   "cache_write_tokens": null,
+   "cached_tokens": 0,
+   "image_tokens": null,
+   "text_tokens": null
+  }
+ },
+ "score": {
+  "parts_f1": 1.0,
+  "edges_precision": 0.9375,
+  "edges_recall": 1.0,
+  "edges_f1": 0.9677,
+  "steps_exact": 0.8333,
+  "hardware_accuracy": 1.0
+ },
+ "notes": [],
+ "reading": {
+  "title": "VARDE",
+  "category": "nightstand",
+  "parts": [
+   {
+    "label": "A",
+    "name": "side panel",
+    "count": 2,
+    "size_mm": [
+     16.0,
+     544.0,
+     400.0
+    ]
+   },
+   {
+    "label": "B",
+    "name": "top",
+    "count": 1,
+    "size_mm": [
+     450.0,
+     16.0,
+     400.0
+    ]
+   },
+   {
+    "label": "C",
+    "name": "bottom",
+    "count": 1,
+    "size_mm": [
+     418.0,
+     16.0,
+     400.0
+    ]
+   },
+   {
+    "label": "D",
+    "name": "back panel",
+    "count": 1,
+    "size_mm": [
+     446.0,
+     480.0,
+     3.0
+    ]
+   },
+   {
+    "label": "E",
+    "name": "drawer front",
+    "count": 1,
+    "size_mm": [
+     446.0,
+     160.0,
+     16.0
+    ]
+   },
+   {
+    "label": "F",
+    "name": "drawer side",
+    "count": 2,
+    "size_mm": [
+     12.0,
+     140.0,
+     360.0
+    ]
+   },
+   {
+    "label": "G",
+    "name": "drawer back",
+    "count": 1,
+    "size_mm": [
+     394.0,
+     140.0,
+     12.0
+    ]
+   },
+   {
+    "label": "H",
+    "name": "drawer bottom",
+    "count": 1,
+    "size_mm": [
+     394.0,
+     3.0,
+     348.0
+    ]
+   }
+  ],
+  "hardware": [
+   {
+    "id": "101350",
+    "kind": "dowel",
+    "name": "wooden dowel 8 x 30 mm",
+    "count": 8
+   },
+   {
+    "id": "118331",
+    "kind": "cam_bolt",
+    "name": "cam bolt 34 mm",
+    "count": 8
+   },
+   {
+    "id": "116952",
+    "kind": "cam_lock",
+    "name": "cam lock 15 mm",
+    "count": 8
+   },
+   {
+    "id": "101351",
+    "kind": "nail",
+    "name": "nail 1.5 x 20 mm",
+    "count": 9
+   },
+   {
+    "id": "100214",
+    "kind": "screw",
+    "name": "screw 3.5 x 25 mm",
+    "count": 8
+   }
+  ],
+  "steps": [
+   {
+    "index": 1,
+    "title": "Bottom between the sides",
+    "adds": [
+     "A",
+     "A",
+     "C"
+    ],
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 4
+     },
+     {
+      "id": "116952",
+      "count": 4
+     },
+     {
+      "id": "118331",
+      "count": 4
+     }
+    ],
+    "orientation": "on_back",
+    "tools": [
+     "screwdriver"
+    ],
+    "connections": [
+     {
+      "a": "C",
+      "b": "A",
+      "kind": "cam_lock"
+     },
+     {
+      "a": "C",
+      "b": "A",
+      "kind": "cam_lock"
+     }
+    ]
+   },
+   {
+    "index": 2,
+    "title": "Fit the top",
+    "adds": [
+     "B"
+    ],
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 4
+     },
+     {
+      "id": "116952",
+      "count": 4
+     },
+     {
+      "id": "118331",
+      "count": 4
+     }
+    ],
+    "orientation": "on_back",
+    "tools": [
+     "screwdriver"
+    ],
+    "connections": [
+     {
+      "a": "B",
+      "b": "A",
+      "kind": "cam_lock"
+     },
+     {
+      "a": "B",
+      "b": "A",
+      "kind": "cam_lock"
+     }
+    ]
+   },
+   {
+    "index": 3,
+    "title": "Face down, nail on the back",
+    "adds": [
+     "D"
+    ],
+    "hardware": [
+     {
+      "id": "101351",
+      "count": 9
+     }
+    ],
+    "orientation": "on_front",
+    "tools": [
+     "hammer"
+    ],
+    "connections": [
+     {
+      "a": "D",
+      "b": "A",
+      "kind": "nail"
+     },
+     {
+      "a": "D",
+      "b": "A",
+      "kind": "nail"
+     },
+     {
+      "a": "D",
+      "b": "B",
+      "kind": "nail"
+     },
+     {
+      "a": "D",
+      "b": "C",
+      "kind": "nail"
+     }
+    ]
+   },
+   {
+    "index": 4,
+    "title": "Build the drawer box",
+    "adds": [
+     "F",
+     "F",
+     "G"
+    ],
+    "hardware": [
+     {
+      "id": "100214",
+      "count": 4
+     }
+    ],
+    "orientation": "upright",
+    "tools": [
+     "screwdriver"
+    ],
+    "connections": [
+     {
+      "a": "G",
+      "b": "F",
+      "kind": "screw"
+     },
+     {
+      "a": "G",
+      "b": "F",
+      "kind": "screw"
+     }
+    ]
+   },
+   {
+    "index": 5,
+    "title": "Drawer bottom and front",
+    "adds": [
+     "E",
+     "H"
+    ],
+    "hardware": [
+     {
+      "id": "100214",
+      "count": 4
+     }
+    ],
+    "orientation": "upright",
+    "tools": [
+     "screwdriver"
+    ],
+    "connections": [
+     {
+      "a": "E",
+      "b": "F",
+      "kind": "screw"
+     },
+     {
+      "a": "E",
+      "b": "F",
+      "kind": "screw"
+     },
+     {
+      "a": "H",
+      "b": "F",
+      "kind": "slot"
+     },
+     {
+      "a": "H",
+      "b": "F",
+      "kind": "slot"
+     }
+    ]
+   },
+   {
+    "index": 6,
+    "title": "Stand it up, slide the drawer in",
+    "adds": [],
+    "hardware": [],
+    "orientation": "upright",
+    "tools": [],
+    "connections": [
+     {
+      "a": "F",
+      "b": "A",
+      "kind": "slot"
+     },
+     {
+      "a": "F",
+      "b": "A",
+      "kind": "slot"
+     }
+    ]
+   }
+  ]
+ },
+ "recovered": {
+  "version": 1,
+  "id": "varde-nightstand",
+  "title": "VARDE",
+  "category": "nightstand",
+  "source": "manual",
+  "units": "mm",
+  "parts": [
+   {
+    "id": "A1",
+    "label": "A",
+    "name": "side panel",
+    "kind": "side",
+    "size_mm": [
+     16.0,
+     544.0,
+     400.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "A2",
+    "label": "A",
+    "name": "side panel",
+    "kind": "side",
+    "size_mm": [
+     16.0,
+     544.0,
+     400.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "B",
+    "label": "B",
+    "name": "top",
+    "kind": "top",
+    "size_mm": [
+     450.0,
+     16.0,
+     400.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "C",
+    "label": "C",
+    "name": "bottom",
+    "kind": "bottom",
+    "size_mm": [
+     418.0,
+     16.0,
+     400.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "D",
+    "label": "D",
+    "name": "back panel",
+    "kind": "back",
+    "size_mm": [
+     446.0,
+     480.0,
+     3.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "E",
+    "label": "E",
+    "name": "drawer front",
+    "kind": "drawer_front",
+    "size_mm": [
+     446.0,
+     160.0,
+     16.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "F1",
+    "label": "F",
+    "name": "drawer side",
+    "kind": "drawer_side",
+    "size_mm": [
+     12.0,
+     140.0,
+     360.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "F2",
+    "label": "F",
+    "name": "drawer side",
+    "kind": "drawer_side",
+    "size_mm": [
+     12.0,
+     140.0,
+     360.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "G",
+    "label": "G",
+    "name": "drawer back",
+    "kind": "drawer_back",
+    "size_mm": [
+     394.0,
+     140.0,
+     12.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "H",
+    "label": "H",
+    "name": "drawer bottom",
+    "kind": "drawer_bottom",
+    "size_mm": [
+     394.0,
+     3.0,
+     348.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   }
+  ],
+  "hardware": [
+   {
+    "id": "101350",
+    "name": "wooden dowel 8 x 30 mm",
+    "kind": "dowel",
+    "count": 8,
+    "size_mm": []
+   },
+   {
+    "id": "118331",
+    "name": "cam bolt 34 mm",
+    "kind": "cam_bolt",
+    "count": 8,
+    "size_mm": []
+   },
+   {
+    "id": "116952",
+    "name": "cam lock 15 mm",
+    "kind": "cam_lock",
+    "count": 8,
+    "size_mm": []
+   },
+   {
+    "id": "101351",
+    "name": "nail 1.5 x 20 mm",
+    "kind": "nail",
+    "count": 9,
+    "size_mm": []
+   },
+   {
+    "id": "100214",
+    "name": "screw 3.5 x 25 mm",
+    "kind": "screw",
+    "count": 8,
+    "size_mm": []
+   }
+  ],
+  "joints": [
+   {
+    "id": "J1",
+    "parts": [
+     "C",
+     "A1"
+    ],
+    "kind": "cam_lock",
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 2
+     },
+     {
+      "id": "116952",
+      "count": 2
+     },
+     {
+      "id": "118331",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J2",
+    "parts": [
+     "C",
+     "A2"
+    ],
+    "kind": "cam_lock",
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 2
+     },
+     {
+      "id": "116952",
+      "count": 2
+     },
+     {
+      "id": "118331",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J3",
+    "parts": [
+     "B",
+     "A1"
+    ],
+    "kind": "cam_lock",
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 2
+     },
+     {
+      "id": "116952",
+      "count": 2
+     },
+     {
+      "id": "118331",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J4",
+    "parts": [
+     "B",
+     "A2"
+    ],
+    "kind": "cam_lock",
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 2
+     },
+     {
+      "id": "116952",
+      "count": 2
+     },
+     {
+      "id": "118331",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J5",
+    "parts": [
+     "D",
+     "A1"
+    ],
+    "kind": "nail",
+    "hardware": [
+     {
+      "id": "101351",
+      "count": 3
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J6",
+    "parts": [
+     "D",
+     "A2"
+    ],
+    "kind": "nail",
+    "hardware": [
+     {
+      "id": "101351",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J7",
+    "parts": [
+     "D",
+     "B"
+    ],
+    "kind": "nail",
+    "hardware": [
+     {
+      "id": "101351",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J8",
+    "parts": [
+     "D",
+     "C"
+    ],
+    "kind": "nail",
+    "hardware": [
+     {
+      "id": "101351",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J9",
+    "parts": [
+     "G",
+     "F1"
+    ],
+    "kind": "screw",
+    "hardware": [
+     {
+      "id": "100214",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J10",
+    "parts": [
+     "G",
+     "F2"
+    ],
+    "kind": "screw",
+    "hardware": [
+     {
+      "id": "100214",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J11",
+    "parts": [
+     "E",
+     "F1"
+    ],
+    "kind": "screw",
+    "hardware": [
+     {
+      "id": "100214",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J12",
+    "parts": [
+     "E",
+     "F2"
+    ],
+    "kind": "screw",
+    "hardware": [
+     {
+      "id": "100214",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J13",
+    "parts": [
+     "H",
+     "F1"
+    ],
+    "kind": "slot",
+    "hardware": [],
+    "fasteners": []
+   },
+   {
+    "id": "J14",
+    "parts": [
+     "H",
+     "F2"
+    ],
+    "kind": "slot",
+    "hardware": [],
+    "fasteners": []
+   },
+   {
+    "id": "J15",
+    "parts": [
+     "F1",
+     "A1"
+    ],
+    "kind": "slot",
+    "hardware": [],
+    "fasteners": []
+   },
+   {
+    "id": "J16",
+    "parts": [
+     "F2",
+     "A2"
+    ],
+    "kind": "slot",
+    "hardware": [],
+    "fasteners": []
+   }
+  ],
+  "steps": [
+   {
+    "index": 1,
+    "title": "Bottom between the sides",
+    "instruction": "Bottom between the sides",
+    "parts": [
+     "A1",
+     "A2",
+     "C"
+    ],
+    "joints": [
+     "J1",
+     "J2"
+    ],
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 4
+     },
+     {
+      "id": "116952",
+      "count": 4
+     },
+     {
+      "id": "118331",
+      "count": 4
+     }
+    ],
+    "actions": [],
+    "orientation": "on_back",
+    "tools": [
+     "screwdriver"
+    ]
+   },
+   {
+    "index": 2,
+    "title": "Fit the top",
+    "instruction": "Fit the top",
+    "parts": [
+     "B"
+    ],
+    "joints": [
+     "J3",
+     "J4"
+    ],
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 4
+     },
+     {
+      "id": "116952",
+      "count": 4
+     },
+     {
+      "id": "118331",
+      "count": 4
+     }
+    ],
+    "actions": [],
+    "orientation": "on_back",
+    "tools": [
+     "screwdriver"
+    ]
+   },
+   {
+    "index": 3,
+    "title": "Face down, nail on the back",
+    "instruction": "Face down, nail on the back",
+    "parts": [
+     "D"
+    ],
+    "joints": [
+     "J5",
+     "J6",
+     "J7",
+     "J8"
+    ],
+    "hardware": [
+     {
+      "id": "101351",
+      "count": 9
+     }
+    ],
+    "actions": [],
+    "orientation": "on_front",
+    "tools": [
+     "hammer"
+    ]
+   },
+   {
+    "index": 4,
+    "title": "Build the drawer box",
+    "instruction": "Build the drawer box",
+    "parts": [
+     "F1",
+     "F2",
+     "G"
+    ],
+    "joints": [
+     "J9",
+     "J10"
+    ],
+    "hardware": [
+     {
+      "id": "100214",
+      "count": 4
+     }
+    ],
+    "actions": [],
+    "orientation": "upright",
+    "tools": [
+     "screwdriver"
+    ]
+   },
+   {
+    "index": 5,
+    "title": "Drawer bottom and front",
+    "instruction": "Drawer bottom and front",
+    "parts": [
+     "E",
+     "H"
+    ],
+    "joints": [
+     "J11",
+     "J12",
+     "J13",
+     "J14"
+    ],
+    "hardware": [
+     {
+      "id": "100214",
+      "count": 4
+     }
+    ],
+    "actions": [],
+    "orientation": "upright",
+    "tools": [
+     "screwdriver"
+    ]
+   },
+   {
+    "index": 6,
+    "title": "Stand it up, slide the drawer in",
+    "instruction": "Stand it up, slide the drawer in",
+    "parts": [],
+    "joints": [
+     "J15",
+     "J16"
+    ],
+    "hardware": [],
+    "actions": [],
+    "orientation": "upright",
+    "tools": []
+   }
+  ],
+  "notes": []
+ }
+}

@@ -1,0 +1,543 @@
+{
+  "$defs": {
+    "Action": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "place",
+            "insert",
+            "rotate",
+            "flip",
+            "stand_up",
+            "lay_down",
+            "tighten",
+            "align",
+            "slide"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "target": {
+          "description": "A part id, or 'assembly' for everything built so far",
+          "title": "Target",
+          "type": "string"
+        },
+        "axis": {
+          "anyOf": [
+            {
+              "enum": [
+                "x",
+                "y",
+                "z"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Axis"
+        },
+        "degrees": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Degrees"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "target",
+        "text"
+      ],
+      "title": "Action",
+      "type": "object"
+    },
+    "Fastener": {
+      "additionalProperties": false,
+      "description": "One placed piece of hardware: where the AR view draws its insertion marker.",
+      "properties": {
+        "hardware": {
+          "title": "Hardware",
+          "type": "string"
+        },
+        "position": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Position",
+          "type": "array"
+        },
+        "axis": {
+          "description": "Insertion direction (unit vector)",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Axis",
+          "type": "array"
+        }
+      },
+      "required": [
+        "hardware",
+        "position",
+        "axis"
+      ],
+      "title": "Fastener",
+      "type": "object"
+    },
+    "Hardware": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "The part number the manual prints, e.g. '101350'",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "dowel",
+            "cam_lock",
+            "cam_bolt",
+            "screw",
+            "bolt",
+            "nail",
+            "shelf_pin",
+            "hinge",
+            "bracket",
+            "glide",
+            "allen_key"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "count": {
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "size_mm": {
+          "description": "e.g. [8, 30] for an 8 x 30 mm dowel",
+          "items": {
+            "type": "number"
+          },
+          "title": "Size Mm",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "count"
+      ],
+      "title": "Hardware",
+      "type": "object"
+    },
+    "HardwareUse": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "count": {
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "count"
+      ],
+      "title": "HardwareUse",
+      "type": "object"
+    },
+    "Joint": {
+      "additionalProperties": false,
+      "description": "Two parts held together: an edge of the assembly graph.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "parts": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Parts",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "dowel",
+            "cam_lock",
+            "screw",
+            "bolt",
+            "nail",
+            "slot",
+            "pin",
+            "glue"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "hardware": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/HardwareUse"
+          },
+          "title": "Hardware",
+          "type": "array"
+        },
+        "fasteners": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Fastener"
+          },
+          "title": "Fasteners",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "parts",
+        "kind"
+      ],
+      "title": "Joint",
+      "type": "object"
+    },
+    "Part": {
+      "additionalProperties": false,
+      "description": "One physical piece. Identical pieces (two side panels) are separate parts sharing a label.",
+      "properties": {
+        "id": {
+          "description": "Unique instance id, e.g. 'A1'",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "description": "The letter the manual prints, e.g. 'A'",
+          "title": "Label",
+          "type": "string"
+        },
+        "name": {
+          "description": "What it is, e.g. 'side panel'",
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "side",
+            "top",
+            "bottom",
+            "shelf",
+            "back",
+            "door",
+            "drawer_front",
+            "drawer_side",
+            "drawer_back",
+            "drawer_bottom",
+            "leg",
+            "rail",
+            "plinth",
+            "panel",
+            "misc"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "size_mm": {
+          "description": "Extents along the part's own x, y, z",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Size Mm",
+          "type": "array"
+        },
+        "material": {
+          "default": "particleboard, white foil",
+          "title": "Material",
+          "type": "string"
+        },
+        "color": {
+          "default": "#efece6",
+          "title": "Color",
+          "type": "string"
+        },
+        "assembled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Pose"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pose in the finished furniture"
+        },
+        "layout": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Pose"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where it lies on the floor before it is used"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "name",
+        "kind",
+        "size_mm"
+      ],
+      "title": "Part",
+      "type": "object"
+    },
+    "Pose": {
+      "additionalProperties": false,
+      "properties": {
+        "position": {
+          "description": "Millimeters, furniture frame",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Position",
+          "type": "array"
+        },
+        "rotation": {
+          "default": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "description": "x, y, z, w",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "title": "Rotation",
+          "type": "array"
+        }
+      },
+      "required": [
+        "position"
+      ],
+      "title": "Pose",
+      "type": "object"
+    },
+    "Step": {
+      "additionalProperties": false,
+      "properties": {
+        "index": {
+          "minimum": 1,
+          "title": "Index",
+          "type": "integer"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "instruction": {
+          "title": "Instruction",
+          "type": "string"
+        },
+        "parts": {
+          "description": "Parts this step brings in",
+          "items": {
+            "type": "string"
+          },
+          "title": "Parts",
+          "type": "array"
+        },
+        "joints": {
+          "description": "Joints this step makes",
+          "items": {
+            "type": "string"
+          },
+          "title": "Joints",
+          "type": "array"
+        },
+        "hardware": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/HardwareUse"
+          },
+          "title": "Hardware",
+          "type": "array"
+        },
+        "actions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Action"
+          },
+          "title": "Actions",
+          "type": "array"
+        },
+        "orientation": {
+          "default": "upright",
+          "description": "How the assembly lies during this step",
+          "enum": [
+            "upright",
+            "on_back",
+            "on_front",
+            "on_side",
+            "upside_down"
+          ],
+          "title": "Orientation",
+          "type": "string"
+        },
+        "tools": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Tools",
+          "type": "array"
+        }
+      },
+      "required": [
+        "index",
+        "title",
+        "instruction"
+      ],
+      "title": "Step",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1,
+      "default": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "category": {
+      "title": "Category",
+      "type": "string"
+    },
+    "source": {
+      "enum": [
+        "procedural",
+        "manual",
+        "hand-authored"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "units": {
+      "const": "mm",
+      "default": "mm",
+      "title": "Units",
+      "type": "string"
+    },
+    "dimensions_mm": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dimensions Mm"
+    },
+    "parts": {
+      "items": {
+        "$ref": "#/$defs/Part"
+      },
+      "title": "Parts",
+      "type": "array"
+    },
+    "hardware": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Hardware"
+      },
+      "title": "Hardware",
+      "type": "array"
+    },
+    "joints": {
+      "items": {
+        "$ref": "#/$defs/Joint"
+      },
+      "title": "Joints",
+      "type": "array"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/Step"
+      },
+      "title": "Steps",
+      "type": "array"
+    },
+    "notes": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "category",
+    "source",
+    "parts",
+    "joints",
+    "steps"
+  ],
+  "title": "AssemblyPlan",
+  "type": "object"
+}

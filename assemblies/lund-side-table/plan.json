@@ -1,0 +1,908 @@
+{
+ "version": 1,
+ "id": "lund-side-table",
+ "title": "Lund side table",
+ "category": "table",
+ "source": "procedural",
+ "units": "mm",
+ "dimensions_mm": [
+  500.0,
+  450.0,
+  500.0
+ ],
+ "parts": [
+  {
+   "id": "B1",
+   "label": "B",
+   "name": "leg",
+   "kind": "leg",
+   "size_mm": [
+    40.0,
+    430.0,
+    40.0
+   ],
+   "material": "solid pine",
+   "color": "#dcb98a",
+   "assembled": {
+    "position": [
+     -200.0,
+     215.0,
+     200.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     -965.0,
+     20.0,
+     720.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.7071067811865476,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "B2",
+   "label": "B",
+   "name": "leg",
+   "kind": "leg",
+   "size_mm": [
+    40.0,
+    430.0,
+    40.0
+   ],
+   "material": "solid pine",
+   "color": "#dcb98a",
+   "assembled": {
+    "position": [
+     200.0,
+     215.0,
+     200.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     -465.0,
+     20.0,
+     720.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.7071067811865476,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "B3",
+   "label": "B",
+   "name": "leg",
+   "kind": "leg",
+   "size_mm": [
+    40.0,
+    430.0,
+    40.0
+   ],
+   "material": "solid pine",
+   "color": "#dcb98a",
+   "assembled": {
+    "position": [
+     200.0,
+     215.0,
+     -200.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     465.0,
+     20.0,
+     720.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.7071067811865476,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "B4",
+   "label": "B",
+   "name": "leg",
+   "kind": "leg",
+   "size_mm": [
+    40.0,
+    430.0,
+    40.0
+   ],
+   "material": "solid pine",
+   "color": "#dcb98a",
+   "assembled": {
+    "position": [
+     -200.0,
+     215.0,
+     -200.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     965.0,
+     20.0,
+     720.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.7071067811865476,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "C1",
+   "label": "C",
+   "name": "rail",
+   "kind": "rail",
+   "size_mm": [
+    360.0,
+    80.0,
+    18.0
+   ],
+   "material": "solid pine",
+   "color": "#dcb98a",
+   "assembled": {
+    "position": [
+     0.0,
+     390.0,
+     205.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     0.0,
+     9.0,
+     740.0
+    ],
+    "rotation": [
+     -0.7071067811865476,
+     0.0,
+     0.0,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "C2",
+   "label": "C",
+   "name": "rail",
+   "kind": "rail",
+   "size_mm": [
+    18.0,
+    80.0,
+    360.0
+   ],
+   "material": "solid pine",
+   "color": "#dcb98a",
+   "assembled": {
+    "position": [
+     205.0,
+     390.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     -145.0,
+     9.0,
+     1030.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.7071067811865476,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "C3",
+   "label": "C",
+   "name": "rail",
+   "kind": "rail",
+   "size_mm": [
+    360.0,
+    80.0,
+    18.0
+   ],
+   "material": "solid pine",
+   "color": "#dcb98a",
+   "assembled": {
+    "position": [
+     0.0,
+     390.0,
+     -205.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     -435.0,
+     9.0,
+     890.0
+    ],
+    "rotation": [
+     -0.7071067811865476,
+     0.0,
+     0.0,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "C4",
+   "label": "C",
+   "name": "rail",
+   "kind": "rail",
+   "size_mm": [
+    18.0,
+    80.0,
+    360.0
+   ],
+   "material": "solid pine",
+   "color": "#dcb98a",
+   "assembled": {
+    "position": [
+     -205.0,
+     390.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     5.0,
+     9.0,
+     1030.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.7071067811865476,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "A",
+   "label": "A",
+   "name": "table top",
+   "kind": "top",
+   "size_mm": [
+    500.0,
+    20.0,
+    500.0
+   ],
+   "material": "solid pine",
+   "color": "#dcb98a",
+   "assembled": {
+    "position": [
+     0.0,
+     440.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     365.0,
+     10.0,
+     1100.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  }
+ ],
+ "hardware": [
+  {
+   "id": "100214",
+   "name": "screw 3.5 x 25 mm",
+   "kind": "screw",
+   "count": 8,
+   "size_mm": [
+    3.5,
+    25.0
+   ]
+  },
+  {
+   "id": "109041",
+   "name": "bolt M6 x 70 mm",
+   "kind": "bolt",
+   "count": 8,
+   "size_mm": [
+    6.0,
+    70.0
+   ]
+  }
+ ],
+ "joints": [
+  {
+   "id": "J1",
+   "parts": [
+    "C1",
+    "B1"
+   ],
+   "kind": "bolt",
+   "hardware": [
+    {
+     "id": "109041",
+     "count": 1
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "109041",
+     "position": [
+      -180.0,
+      390.0,
+      205.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J2",
+   "parts": [
+    "C1",
+    "B2"
+   ],
+   "kind": "bolt",
+   "hardware": [
+    {
+     "id": "109041",
+     "count": 1
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "109041",
+     "position": [
+      180.0,
+      390.0,
+      205.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J3",
+   "parts": [
+    "C3",
+    "B3"
+   ],
+   "kind": "bolt",
+   "hardware": [
+    {
+     "id": "109041",
+     "count": 1
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "109041",
+     "position": [
+      180.0,
+      390.0,
+      -205.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J4",
+   "parts": [
+    "C3",
+    "B4"
+   ],
+   "kind": "bolt",
+   "hardware": [
+    {
+     "id": "109041",
+     "count": 1
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "109041",
+     "position": [
+      -180.0,
+      390.0,
+      -205.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J5",
+   "parts": [
+    "C2",
+    "B2"
+   ],
+   "kind": "bolt",
+   "hardware": [
+    {
+     "id": "109041",
+     "count": 1
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "109041",
+     "position": [
+      205.0,
+      390.0,
+      180.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J6",
+   "parts": [
+    "C2",
+    "B3"
+   ],
+   "kind": "bolt",
+   "hardware": [
+    {
+     "id": "109041",
+     "count": 1
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "109041",
+     "position": [
+      205.0,
+      390.0,
+      -180.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      -1.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J7",
+   "parts": [
+    "C4",
+    "B4"
+   ],
+   "kind": "bolt",
+   "hardware": [
+    {
+     "id": "109041",
+     "count": 1
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "109041",
+     "position": [
+      -205.0,
+      390.0,
+      -180.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      -1.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J8",
+   "parts": [
+    "C4",
+    "B1"
+   ],
+   "kind": "bolt",
+   "hardware": [
+    {
+     "id": "109041",
+     "count": 1
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "109041",
+     "position": [
+      -205.0,
+      390.0,
+      180.0
+     ],
+     "axis": [
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J9",
+   "parts": [
+    "A",
+    "C1"
+   ],
+   "kind": "screw",
+   "hardware": [
+    {
+     "id": "100214",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "100214",
+     "position": [
+      -140.0,
+      430.0,
+      205.0
+     ],
+     "axis": [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "100214",
+     "position": [
+      140.0,
+      430.0,
+      205.0
+     ],
+     "axis": [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J10",
+   "parts": [
+    "A",
+    "C2"
+   ],
+   "kind": "screw",
+   "hardware": [
+    {
+     "id": "100214",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "100214",
+     "position": [
+      205.0,
+      430.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "100214",
+     "position": [
+      205.0,
+      430.0,
+      140.0
+     ],
+     "axis": [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J11",
+   "parts": [
+    "A",
+    "C3"
+   ],
+   "kind": "screw",
+   "hardware": [
+    {
+     "id": "100214",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "100214",
+     "position": [
+      -140.0,
+      430.0,
+      -205.0
+     ],
+     "axis": [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "100214",
+     "position": [
+      140.0,
+      430.0,
+      -205.0
+     ],
+     "axis": [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J12",
+   "parts": [
+    "A",
+    "C4"
+   ],
+   "kind": "screw",
+   "hardware": [
+    {
+     "id": "100214",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "100214",
+     "position": [
+      -205.0,
+      430.0,
+      -140.0
+     ],
+     "axis": [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "100214",
+     "position": [
+      -205.0,
+      430.0,
+      140.0
+     ],
+     "axis": [
+      0.0,
+      -1.0,
+      0.0
+     ]
+    }
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "index": 1,
+   "title": "Front frame",
+   "instruction": "Bolt rail C between two legs B. Hand-tight for now.",
+   "parts": [
+    "B1",
+    "B2",
+    "C1"
+   ],
+   "joints": [
+    "J1",
+    "J2"
+   ],
+   "hardware": [
+    {
+     "id": "109041",
+     "count": 2
+    }
+   ],
+   "actions": [],
+   "orientation": "upright",
+   "tools": [
+    "allen key"
+   ]
+  },
+  {
+   "index": 2,
+   "title": "Back frame",
+   "instruction": "Build the second frame the same way.",
+   "parts": [
+    "B3",
+    "B4",
+    "C3"
+   ],
+   "joints": [
+    "J3",
+    "J4"
+   ],
+   "hardware": [
+    {
+     "id": "109041",
+     "count": 2
+    }
+   ],
+   "actions": [],
+   "orientation": "upright",
+   "tools": [
+    "allen key"
+   ]
+  },
+  {
+   "index": 3,
+   "title": "Join the frames",
+   "instruction": "Connect the two frames with the side rails C, then tighten all eight bolts.",
+   "parts": [
+    "C2",
+    "C4"
+   ],
+   "joints": [
+    "J5",
+    "J6",
+    "J7",
+    "J8"
+   ],
+   "hardware": [
+    {
+     "id": "109041",
+     "count": 4
+    }
+   ],
+   "actions": [
+    {
+     "kind": "tighten",
+     "target": "assembly",
+     "text": "Tighten all bolts"
+    }
+   ],
+   "orientation": "upright",
+   "tools": [
+    "allen key"
+   ]
+  },
+  {
+   "index": 4,
+   "title": "Screw on the top",
+   "instruction": "Lay top A face down, set the frame on it upside down and centered, and screw through the rails. Turn the table over.",
+   "parts": [
+    "A"
+   ],
+   "joints": [
+    "J9",
+    "J10",
+    "J11",
+    "J12"
+   ],
+   "hardware": [
+    {
+     "id": "100214",
+     "count": 8
+    }
+   ],
+   "actions": [
+    {
+     "kind": "flip",
+     "target": "assembly",
+     "axis": "z",
+     "degrees": 180.0,
+     "text": "Turn the frame upside down onto the top"
+    }
+   ],
+   "orientation": "upside_down",
+   "tools": [
+    "screwdriver"
+   ]
+  }
+ ],
+ "notes": []
+}

@@ -9,7 +9,7 @@ __pycache__/
 .venv/
 
 # Pipeline outputs (re-creatable)
-pipeline/outputs/
+engine/outputs/
 
 # Frontend
 node_modules/

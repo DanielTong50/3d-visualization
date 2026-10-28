@@ -1,0 +1,948 @@
+{
+ "plan": "halden-bookcase",
+ "model": "muse-spark-1.3",
+ "pages": 8,
+ "seconds": 67.82,
+ "usage": {
+  "completion_tokens": 14578,
+  "prompt_tokens": 12025,
+  "total_tokens": 26603,
+  "completion_tokens_details": {
+   "accepted_prediction_tokens": null,
+   "audio_tokens": null,
+   "reasoning_tokens": 13511,
+   "rejected_prediction_tokens": null,
+   "text_tokens": null
+  },
+  "prompt_tokens_details": {
+   "audio_tokens": null,
+   "cache_write_tokens": null,
+   "cached_tokens": 0,
+   "image_tokens": null,
+   "text_tokens": null
+  }
+ },
+ "score": {
+  "parts_f1": 1.0,
+  "edges_precision": 1.0,
+  "edges_recall": 1.0,
+  "edges_f1": 1.0,
+  "steps_exact": 1.0,
+  "hardware_accuracy": 1.0
+ },
+ "notes": [],
+ "reading": {
+  "title": "HALDEN",
+  "category": "bookcase",
+  "parts": [
+   {
+    "label": "A",
+    "name": "side panel",
+    "count": 2,
+    "size_mm": [
+     18.0,
+     1060.0,
+     280.0
+    ]
+   },
+   {
+    "label": "B",
+    "name": "top",
+    "count": 1,
+    "size_mm": [
+     764.0,
+     18.0,
+     280.0
+    ]
+   },
+   {
+    "label": "C",
+    "name": "bottom",
+    "count": 1,
+    "size_mm": [
+     764.0,
+     18.0,
+     280.0
+    ]
+   },
+   {
+    "label": "D",
+    "name": "fixed shelf",
+    "count": 1,
+    "size_mm": [
+     764.0,
+     18.0,
+     260.0
+    ]
+   },
+   {
+    "label": "E",
+    "name": "plinth",
+    "count": 1,
+    "size_mm": [
+     764.0,
+     60.0,
+     18.0
+    ]
+   },
+   {
+    "label": "F",
+    "name": "back panel",
+    "count": 1,
+    "size_mm": [
+     796.0,
+     996.0,
+     3.0
+    ]
+   },
+   {
+    "label": "G",
+    "name": "shelf",
+    "count": 2,
+    "size_mm": [
+     764.0,
+     18.0,
+     260.0
+    ]
+   }
+  ],
+  "hardware": [
+   {
+    "id": "101350",
+    "kind": "dowel",
+    "name": "wooden dowel",
+    "count": 16
+   },
+   {
+    "id": "118331",
+    "kind": "cam_bolt",
+    "name": "cam bolt",
+    "count": 12
+   },
+   {
+    "id": "116952",
+    "kind": "cam_lock",
+    "name": "cam lock",
+    "count": 12
+   },
+   {
+    "id": "101351",
+    "kind": "nail",
+    "name": "nail",
+    "count": 24
+   },
+   {
+    "id": "115753",
+    "kind": "shelf_pin",
+    "name": "shelf pin",
+    "count": 8
+   }
+  ],
+  "steps": [
+   {
+    "index": 1,
+    "title": "Top and bottom onto the left side",
+    "adds": [
+     "B",
+     "C"
+    ],
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 4
+     },
+     {
+      "id": "116952",
+      "count": 4
+     },
+     {
+      "id": "118331",
+      "count": 4
+     }
+    ],
+    "orientation": "on_side",
+    "tools": [
+     "screwdriver"
+    ],
+    "connections": [
+     {
+      "a": "A",
+      "b": "B",
+      "kind": "cam_lock"
+     },
+     {
+      "a": "A",
+      "b": "C",
+      "kind": "cam_lock"
+     }
+    ]
+   },
+   {
+    "index": 2,
+    "title": "Fixed shelf and plinth",
+    "adds": [
+     "D",
+     "E"
+    ],
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 4
+     },
+     {
+      "id": "116952",
+      "count": 2
+     },
+     {
+      "id": "118331",
+      "count": 2
+     }
+    ],
+    "orientation": "on_side",
+    "tools": [
+     "screwdriver"
+    ],
+    "connections": [
+     {
+      "a": "A",
+      "b": "D",
+      "kind": "cam_lock"
+     },
+     {
+      "a": "A",
+      "b": "E",
+      "kind": "dowel"
+     }
+    ]
+   },
+   {
+    "index": 3,
+    "title": "Close with the right side",
+    "adds": [
+     "A"
+    ],
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 8
+     },
+     {
+      "id": "116952",
+      "count": 6
+     },
+     {
+      "id": "118331",
+      "count": 6
+     }
+    ],
+    "orientation": "on_side",
+    "tools": [
+     "screwdriver"
+    ],
+    "connections": [
+     {
+      "a": "A",
+      "b": "B",
+      "kind": "cam_lock"
+     },
+     {
+      "a": "A",
+      "b": "D",
+      "kind": "cam_lock"
+     },
+     {
+      "a": "A",
+      "b": "C",
+      "kind": "cam_lock"
+     },
+     {
+      "a": "A",
+      "b": "E",
+      "kind": "dowel"
+     }
+    ]
+   },
+   {
+    "index": 4,
+    "title": "Face down, nail on the back",
+    "adds": [
+     "F"
+    ],
+    "hardware": [
+     {
+      "id": "101351",
+      "count": 24
+     }
+    ],
+    "orientation": "on_front",
+    "tools": [
+     "hammer"
+    ],
+    "connections": [
+     {
+      "a": "A",
+      "b": "F",
+      "kind": "nail"
+     },
+     {
+      "a": "A",
+      "b": "F",
+      "kind": "nail"
+     },
+     {
+      "a": "B",
+      "b": "F",
+      "kind": "nail"
+     },
+     {
+      "a": "C",
+      "b": "F",
+      "kind": "nail"
+     }
+    ]
+   },
+   {
+    "index": 5,
+    "title": "Stand it up, add the shelves",
+    "adds": [
+     "G",
+     "G"
+    ],
+    "hardware": [
+     {
+      "id": "115753",
+      "count": 8
+     }
+    ],
+    "orientation": "upright",
+    "tools": [],
+    "connections": [
+     {
+      "a": "A",
+      "b": "G",
+      "kind": "pin"
+     },
+     {
+      "a": "A",
+      "b": "G",
+      "kind": "pin"
+     },
+     {
+      "a": "A",
+      "b": "G",
+      "kind": "pin"
+     },
+     {
+      "a": "A",
+      "b": "G",
+      "kind": "pin"
+     }
+    ]
+   }
+  ]
+ },
+ "recovered": {
+  "version": 1,
+  "id": "halden-bookcase",
+  "title": "HALDEN",
+  "category": "bookcase",
+  "source": "manual",
+  "units": "mm",
+  "parts": [
+   {
+    "id": "A1",
+    "label": "A",
+    "name": "side panel",
+    "kind": "side",
+    "size_mm": [
+     18.0,
+     1060.0,
+     280.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "A2",
+    "label": "A",
+    "name": "side panel",
+    "kind": "side",
+    "size_mm": [
+     18.0,
+     1060.0,
+     280.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "B",
+    "label": "B",
+    "name": "top",
+    "kind": "top",
+    "size_mm": [
+     764.0,
+     18.0,
+     280.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "C",
+    "label": "C",
+    "name": "bottom",
+    "kind": "bottom",
+    "size_mm": [
+     764.0,
+     18.0,
+     280.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "D",
+    "label": "D",
+    "name": "fixed shelf",
+    "kind": "shelf",
+    "size_mm": [
+     764.0,
+     18.0,
+     260.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "E",
+    "label": "E",
+    "name": "plinth",
+    "kind": "plinth",
+    "size_mm": [
+     764.0,
+     60.0,
+     18.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "F",
+    "label": "F",
+    "name": "back panel",
+    "kind": "back",
+    "size_mm": [
+     796.0,
+     996.0,
+     3.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "G1",
+    "label": "G",
+    "name": "shelf",
+    "kind": "shelf",
+    "size_mm": [
+     764.0,
+     18.0,
+     260.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   },
+   {
+    "id": "G2",
+    "label": "G",
+    "name": "shelf",
+    "kind": "shelf",
+    "size_mm": [
+     764.0,
+     18.0,
+     260.0
+    ],
+    "material": "particleboard, white foil",
+    "color": "#efece6"
+   }
+  ],
+  "hardware": [
+   {
+    "id": "101350",
+    "name": "wooden dowel",
+    "kind": "dowel",
+    "count": 16,
+    "size_mm": []
+   },
+   {
+    "id": "118331",
+    "name": "cam bolt",
+    "kind": "cam_bolt",
+    "count": 12,
+    "size_mm": []
+   },
+   {
+    "id": "116952",
+    "name": "cam lock",
+    "kind": "cam_lock",
+    "count": 12,
+    "size_mm": []
+   },
+   {
+    "id": "101351",
+    "name": "nail",
+    "kind": "nail",
+    "count": 24,
+    "size_mm": []
+   },
+   {
+    "id": "115753",
+    "name": "shelf pin",
+    "kind": "shelf_pin",
+    "count": 8,
+    "size_mm": []
+   }
+  ],
+  "joints": [
+   {
+    "id": "J1",
+    "parts": [
+     "A1",
+     "B"
+    ],
+    "kind": "cam_lock",
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 2
+     },
+     {
+      "id": "116952",
+      "count": 2
+     },
+     {
+      "id": "118331",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J2",
+    "parts": [
+     "A1",
+     "C"
+    ],
+    "kind": "cam_lock",
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 2
+     },
+     {
+      "id": "116952",
+      "count": 2
+     },
+     {
+      "id": "118331",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J3",
+    "parts": [
+     "A1",
+     "D"
+    ],
+    "kind": "cam_lock",
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 2
+     },
+     {
+      "id": "116952",
+      "count": 2
+     },
+     {
+      "id": "118331",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J4",
+    "parts": [
+     "A1",
+     "E"
+    ],
+    "kind": "dowel",
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J5",
+    "parts": [
+     "A2",
+     "B"
+    ],
+    "kind": "cam_lock",
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 2
+     },
+     {
+      "id": "116952",
+      "count": 2
+     },
+     {
+      "id": "118331",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J6",
+    "parts": [
+     "A2",
+     "D"
+    ],
+    "kind": "cam_lock",
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 2
+     },
+     {
+      "id": "116952",
+      "count": 2
+     },
+     {
+      "id": "118331",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J7",
+    "parts": [
+     "A2",
+     "C"
+    ],
+    "kind": "cam_lock",
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 2
+     },
+     {
+      "id": "116952",
+      "count": 2
+     },
+     {
+      "id": "118331",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J8",
+    "parts": [
+     "A2",
+     "E"
+    ],
+    "kind": "dowel",
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J9",
+    "parts": [
+     "A1",
+     "F"
+    ],
+    "kind": "nail",
+    "hardware": [
+     {
+      "id": "101351",
+      "count": 6
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J10",
+    "parts": [
+     "A2",
+     "F"
+    ],
+    "kind": "nail",
+    "hardware": [
+     {
+      "id": "101351",
+      "count": 6
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J11",
+    "parts": [
+     "B",
+     "F"
+    ],
+    "kind": "nail",
+    "hardware": [
+     {
+      "id": "101351",
+      "count": 6
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J12",
+    "parts": [
+     "C",
+     "F"
+    ],
+    "kind": "nail",
+    "hardware": [
+     {
+      "id": "101351",
+      "count": 6
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J13",
+    "parts": [
+     "A1",
+     "G1"
+    ],
+    "kind": "pin",
+    "hardware": [
+     {
+      "id": "115753",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J14",
+    "parts": [
+     "A2",
+     "G2"
+    ],
+    "kind": "pin",
+    "hardware": [
+     {
+      "id": "115753",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J15",
+    "parts": [
+     "A1",
+     "G2"
+    ],
+    "kind": "pin",
+    "hardware": [
+     {
+      "id": "115753",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   },
+   {
+    "id": "J16",
+    "parts": [
+     "A2",
+     "G1"
+    ],
+    "kind": "pin",
+    "hardware": [
+     {
+      "id": "115753",
+      "count": 2
+     }
+    ],
+    "fasteners": []
+   }
+  ],
+  "steps": [
+   {
+    "index": 1,
+    "title": "Top and bottom onto the left side",
+    "instruction": "Top and bottom onto the left side",
+    "parts": [
+     "B",
+     "C",
+     "A1"
+    ],
+    "joints": [
+     "J1",
+     "J2"
+    ],
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 4
+     },
+     {
+      "id": "116952",
+      "count": 4
+     },
+     {
+      "id": "118331",
+      "count": 4
+     }
+    ],
+    "actions": [],
+    "orientation": "on_side",
+    "tools": [
+     "screwdriver"
+    ]
+   },
+   {
+    "index": 2,
+    "title": "Fixed shelf and plinth",
+    "instruction": "Fixed shelf and plinth",
+    "parts": [
+     "D",
+     "E"
+    ],
+    "joints": [
+     "J3",
+     "J4"
+    ],
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 4
+     },
+     {
+      "id": "116952",
+      "count": 2
+     },
+     {
+      "id": "118331",
+      "count": 2
+     }
+    ],
+    "actions": [],
+    "orientation": "on_side",
+    "tools": [
+     "screwdriver"
+    ]
+   },
+   {
+    "index": 3,
+    "title": "Close with the right side",
+    "instruction": "Close with the right side",
+    "parts": [
+     "A2"
+    ],
+    "joints": [
+     "J5",
+     "J6",
+     "J7",
+     "J8"
+    ],
+    "hardware": [
+     {
+      "id": "101350",
+      "count": 8
+     },
+     {
+      "id": "116952",
+      "count": 6
+     },
+     {
+      "id": "118331",
+      "count": 6
+     }
+    ],
+    "actions": [],
+    "orientation": "on_side",
+    "tools": [
+     "screwdriver"
+    ]
+   },
+   {
+    "index": 4,
+    "title": "Face down, nail on the back",
+    "instruction": "Face down, nail on the back",
+    "parts": [
+     "F"
+    ],
+    "joints": [
+     "J9",
+     "J10",
+     "J11",
+     "J12"
+    ],
+    "hardware": [
+     {
+      "id": "101351",
+      "count": 24
+     }
+    ],
+    "actions": [],
+    "orientation": "on_front",
+    "tools": [
+     "hammer"
+    ]
+   },
+   {
+    "index": 5,
+    "title": "Stand it up, add the shelves",
+    "instruction": "Stand it up, add the shelves",
+    "parts": [
+     "G1",
+     "G2"
+    ],
+    "joints": [
+     "J13",
+     "J14",
+     "J15",
+     "J16"
+    ],
+    "hardware": [
+     {
+      "id": "115753",
+      "count": 8
+     }
+    ],
+    "actions": [],
+    "orientation": "upright",
+    "tools": []
+   }
+  ],
+  "notes": []
+ }
+}

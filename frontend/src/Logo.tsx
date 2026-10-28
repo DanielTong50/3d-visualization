@@ -1,4 +1,4 @@
-/** The Darius mark (a solid block casting its outline: the real object and its simulated twin) and name. */
+/** The Darius mark (a part and its ghost: where a piece is, and where it goes) and name. */
 export function Wordmark({ href, onClick }: { href?: string; onClick?: () => void }) {
   const mark = (
     <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">

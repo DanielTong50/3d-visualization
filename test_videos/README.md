@@ -1,7 +1,7 @@
 # Test videos
 
-Put your phone videos of tabletop scenes here. See CONTRIBUTING.md for filming tips.
+Put your own build videos here (git ignores the videos; they stay on your computer).
 
-- Name them `scene1.mp4` to `scene5.mp4`. iPhone `.MOV` files are fine too, for example `scene1.mov`.
-- Push-test videos for the reality check: `push_scene1_mug_1.mp4` and so on.
-- Videos are large, so git ignores this folder. They stay on your computer only.
+- Film a flat-pack build from chest height with the whole work area in view. One video per build.
+- Decode one against a library plan: `cd engine && uv run darius track ../test_videos/build.mp4 --plan halden-bookcase`.
+- Or open live mode, choose "Use a video file", and watch the copilot follow it.

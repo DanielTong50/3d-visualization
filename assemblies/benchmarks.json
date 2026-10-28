@@ -1,0 +1,112 @@
+{
+ "model": "muse-spark-1.3",
+ "date": "2026-10-28",
+ "manuals": {
+  "items": {
+   "halden-bookcase": {
+    "parts_f1": 1.0,
+    "edges_precision": 1.0,
+    "edges_recall": 1.0,
+    "edges_f1": 1.0,
+    "steps_exact": 1.0,
+    "hardware_accuracy": 1.0,
+    "seconds": 67.82,
+    "pages": 8
+   },
+   "varde-nightstand": {
+    "parts_f1": 1.0,
+    "edges_precision": 0.9375,
+    "edges_recall": 1.0,
+    "edges_f1": 0.9677,
+    "steps_exact": 0.8333,
+    "hardware_accuracy": 1.0,
+    "seconds": 58.52,
+    "pages": 9
+   },
+   "lund-side-table": {
+    "parts_f1": 1.0,
+    "edges_precision": 1.0,
+    "edges_recall": 1.0,
+    "edges_f1": 1.0,
+    "steps_exact": 1.0,
+    "hardware_accuracy": 1.0,
+    "seconds": 34.65,
+    "pages": 7
+   },
+   "ostra-desk": {
+    "parts_f1": 1.0,
+    "edges_precision": 1.0,
+    "edges_recall": 1.0,
+    "edges_f1": 1.0,
+    "steps_exact": 1.0,
+    "hardware_accuracy": 1.0,
+    "seconds": 35.25,
+    "pages": 6
+   }
+  },
+  "mean": {
+   "parts_f1": 1.0,
+   "edges_f1": 0.9919,
+   "steps_exact": 0.9583,
+   "hardware_accuracy": 1.0
+  }
+ },
+ "sessions": {
+  "items": {
+   "halden-bookcase": {
+    "frames": 57,
+    "frame_accuracy": 0.9123,
+    "raw_frame_accuracy": 0.9123,
+    "steps_found": 5,
+    "steps": 5,
+    "step_error_s": 0.49,
+    "step_offset_s": -0.45,
+    "edges_recall": 1.0,
+    "seconds": 27.86,
+    "duration_s": 57.867
+   },
+   "varde-nightstand": {
+    "frames": 67,
+    "frame_accuracy": 0.8507,
+    "raw_frame_accuracy": 0.8507,
+    "steps_found": 6,
+    "steps": 6,
+    "step_error_s": 1.2,
+    "step_offset_s": -1.125,
+    "edges_recall": 1.0,
+    "seconds": 30.94,
+    "duration_s": 67.4
+   },
+   "lund-side-table": {
+    "frames": 48,
+    "frame_accuracy": 0.9375,
+    "raw_frame_accuracy": 0.9375,
+    "steps_found": 4,
+    "steps": 4,
+    "step_error_s": 0.625,
+    "step_offset_s": -0.15,
+    "edges_recall": 1.0,
+    "seconds": 16.36,
+    "duration_s": 49.0
+   },
+   "ostra-desk": {
+    "frames": 36,
+    "frame_accuracy": 0.8889,
+    "raw_frame_accuracy": 0.8889,
+    "steps_found": 3,
+    "steps": 3,
+    "step_error_s": 0.9,
+    "step_offset_s": -0.9,
+    "edges_recall": 1.0,
+    "seconds": 10.49,
+    "duration_s": 36.333
+   }
+  },
+  "mean": {
+   "frame_accuracy": 0.8973,
+   "raw_frame_accuracy": 0.8973,
+   "step_error_s": 0.8037,
+   "edges_recall": 1.0
+  }
+ }
+}

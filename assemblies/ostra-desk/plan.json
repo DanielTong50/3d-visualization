@@ -1,0 +1,804 @@
+{
+ "version": 1,
+ "id": "ostra-desk",
+ "title": "Ostra desk",
+ "category": "desk",
+ "source": "procedural",
+ "units": "mm",
+ "dimensions_mm": [
+  1200.0,
+  750.0,
+  600.0
+ ],
+ "parts": [
+  {
+   "id": "B",
+   "label": "B",
+   "name": "desktop",
+   "kind": "top",
+   "size_mm": [
+    1200.0,
+    25.0,
+    600.0
+   ],
+   "material": "oak veneer",
+   "color": "#d6bc93",
+   "assembled": {
+    "position": [
+     0.0,
+     737.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     -397.5,
+     12.5,
+     1050.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "id": "A1",
+   "label": "A",
+   "name": "side panel",
+   "kind": "side",
+   "size_mm": [
+    25.0,
+    725.0,
+    580.0
+   ],
+   "material": "black-brown foil",
+   "color": "#36353a",
+   "assembled": {
+    "position": [
+     -537.5,
+     362.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     635.0,
+     12.5,
+     1040.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.7071067811865476,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "A2",
+   "label": "A",
+   "name": "side panel",
+   "kind": "side",
+   "size_mm": [
+    25.0,
+    725.0,
+    580.0
+   ],
+   "material": "black-brown foil",
+   "color": "#36353a",
+   "assembled": {
+    "position": [
+     537.5,
+     362.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     -560.0,
+     12.5,
+     1710.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.7071067811865476,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "C",
+   "label": "C",
+   "name": "modesty panel",
+   "kind": "panel",
+   "size_mm": [
+    1050.0,
+    345.0,
+    18.0
+   ],
+   "material": "black-brown foil",
+   "color": "#36353a",
+   "assembled": {
+    "position": [
+     0.0,
+     552.5,
+     -220.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     397.5,
+     9.0,
+     1592.5
+    ],
+    "rotation": [
+     -0.7071067811865476,
+     0.0,
+     0.0,
+     0.7071067811865476
+    ]
+   }
+  },
+  {
+   "id": "E",
+   "label": "E",
+   "name": "footrest shelf",
+   "kind": "shelf",
+   "size_mm": [
+    1050.0,
+    18.0,
+    280.0
+   ],
+   "material": "black-brown foil",
+   "color": "#36353a",
+   "assembled": {
+    "position": [
+     0.0,
+     109.0,
+     40.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "layout": {
+    "position": [
+     0.0,
+     9.0,
+     2210.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  }
+ ],
+ "hardware": [
+  {
+   "id": "101350",
+   "name": "wooden dowel 8 x 30 mm",
+   "kind": "dowel",
+   "count": 12,
+   "size_mm": [
+    8.0,
+    30.0
+   ]
+  },
+  {
+   "id": "118331",
+   "name": "cam bolt 34 mm",
+   "kind": "cam_bolt",
+   "count": 8,
+   "size_mm": [
+    6.0,
+    34.0
+   ]
+  },
+  {
+   "id": "116952",
+   "name": "cam lock 15 mm",
+   "kind": "cam_lock",
+   "count": 8,
+   "size_mm": [
+    15.0,
+    12.0
+   ]
+  },
+  {
+   "id": "100214",
+   "name": "screw 3.5 x 25 mm",
+   "kind": "screw",
+   "count": 3,
+   "size_mm": [
+    3.5,
+    25.0
+   ]
+  }
+ ],
+ "joints": [
+  {
+   "id": "J1",
+   "parts": [
+    "A1",
+    "B"
+   ],
+   "kind": "cam_lock",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    },
+    {
+     "id": "118331",
+     "count": 2
+    },
+    {
+     "id": "116952",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      -537.5,
+      725.0,
+      -253.0
+     ],
+     "axis": [
+      0.0,
+      1.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      -537.5,
+      725.0,
+      -84.3
+     ],
+     "axis": [
+      0.0,
+      1.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      -537.5,
+      725.0,
+      84.3
+     ],
+     "axis": [
+      0.0,
+      1.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      -537.5,
+      725.0,
+      253.0
+     ],
+     "axis": [
+      0.0,
+      1.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J2",
+   "parts": [
+    "A2",
+    "B"
+   ],
+   "kind": "cam_lock",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    },
+    {
+     "id": "118331",
+     "count": 2
+    },
+    {
+     "id": "116952",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      537.5,
+      725.0,
+      -253.0
+     ],
+     "axis": [
+      0.0,
+      1.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      537.5,
+      725.0,
+      -84.3
+     ],
+     "axis": [
+      0.0,
+      1.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      537.5,
+      725.0,
+      84.3
+     ],
+     "axis": [
+      0.0,
+      1.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      537.5,
+      725.0,
+      253.0
+     ],
+     "axis": [
+      0.0,
+      1.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J3",
+   "parts": [
+    "C",
+    "A1"
+   ],
+   "kind": "cam_lock",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    },
+    {
+     "id": "118331",
+     "count": 2
+    },
+    {
+     "id": "116952",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      -525.0,
+      417.0,
+      -220.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      -525.0,
+      507.3,
+      -220.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      -525.0,
+      597.7,
+      -220.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      -525.0,
+      688.0,
+      -220.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J4",
+   "parts": [
+    "C",
+    "A2"
+   ],
+   "kind": "cam_lock",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    },
+    {
+     "id": "118331",
+     "count": 2
+    },
+    {
+     "id": "116952",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      525.0,
+      417.0,
+      -220.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      525.0,
+      507.3,
+      -220.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "118331",
+     "position": [
+      525.0,
+      597.7,
+      -220.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      525.0,
+      688.0,
+      -220.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J5",
+   "parts": [
+    "C",
+    "B"
+   ],
+   "kind": "screw",
+   "hardware": [
+    {
+     "id": "100214",
+     "count": 3
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "100214",
+     "position": [
+      -485.0,
+      725.0,
+      -220.0
+     ],
+     "axis": [
+      0.0,
+      1.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "100214",
+     "position": [
+      0.0,
+      725.0,
+      -220.0
+     ],
+     "axis": [
+      0.0,
+      1.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "100214",
+     "position": [
+      485.0,
+      725.0,
+      -220.0
+     ],
+     "axis": [
+      0.0,
+      1.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J6",
+   "parts": [
+    "E",
+    "A1"
+   ],
+   "kind": "dowel",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      -525.0,
+      109.0,
+      -60.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      -525.0,
+      109.0,
+      140.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "J7",
+   "parts": [
+    "E",
+    "A2"
+   ],
+   "kind": "dowel",
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 2
+    }
+   ],
+   "fasteners": [
+    {
+     "hardware": "101350",
+     "position": [
+      525.0,
+      109.0,
+      -60.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "hardware": "101350",
+     "position": [
+      525.0,
+      109.0,
+      140.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "index": 1,
+   "title": "Sides to the desktop",
+   "instruction": "Lay desktop B face down on the box. Fit side panels A to it with dowels and cam locks.",
+   "parts": [
+    "B",
+    "A1",
+    "A2"
+   ],
+   "joints": [
+    "J1",
+    "J2"
+   ],
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 4
+    },
+    {
+     "id": "116952",
+     "count": 4
+    },
+    {
+     "id": "118331",
+     "count": 4
+    }
+   ],
+   "actions": [
+    {
+     "kind": "lay_down",
+     "target": "B",
+     "text": "Lay the desktop face down on the cardboard"
+    }
+   ],
+   "orientation": "upside_down",
+   "tools": [
+    "screwdriver"
+   ]
+  },
+  {
+   "index": 2,
+   "title": "Modesty panel",
+   "instruction": "Fit modesty panel C between the sides and screw it to the desktop.",
+   "parts": [
+    "C"
+   ],
+   "joints": [
+    "J3",
+    "J4",
+    "J5"
+   ],
+   "hardware": [
+    {
+     "id": "100214",
+     "count": 3
+    },
+    {
+     "id": "101350",
+     "count": 4
+    },
+    {
+     "id": "116952",
+     "count": 4
+    },
+    {
+     "id": "118331",
+     "count": 4
+    }
+   ],
+   "actions": [],
+   "orientation": "upside_down",
+   "tools": [
+    "screwdriver"
+   ]
+  },
+  {
+   "index": 3,
+   "title": "Stand it up, fit the footrest",
+   "instruction": "With a helper, turn the desk upright. Fit footrest shelf E between the sides.",
+   "parts": [
+    "E"
+   ],
+   "joints": [
+    "J6",
+    "J7"
+   ],
+   "hardware": [
+    {
+     "id": "101350",
+     "count": 4
+    }
+   ],
+   "actions": [
+    {
+     "kind": "stand_up",
+     "target": "assembly",
+     "axis": "z",
+     "degrees": 180.0,
+     "text": "Turn the desk upright"
+    }
+   ],
+   "orientation": "upright",
+   "tools": []
+  }
+ ],
+ "notes": []
+}
