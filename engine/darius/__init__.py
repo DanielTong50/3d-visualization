@@ -7,11 +7,10 @@ Layers, lowest first. A layer imports only from the layers listed before it:
     darius.assembly     the assembly plan (parts, hardware, joints, steps) as a graph; validation,
                         comparison, plan-conditioned progress tracking, guidance
     darius.furniture    a procedural flat-pack library with exact geometry: ground truth
-    darius.models       clients for the foundation models perception calls
-    darius.perception   manual pages -> plan; camera frame -> observation; video -> timeline
-    darius.pipeline     job folders and the stage graph that runs perception in the cloud
-    darius.service      the HTTP API: manuals, live sessions, videos
+    darius.models       the client for the foundation model perception calls (Muse Spark)
+    darius.perception   manual pages -> plan; camera frames -> evidence; video -> timeline
     darius.eval         benchmarks against the furniture library's ground truth
+    darius.service      the HTTP API: library, manuals, frames, videos
 
     >>> from darius.furniture import catalog
     >>> plan = catalog.build("halden-bookcase")
