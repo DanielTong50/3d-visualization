@@ -1,0 +1,174 @@
+{
+  "schema_version": "1.0",
+  "id": "stairway",
+  "title": "Gradient stairway",
+  "description": "A six-brick staircase trains height-conditioned placement with an inspectable dependency graph.",
+  "source": {
+    "kind": "original",
+    "description": "Original Darius curriculum build; not reconstructed from an official LEGO set.",
+    "url": null,
+    "training_rights": "project-original",
+    "permission_reference": null,
+    "review_status": "original"
+  },
+  "baseplate": {
+    "studs": [
+      16,
+      16
+    ],
+    "color_hex": "#d7dccf",
+    "height_mm": 3.2
+  },
+  "bricks": [
+    {
+      "id": "b01",
+      "part_id": "3001",
+      "color": "coral",
+      "color_hex": "#f4553b",
+      "studs": [
+        2,
+        4
+      ],
+      "height_plates": 3,
+      "position": [
+        4,
+        0,
+        5
+      ],
+      "rotation": 0
+    },
+    {
+      "id": "b02",
+      "part_id": "3001",
+      "color": "yellow",
+      "color_hex": "#ffd33d",
+      "studs": [
+        2,
+        4
+      ],
+      "height_plates": 3,
+      "position": [
+        6,
+        0,
+        5
+      ],
+      "rotation": 0
+    },
+    {
+      "id": "b03",
+      "part_id": "3001",
+      "color": "teal",
+      "color_hex": "#31aaa2",
+      "studs": [
+        2,
+        4
+      ],
+      "height_plates": 3,
+      "position": [
+        8,
+        0,
+        5
+      ],
+      "rotation": 0
+    },
+    {
+      "id": "b04",
+      "part_id": "3001",
+      "color": "yellow",
+      "color_hex": "#ffd33d",
+      "studs": [
+        2,
+        4
+      ],
+      "height_plates": 3,
+      "position": [
+        6,
+        3,
+        5
+      ],
+      "rotation": 0
+    },
+    {
+      "id": "b05",
+      "part_id": "3001",
+      "color": "teal",
+      "color_hex": "#31aaa2",
+      "studs": [
+        2,
+        4
+      ],
+      "height_plates": 3,
+      "position": [
+        8,
+        3,
+        5
+      ],
+      "rotation": 0
+    },
+    {
+      "id": "b06",
+      "part_id": "3001",
+      "color": "cream",
+      "color_hex": "#f4efe4",
+      "studs": [
+        2,
+        4
+      ],
+      "height_plates": 3,
+      "position": [
+        8,
+        6,
+        5
+      ],
+      "rotation": 0
+    }
+  ],
+  "steps": [
+    {
+      "index": 1,
+      "title": "Place the first tread base",
+      "brick_ids": [
+        "b01"
+      ]
+    },
+    {
+      "index": 2,
+      "title": "Place the middle tread base",
+      "brick_ids": [
+        "b02"
+      ]
+    },
+    {
+      "index": 3,
+      "title": "Place the upper tread base",
+      "brick_ids": [
+        "b03"
+      ]
+    },
+    {
+      "index": 4,
+      "title": "Raise the middle tread",
+      "brick_ids": [
+        "b04"
+      ]
+    },
+    {
+      "index": 5,
+      "title": "Raise the upper tread",
+      "brick_ids": [
+        "b05"
+      ]
+    },
+    {
+      "index": 6,
+      "title": "Finish the top tread",
+      "brick_ids": [
+        "b06"
+      ]
+    }
+  ],
+  "notes": [
+    "Nominal grid geometry; no measured clutch-force or hardware success claims.",
+    "Original curriculum build, independent of official LEGO instruction sets."
+  ]
+}

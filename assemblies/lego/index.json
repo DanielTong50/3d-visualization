@@ -1,0 +1,41 @@
+[
+  {
+    "id": "signal-tower",
+    "title": "Signal tower",
+    "description": "A compact beacon: cross-bonded courses teach alignment, support and guarded insertion.",
+    "source": "original",
+    "bricks": 6,
+    "connections": 9,
+    "stud_connections": 40,
+    "steps": 6,
+    "primitives": 60,
+    "nominal_duration_s": 30.6,
+    "valid": true
+  },
+  {
+    "id": "bridge",
+    "title": "Stud bridge",
+    "description": "Two piers and a spanning plate introduce multiple support parents and partial-contact reasoning.",
+    "source": "original",
+    "bricks": 6,
+    "connections": 7,
+    "stud_connections": 28,
+    "steps": 6,
+    "primitives": 60,
+    "nominal_duration_s": 30.6,
+    "valid": true
+  },
+  {
+    "id": "stairway",
+    "title": "Gradient stairway",
+    "description": "A six-brick staircase trains height-conditioned placement with an inspectable dependency graph.",
+    "source": "original",
+    "bricks": 6,
+    "connections": 6,
+    "stud_connections": 48,
+    "steps": 6,
+    "primitives": 60,
+    "nominal_duration_s": 30.6,
+    "valid": true
+  }
+]

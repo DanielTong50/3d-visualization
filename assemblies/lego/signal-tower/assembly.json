@@ -1,0 +1,174 @@
+{
+  "schema_version": "1.0",
+  "id": "signal-tower",
+  "title": "Signal tower",
+  "description": "A compact beacon: cross-bonded courses teach alignment, support and guarded insertion.",
+  "source": {
+    "kind": "original",
+    "description": "Original Darius curriculum build; not reconstructed from an official LEGO set.",
+    "url": null,
+    "training_rights": "project-original",
+    "permission_reference": null,
+    "review_status": "original"
+  },
+  "baseplate": {
+    "studs": [
+      16,
+      16
+    ],
+    "color_hex": "#d7dccf",
+    "height_mm": 3.2
+  },
+  "bricks": [
+    {
+      "id": "b01",
+      "part_id": "3001",
+      "color": "coral",
+      "color_hex": "#f4553b",
+      "studs": [
+        2,
+        4
+      ],
+      "height_plates": 3,
+      "position": [
+        6,
+        0,
+        4
+      ],
+      "rotation": 0
+    },
+    {
+      "id": "b02",
+      "part_id": "3001",
+      "color": "coral",
+      "color_hex": "#f4553b",
+      "studs": [
+        2,
+        4
+      ],
+      "height_plates": 3,
+      "position": [
+        8,
+        0,
+        4
+      ],
+      "rotation": 0
+    },
+    {
+      "id": "b03",
+      "part_id": "3001",
+      "color": "yellow",
+      "color_hex": "#ffd33d",
+      "studs": [
+        2,
+        4
+      ],
+      "height_plates": 3,
+      "position": [
+        6,
+        3,
+        4
+      ],
+      "rotation": 90
+    },
+    {
+      "id": "b04",
+      "part_id": "3001",
+      "color": "yellow",
+      "color_hex": "#ffd33d",
+      "studs": [
+        2,
+        4
+      ],
+      "height_plates": 3,
+      "position": [
+        6,
+        3,
+        6
+      ],
+      "rotation": 90
+    },
+    {
+      "id": "b05",
+      "part_id": "3003",
+      "color": "teal",
+      "color_hex": "#31aaa2",
+      "studs": [
+        2,
+        2
+      ],
+      "height_plates": 3,
+      "position": [
+        7,
+        6,
+        5
+      ],
+      "rotation": 0
+    },
+    {
+      "id": "b06",
+      "part_id": "3003",
+      "color": "cream",
+      "color_hex": "#f4efe4",
+      "studs": [
+        2,
+        2
+      ],
+      "height_plates": 3,
+      "position": [
+        7,
+        9,
+        5
+      ],
+      "rotation": 0
+    }
+  ],
+  "steps": [
+    {
+      "index": 1,
+      "title": "Anchor the first foundation brick",
+      "brick_ids": [
+        "b01"
+      ]
+    },
+    {
+      "index": 2,
+      "title": "Complete the foundation course",
+      "brick_ids": [
+        "b02"
+      ]
+    },
+    {
+      "index": 3,
+      "title": "Cross-bond the front course",
+      "brick_ids": [
+        "b03"
+      ]
+    },
+    {
+      "index": 4,
+      "title": "Cross-bond the rear course",
+      "brick_ids": [
+        "b04"
+      ]
+    },
+    {
+      "index": 5,
+      "title": "Raise the central beacon",
+      "brick_ids": [
+        "b05"
+      ]
+    },
+    {
+      "index": 6,
+      "title": "Cap the signal tower",
+      "brick_ids": [
+        "b06"
+      ]
+    }
+  ],
+  "notes": [
+    "Nominal grid geometry; no measured clutch-force or hardware success claims.",
+    "Original curriculum build, independent of official LEGO instruction sets."
+  ]
+}

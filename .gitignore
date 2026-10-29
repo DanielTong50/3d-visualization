@@ -10,6 +10,7 @@ __pycache__/
 
 # Pipeline outputs (re-creatable)
 engine/outputs/
+/outputs/
 
 # Frontend
 node_modules/
@@ -23,3 +24,4 @@ test_videos/*
 .DS_Store
 .vscode/
 .idea/
+.ariadne/

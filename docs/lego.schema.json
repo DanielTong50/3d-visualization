@@ -1,0 +1,279 @@
+{
+  "$defs": {
+    "Baseplate": {
+      "additionalProperties": false,
+      "properties": {
+        "studs": {
+          "default": [
+            16,
+            16
+          ],
+          "items": {
+            "maximum": 32,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Studs",
+          "type": "array"
+        },
+        "color_hex": {
+          "default": "#d7dccf",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Color Hex",
+          "type": "string"
+        },
+        "height_mm": {
+          "default": 3.2,
+          "exclusiveMinimum": 0,
+          "maximum": 20,
+          "title": "Height Mm",
+          "type": "number"
+        }
+      },
+      "title": "Baseplate",
+      "type": "object"
+    },
+    "Brick": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "part_id": {
+          "pattern": "^[0-9]{3,7}$",
+          "title": "Part Id",
+          "type": "string"
+        },
+        "color": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Color",
+          "type": "string"
+        },
+        "color_hex": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Color Hex",
+          "type": "string"
+        },
+        "studs": {
+          "items": {
+            "maximum": 32,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Studs",
+          "type": "array"
+        },
+        "height_plates": {
+          "default": 3,
+          "maximum": 12,
+          "minimum": 1,
+          "title": "Height Plates",
+          "type": "integer"
+        },
+        "position": {
+          "items": {
+            "maximum": 96,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Position",
+          "type": "array"
+        },
+        "rotation": {
+          "default": 0,
+          "enum": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "title": "Rotation",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "part_id",
+        "color",
+        "color_hex",
+        "studs",
+        "position"
+      ],
+      "title": "Brick",
+      "type": "object"
+    },
+    "BuildStep": {
+      "additionalProperties": false,
+      "properties": {
+        "index": {
+          "maximum": 256,
+          "minimum": 1,
+          "title": "Index",
+          "type": "integer"
+        },
+        "title": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "brick_ids": {
+          "items": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Brick Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "index",
+        "title",
+        "brick_ids"
+      ],
+      "title": "BuildStep",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "default": "original",
+          "enum": [
+            "original",
+            "reviewed-import"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "description": {
+          "default": "Original Darius curriculum build; not reconstructed from an official LEGO set.",
+          "title": "Description",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "training_rights": {
+          "default": "project-original",
+          "enum": [
+            "project-original",
+            "permission-required",
+            "permission-documented"
+          ],
+          "title": "Training Rights",
+          "type": "string"
+        },
+        "permission_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Permission Reference"
+        },
+        "review_status": {
+          "default": "original",
+          "enum": [
+            "original",
+            "pending",
+            "reviewed"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        }
+      },
+      "title": "Source",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "description": {
+      "maxLength": 1000,
+      "title": "Description",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/Source"
+    },
+    "baseplate": {
+      "$ref": "#/$defs/Baseplate"
+    },
+    "bricks": {
+      "items": {
+        "$ref": "#/$defs/Brick"
+      },
+      "maxItems": 256,
+      "minItems": 1,
+      "title": "Bricks",
+      "type": "array"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/BuildStep"
+      },
+      "maxItems": 256,
+      "minItems": 1,
+      "title": "Steps",
+      "type": "array"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "description",
+    "bricks",
+    "steps"
+  ],
+  "title": "LegoAssembly",
+  "type": "object"
+}

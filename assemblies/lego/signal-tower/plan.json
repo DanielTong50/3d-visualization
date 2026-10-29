@@ -1,0 +1,1380 @@
+{
+  "schema_version": "1.0",
+  "assembly": {
+    "schema_version": "1.0",
+    "id": "signal-tower",
+    "title": "Signal tower",
+    "description": "A compact beacon: cross-bonded courses teach alignment, support and guarded insertion.",
+    "source": {
+      "kind": "original",
+      "description": "Original Darius curriculum build; not reconstructed from an official LEGO set.",
+      "url": null,
+      "training_rights": "project-original",
+      "permission_reference": null,
+      "review_status": "original"
+    },
+    "baseplate": {
+      "studs": [
+        16,
+        16
+      ],
+      "color_hex": "#d7dccf",
+      "height_mm": 3.2
+    },
+    "bricks": [
+      {
+        "id": "b01",
+        "part_id": "3001",
+        "color": "coral",
+        "color_hex": "#f4553b",
+        "studs": [
+          2,
+          4
+        ],
+        "height_plates": 3,
+        "position": [
+          6,
+          0,
+          4
+        ],
+        "rotation": 0
+      },
+      {
+        "id": "b02",
+        "part_id": "3001",
+        "color": "coral",
+        "color_hex": "#f4553b",
+        "studs": [
+          2,
+          4
+        ],
+        "height_plates": 3,
+        "position": [
+          8,
+          0,
+          4
+        ],
+        "rotation": 0
+      },
+      {
+        "id": "b03",
+        "part_id": "3001",
+        "color": "yellow",
+        "color_hex": "#ffd33d",
+        "studs": [
+          2,
+          4
+        ],
+        "height_plates": 3,
+        "position": [
+          6,
+          3,
+          4
+        ],
+        "rotation": 90
+      },
+      {
+        "id": "b04",
+        "part_id": "3001",
+        "color": "yellow",
+        "color_hex": "#ffd33d",
+        "studs": [
+          2,
+          4
+        ],
+        "height_plates": 3,
+        "position": [
+          6,
+          3,
+          6
+        ],
+        "rotation": 90
+      },
+      {
+        "id": "b05",
+        "part_id": "3003",
+        "color": "teal",
+        "color_hex": "#31aaa2",
+        "studs": [
+          2,
+          2
+        ],
+        "height_plates": 3,
+        "position": [
+          7,
+          6,
+          5
+        ],
+        "rotation": 0
+      },
+      {
+        "id": "b06",
+        "part_id": "3003",
+        "color": "cream",
+        "color_hex": "#f4efe4",
+        "studs": [
+          2,
+          2
+        ],
+        "height_plates": 3,
+        "position": [
+          7,
+          9,
+          5
+        ],
+        "rotation": 0
+      }
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "title": "Anchor the first foundation brick",
+        "brick_ids": [
+          "b01"
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Complete the foundation course",
+        "brick_ids": [
+          "b02"
+        ]
+      },
+      {
+        "index": 3,
+        "title": "Cross-bond the front course",
+        "brick_ids": [
+          "b03"
+        ]
+      },
+      {
+        "index": 4,
+        "title": "Cross-bond the rear course",
+        "brick_ids": [
+          "b04"
+        ]
+      },
+      {
+        "index": 5,
+        "title": "Raise the central beacon",
+        "brick_ids": [
+          "b05"
+        ]
+      },
+      {
+        "index": 6,
+        "title": "Cap the signal tower",
+        "brick_ids": [
+          "b06"
+        ]
+      }
+    ],
+    "notes": [
+      "Nominal grid geometry; no measured clutch-force or hardware success claims.",
+      "Original curriculum build, independent of official LEGO instruction sets."
+    ]
+  },
+  "connections": [
+    {
+      "id": "c001",
+      "lower": "baseplate",
+      "upper": "b01",
+      "studs": [
+        [
+          6,
+          4
+        ],
+        [
+          6,
+          5
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          7,
+          5
+        ],
+        [
+          7,
+          6
+        ],
+        [
+          7,
+          7
+        ]
+      ],
+      "step": 1
+    },
+    {
+      "id": "c002",
+      "lower": "baseplate",
+      "upper": "b02",
+      "studs": [
+        [
+          8,
+          4
+        ],
+        [
+          8,
+          5
+        ],
+        [
+          8,
+          6
+        ],
+        [
+          8,
+          7
+        ],
+        [
+          9,
+          4
+        ],
+        [
+          9,
+          5
+        ],
+        [
+          9,
+          6
+        ],
+        [
+          9,
+          7
+        ]
+      ],
+      "step": 2
+    },
+    {
+      "id": "c003",
+      "lower": "b01",
+      "upper": "b03",
+      "studs": [
+        [
+          6,
+          4
+        ],
+        [
+          6,
+          5
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          7,
+          5
+        ]
+      ],
+      "step": 3
+    },
+    {
+      "id": "c004",
+      "lower": "b02",
+      "upper": "b03",
+      "studs": [
+        [
+          8,
+          4
+        ],
+        [
+          8,
+          5
+        ],
+        [
+          9,
+          4
+        ],
+        [
+          9,
+          5
+        ]
+      ],
+      "step": 3
+    },
+    {
+      "id": "c005",
+      "lower": "b01",
+      "upper": "b04",
+      "studs": [
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          7
+        ],
+        [
+          7,
+          6
+        ],
+        [
+          7,
+          7
+        ]
+      ],
+      "step": 4
+    },
+    {
+      "id": "c006",
+      "lower": "b02",
+      "upper": "b04",
+      "studs": [
+        [
+          8,
+          6
+        ],
+        [
+          8,
+          7
+        ],
+        [
+          9,
+          6
+        ],
+        [
+          9,
+          7
+        ]
+      ],
+      "step": 4
+    },
+    {
+      "id": "c007",
+      "lower": "b03",
+      "upper": "b05",
+      "studs": [
+        [
+          7,
+          5
+        ],
+        [
+          8,
+          5
+        ]
+      ],
+      "step": 5
+    },
+    {
+      "id": "c008",
+      "lower": "b04",
+      "upper": "b05",
+      "studs": [
+        [
+          7,
+          6
+        ],
+        [
+          8,
+          6
+        ]
+      ],
+      "step": 5
+    },
+    {
+      "id": "c009",
+      "lower": "b05",
+      "upper": "b06",
+      "studs": [
+        [
+          7,
+          5
+        ],
+        [
+          7,
+          6
+        ],
+        [
+          8,
+          5
+        ],
+        [
+          8,
+          6
+        ]
+      ],
+      "step": 6
+    }
+  ],
+  "steps": [
+    {
+      "index": 1,
+      "source_step": 1,
+      "title": "Anchor the first foundation brick",
+      "brick_id": "b01",
+      "dependencies": [],
+      "connection_ids": [
+        "c001"
+      ],
+      "support_ratio": 1.0,
+      "source_center_mm": [
+        160.0,
+        4.800000000000001,
+        40.0
+      ],
+      "target_center_mm": [
+        56.0,
+        8.0,
+        48.0
+      ],
+      "source_yaw_deg": 0.0,
+      "target_yaw_deg": 0.0,
+      "primitives": [
+        {
+          "kind": "move",
+          "position_mm": [
+            160.0,
+            100.0,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.7,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Approach indexed tray slot"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            160.0,
+            15.600000000000001,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.4,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Descend to nominal grasp TCP"
+        },
+        {
+          "kind": "grasp",
+          "position_mm": [
+            160.0,
+            15.600000000000001,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.35,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Close jaws; hardware adapter must verify possession"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            160.0,
+            100.0,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Lift above fixture"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            56.0,
+            100.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.8,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Transfer over target"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            56.0,
+            24.8,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Align over target studs"
+        },
+        {
+          "kind": "press",
+          "position_mm": [
+            56.0,
+            18.8,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.7,
+          "gripper": "closed",
+          "force_limit_n": 12.0,
+          "description": "Guarded nominal seating; 12N is an uncalibrated placeholder"
+        },
+        {
+          "kind": "release",
+          "position_mm": [
+            56.0,
+            18.8,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.25,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Release seated brick"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            56.0,
+            100.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Retract to observation clearance"
+        },
+        {
+          "kind": "verify",
+          "position_mm": [
+            56.0,
+            100.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.4,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Require visual and force verification before advance"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "source_step": 2,
+      "title": "Complete the foundation course",
+      "brick_id": "b02",
+      "dependencies": [],
+      "connection_ids": [
+        "c002"
+      ],
+      "support_ratio": 1.0,
+      "source_center_mm": [
+        208.0,
+        4.800000000000001,
+        40.0
+      ],
+      "target_center_mm": [
+        72.0,
+        8.0,
+        48.0
+      ],
+      "source_yaw_deg": 0.0,
+      "target_yaw_deg": 0.0,
+      "primitives": [
+        {
+          "kind": "move",
+          "position_mm": [
+            208.0,
+            100.0,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.7,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Approach indexed tray slot"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            208.0,
+            15.600000000000001,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.4,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Descend to nominal grasp TCP"
+        },
+        {
+          "kind": "grasp",
+          "position_mm": [
+            208.0,
+            15.600000000000001,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.35,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Close jaws; hardware adapter must verify possession"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            208.0,
+            100.0,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Lift above fixture"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            72.0,
+            100.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.8,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Transfer over target"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            72.0,
+            24.8,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Align over target studs"
+        },
+        {
+          "kind": "press",
+          "position_mm": [
+            72.0,
+            18.8,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.7,
+          "gripper": "closed",
+          "force_limit_n": 12.0,
+          "description": "Guarded nominal seating; 12N is an uncalibrated placeholder"
+        },
+        {
+          "kind": "release",
+          "position_mm": [
+            72.0,
+            18.8,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.25,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Release seated brick"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            72.0,
+            100.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Retract to observation clearance"
+        },
+        {
+          "kind": "verify",
+          "position_mm": [
+            72.0,
+            100.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.4,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Require visual and force verification before advance"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "source_step": 3,
+      "title": "Cross-bond the front course",
+      "brick_id": "b03",
+      "dependencies": [
+        "b01",
+        "b02"
+      ],
+      "connection_ids": [
+        "c003",
+        "c004"
+      ],
+      "support_ratio": 1.0,
+      "source_center_mm": [
+        256.0,
+        4.800000000000001,
+        40.0
+      ],
+      "target_center_mm": [
+        64.0,
+        17.6,
+        40.0
+      ],
+      "source_yaw_deg": 0.0,
+      "target_yaw_deg": 90.0,
+      "primitives": [
+        {
+          "kind": "move",
+          "position_mm": [
+            256.0,
+            100.0,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.7,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Approach indexed tray slot"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            256.0,
+            15.600000000000001,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.4,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Descend to nominal grasp TCP"
+        },
+        {
+          "kind": "grasp",
+          "position_mm": [
+            256.0,
+            15.600000000000001,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.35,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Close jaws; hardware adapter must verify possession"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            256.0,
+            100.0,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Lift above fixture"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            64.0,
+            100.0,
+            40.0
+          ],
+          "yaw_deg": 90.0,
+          "duration_s": 0.8,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Transfer over target"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            64.0,
+            34.400000000000006,
+            40.0
+          ],
+          "yaw_deg": 90.0,
+          "duration_s": 0.5,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Align over target studs"
+        },
+        {
+          "kind": "press",
+          "position_mm": [
+            64.0,
+            28.400000000000002,
+            40.0
+          ],
+          "yaw_deg": 90.0,
+          "duration_s": 0.7,
+          "gripper": "closed",
+          "force_limit_n": 12.0,
+          "description": "Guarded nominal seating; 12N is an uncalibrated placeholder"
+        },
+        {
+          "kind": "release",
+          "position_mm": [
+            64.0,
+            28.400000000000002,
+            40.0
+          ],
+          "yaw_deg": 90.0,
+          "duration_s": 0.25,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Release seated brick"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            64.0,
+            100.0,
+            40.0
+          ],
+          "yaw_deg": 90.0,
+          "duration_s": 0.5,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Retract to observation clearance"
+        },
+        {
+          "kind": "verify",
+          "position_mm": [
+            64.0,
+            100.0,
+            40.0
+          ],
+          "yaw_deg": 90.0,
+          "duration_s": 0.4,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Require visual and force verification before advance"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "source_step": 4,
+      "title": "Cross-bond the rear course",
+      "brick_id": "b04",
+      "dependencies": [
+        "b01",
+        "b02"
+      ],
+      "connection_ids": [
+        "c005",
+        "c006"
+      ],
+      "support_ratio": 1.0,
+      "source_center_mm": [
+        304.0,
+        4.800000000000001,
+        40.0
+      ],
+      "target_center_mm": [
+        64.0,
+        17.6,
+        56.0
+      ],
+      "source_yaw_deg": 0.0,
+      "target_yaw_deg": 90.0,
+      "primitives": [
+        {
+          "kind": "move",
+          "position_mm": [
+            304.0,
+            100.0,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.7,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Approach indexed tray slot"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            304.0,
+            15.600000000000001,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.4,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Descend to nominal grasp TCP"
+        },
+        {
+          "kind": "grasp",
+          "position_mm": [
+            304.0,
+            15.600000000000001,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.35,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Close jaws; hardware adapter must verify possession"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            304.0,
+            100.0,
+            40.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Lift above fixture"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            64.0,
+            100.0,
+            56.0
+          ],
+          "yaw_deg": 90.0,
+          "duration_s": 0.8,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Transfer over target"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            64.0,
+            34.400000000000006,
+            56.0
+          ],
+          "yaw_deg": 90.0,
+          "duration_s": 0.5,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Align over target studs"
+        },
+        {
+          "kind": "press",
+          "position_mm": [
+            64.0,
+            28.400000000000002,
+            56.0
+          ],
+          "yaw_deg": 90.0,
+          "duration_s": 0.7,
+          "gripper": "closed",
+          "force_limit_n": 12.0,
+          "description": "Guarded nominal seating; 12N is an uncalibrated placeholder"
+        },
+        {
+          "kind": "release",
+          "position_mm": [
+            64.0,
+            28.400000000000002,
+            56.0
+          ],
+          "yaw_deg": 90.0,
+          "duration_s": 0.25,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Release seated brick"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            64.0,
+            100.0,
+            56.0
+          ],
+          "yaw_deg": 90.0,
+          "duration_s": 0.5,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Retract to observation clearance"
+        },
+        {
+          "kind": "verify",
+          "position_mm": [
+            64.0,
+            100.0,
+            56.0
+          ],
+          "yaw_deg": 90.0,
+          "duration_s": 0.4,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Require visual and force verification before advance"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "source_step": 5,
+      "title": "Raise the central beacon",
+      "brick_id": "b05",
+      "dependencies": [
+        "b03",
+        "b04"
+      ],
+      "connection_ids": [
+        "c007",
+        "c008"
+      ],
+      "support_ratio": 1.0,
+      "source_center_mm": [
+        160.0,
+        4.800000000000001,
+        88.0
+      ],
+      "target_center_mm": [
+        64.0,
+        27.2,
+        48.0
+      ],
+      "source_yaw_deg": 0.0,
+      "target_yaw_deg": 0.0,
+      "primitives": [
+        {
+          "kind": "move",
+          "position_mm": [
+            160.0,
+            100.0,
+            88.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.7,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Approach indexed tray slot"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            160.0,
+            15.600000000000001,
+            88.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.4,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Descend to nominal grasp TCP"
+        },
+        {
+          "kind": "grasp",
+          "position_mm": [
+            160.0,
+            15.600000000000001,
+            88.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.35,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Close jaws; hardware adapter must verify possession"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            160.0,
+            100.0,
+            88.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Lift above fixture"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            64.0,
+            100.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.8,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Transfer over target"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            64.0,
+            44.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Align over target studs"
+        },
+        {
+          "kind": "press",
+          "position_mm": [
+            64.0,
+            38.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.7,
+          "gripper": "closed",
+          "force_limit_n": 12.0,
+          "description": "Guarded nominal seating; 12N is an uncalibrated placeholder"
+        },
+        {
+          "kind": "release",
+          "position_mm": [
+            64.0,
+            38.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.25,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Release seated brick"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            64.0,
+            100.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Retract to observation clearance"
+        },
+        {
+          "kind": "verify",
+          "position_mm": [
+            64.0,
+            100.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.4,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Require visual and force verification before advance"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "source_step": 6,
+      "title": "Cap the signal tower",
+      "brick_id": "b06",
+      "dependencies": [
+        "b05"
+      ],
+      "connection_ids": [
+        "c009"
+      ],
+      "support_ratio": 1.0,
+      "source_center_mm": [
+        208.0,
+        4.800000000000001,
+        88.0
+      ],
+      "target_center_mm": [
+        64.0,
+        36.800000000000004,
+        48.0
+      ],
+      "source_yaw_deg": 0.0,
+      "target_yaw_deg": 0.0,
+      "primitives": [
+        {
+          "kind": "move",
+          "position_mm": [
+            208.0,
+            100.0,
+            88.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.7,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Approach indexed tray slot"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            208.0,
+            15.600000000000001,
+            88.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.4,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Descend to nominal grasp TCP"
+        },
+        {
+          "kind": "grasp",
+          "position_mm": [
+            208.0,
+            15.600000000000001,
+            88.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.35,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Close jaws; hardware adapter must verify possession"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            208.0,
+            100.0,
+            88.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Lift above fixture"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            64.0,
+            100.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.8,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Transfer over target"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            64.0,
+            53.60000000000001,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "closed",
+          "force_limit_n": null,
+          "description": "Align over target studs"
+        },
+        {
+          "kind": "press",
+          "position_mm": [
+            64.0,
+            47.60000000000001,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.7,
+          "gripper": "closed",
+          "force_limit_n": 12.0,
+          "description": "Guarded nominal seating; 12N is an uncalibrated placeholder"
+        },
+        {
+          "kind": "release",
+          "position_mm": [
+            64.0,
+            47.60000000000001,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.25,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Release seated brick"
+        },
+        {
+          "kind": "move",
+          "position_mm": [
+            64.0,
+            100.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.5,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Retract to observation clearance"
+        },
+        {
+          "kind": "verify",
+          "position_mm": [
+            64.0,
+            100.0,
+            48.0
+          ],
+          "yaw_deg": 0.0,
+          "duration_s": 0.4,
+          "gripper": "open",
+          "force_limit_n": null,
+          "description": "Require visual and force verification before advance"
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": []
+  },
+  "metrics": {
+    "bricks": 6,
+    "connections": 9,
+    "stud_connections": 40,
+    "steps": 6,
+    "primitives": 60,
+    "nominal_duration_s": 30.6
+  },
+  "execution": {
+    "status": "simulation_only",
+    "blockers": [
+      "No robot connected: all primitives are nominal task-space references.",
+      "Calibrate camera, baseplate, tray and TCP transforms before hardware execution.",
+      "Solve joint-space IK and collision checking for the selected arm and gripper.",
+      "Measure grip and insertion forces; validate guarded press and emergency stop on hardware."
+    ]
+  },
+  "coordinate_system": "+Y up; x/z = 8 mm stud pitch; y = 3.2 mm plate pitch; TCP positions in mm"
+}
