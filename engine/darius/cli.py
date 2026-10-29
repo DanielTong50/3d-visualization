@@ -1,4 +1,11 @@
-"""The `darius` command line.
+"""The `darius` command line: LEGO assembly intelligence and retained furniture tools.
+
+    darius lego library                    list original LEGO curriculum builds
+    darius lego compile BUILD              compile an id or source JSON into a nominal robot plan
+    darius lego instructions SET           discover official instruction booklet links
+    darius lego draft-set SET --out DIR    acquire selected public pages and infer a review-required draft
+    darius lego dataset BUILD --out DIR    export hashed synthetic reference trajectories
+    darius lego sim BUILD --out FILE       export a nominal MuJoCo scene scaffold
 
     darius library                         list the furniture library
     darius export [--out ../assemblies]    write every library plan (and an index) for the web app
@@ -225,10 +232,162 @@ def _eval(args: argparse.Namespace) -> int:
     return 0
 
 
+def _lego(args: argparse.Namespace) -> int:
+    from .lego import compile_assembly, get_assembly, library_index
+    from .lego.catalog import export_library
+    from .lego.instructions import InstructionLookupError, lookup_instructions
+    from .lego.schema import LegoAssembly
+
+    def compiled():
+        assembly = (
+            get_assembly(args.build)
+            if not Path(args.build).is_file()
+            else LegoAssembly.model_validate_json(Path(args.build).read_text())
+        )
+        return compile_assembly(assembly)
+
+    def emit(value):
+        text = value.model_dump_json(indent=2) if hasattr(value, "model_dump_json") else json.dumps(value, indent=2)
+        if getattr(args, "out", None):
+            path = Path(args.out)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(text + "\n")
+            print(f"wrote {path}")
+        else:
+            print(text)
+
+    try:
+        if args.lego_command == "library":
+            emit(library_index())
+        elif args.lego_command == "schema":
+            emit(LegoAssembly.model_json_schema())
+        elif args.lego_command == "compile":
+            result = compiled()
+            emit(result)
+            return 0 if result.validation.valid else 1
+        elif args.lego_command == "instructions":
+            emit(lookup_instructions(args.set_number, refresh=args.refresh))
+        elif args.lego_command == "export":
+            export_library(Path(args.out))
+            print(f"exported LEGO curriculum to {args.out}")
+        elif args.lego_command == "manual":
+            from dotenv import load_dotenv
+            from PIL import Image
+
+            from .lego.manual import read_manual_draft
+
+            load_dotenv(REPO / ".env")
+            paths = _pages(args.pages)
+            if not 1 <= len(paths) <= 30:
+                raise ValueError("provide 1 to 30 ordered page images")
+            emit(
+                read_manual_draft(
+                    [Image.open(path).convert("RGB") for path in paths], args.id, source_url=args.source_url
+                )
+            )
+        elif args.lego_command in {"fetch", "draft-set"}:
+            from .lego.documents import fetch_booklet
+
+            selected = [int(page.strip()) for page in args.pages.split(",")] if args.pages else None
+            result = fetch_booklet(
+                args.set_number, Path(args.out), booklet_index=args.booklet, pages=selected, refresh=args.refresh
+            )
+            if args.lego_command == "fetch":
+                print(json.dumps(result, indent=2))
+            else:
+                from dotenv import load_dotenv
+                from PIL import Image
+
+                from .lego.manual import read_manual_draft
+
+                load_dotenv(REPO / ".env")
+                if not result["page_paths"]:
+                    raise ValueError("draft-set requires selected rendered pages via --pages")
+                draft = read_manual_draft(
+                    [Image.open(page).convert("RGB") for page in result["page_paths"]],
+                    f"set-{args.set_number}-draft",
+                    source_url=f"https://www.lego.com/en-us/service/building-instructions/{args.set_number}",
+                )
+                draft.source_page_map = result["manifest"]["selected_pages"]
+                draft.acquisition = result["manifest"]
+                path = Path(args.out) / "draft.json"
+                path.write_text(draft.model_dump_json(indent=2) + "\n")
+                print(f"wrote unapproved candidate draft {path}; review required")
+        elif args.lego_command == "dataset":
+            from .robotics.dataset import export_dataset
+
+            result = export_dataset(compiled(), Path(args.out), episodes=args.episodes, seed=args.seed, fps=args.fps)
+            print(json.dumps(result, indent=2))
+        elif args.lego_command == "sim":
+            from .robotics.mujoco import export_scene
+
+            print(export_scene(compiled(), Path(args.out)))
+    except (KeyError, ValueError, InstructionLookupError, RuntimeError, OSError) as error:
+        print(str(error), file=sys.stderr)
+        return 1
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="darius", description="Assembly copilot: plans, perception and tracking.")
+    parser = argparse.ArgumentParser(
+        prog="darius",
+        description="LEGO assembly intelligence: compile builds, discover manuals, generate learning data.",
+    )
     parser.add_argument("--version", action="version", version=f"darius {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
+
+    lego = commands.add_parser("lego", help="LEGO task compiler, public instructions and robot-training drafts")
+    lego_commands = lego.add_subparsers(dest="lego_command", required=True)
+    lego_commands.add_parser("library", help="list original LEGO curriculum builds").set_defaults(run=_lego)
+    command = lego_commands.add_parser("schema", help="export the LEGO assembly JSON Schema")
+    command.add_argument("--out")
+    command.set_defaults(run=_lego)
+    command = lego_commands.add_parser("compile", help="compile a curriculum id or assembly JSON into a task plan")
+    command.add_argument("build")
+    command.add_argument("--out")
+    command.set_defaults(run=_lego)
+    command = lego_commands.add_parser("instructions", help="discover official public instructions by set number")
+    command.add_argument("set_number")
+    command.add_argument("--refresh", action="store_true", help="refresh metadata directly from LEGO.com")
+    command.add_argument("--out")
+    command.set_defaults(run=_lego)
+    command = lego_commands.add_parser("export", help="export curriculum assembly and compiled plan fixtures")
+    command.add_argument("--out", default=str(REPO / "assemblies" / "lego"))
+    command.set_defaults(run=_lego)
+    command = lego_commands.add_parser("manual", help="read ordered page images into an uncertain LEGO plan draft")
+    command.add_argument("pages", nargs="+")
+    command.add_argument("--id", default="manual-draft")
+    command.add_argument("--source-url")
+    command.add_argument("--out")
+    command.set_defaults(run=_lego)
+    for name in ("fetch", "draft-set"):
+        command = lego_commands.add_parser(
+            name,
+            help="fetch official booklet"
+            + (" and infer an unapproved plan draft" if name == "draft-set" else " metadata/PDF/pages"),
+        )
+        command.add_argument("set_number")
+        command.add_argument("--booklet", type=int, default=1)
+        command.add_argument(
+            "--pages",
+            default="",
+            required=name == "draft-set",
+            help="comma-separated 1-based PDF pages to render (max16)",
+        )
+        command.add_argument("--refresh", action="store_true")
+        command.add_argument("--out", required=True)
+        command.set_defaults(run=_lego)
+    command = lego_commands.add_parser("dataset", help="export synthetic Cartesian reference episodes")
+    command.add_argument("build")
+    command.add_argument("--out", required=True)
+    command.add_argument("--episodes", type=int, default=8)
+    command.add_argument("--seed", type=int, default=7)
+    command.add_argument("--fps", type=int, default=10)
+    command.set_defaults(run=_lego)
+    command = lego_commands.add_parser("sim", help="export a nominal MuJoCo scene (no robot or clutch model)")
+    command.add_argument("build")
+    command.add_argument("--out", required=True)
+    command.set_defaults(run=_lego)
 
     commands.add_parser("library", help="list the furniture library").set_defaults(run=_library)
     command = commands.add_parser("export", help="write every library plan for the web app")

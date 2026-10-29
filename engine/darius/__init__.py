@@ -1,9 +1,14 @@
-"""Darius: an assembly copilot. It reads a manual into an assembly graph, tracks a build from a
-phone camera, and shows the next move in AR.
+"""Darius: LEGO assembly intelligence, from stud-grid plans to robot-learning artifacts.
+
+The LEGO branch compiles exact original builds, discovers public instructions,
+produces reviewable vision-language drafts and exports synthetic training data.
+The furniture perception pipeline remains available as a historical baseline.
 
 Layers, lowest first. A layer imports only from the layers listed before it:
 
     darius.core         cross-process errors
+    darius.lego         stud-grid IR, compiler, curriculum, official instructions and manual drafts
+    darius.robotics     synthetic Cartesian episodes, numeric imitation baseline, MJCF scene scaffold
     darius.assembly     the assembly plan (parts, hardware, joints, steps) as a graph; validation,
                         comparison, plan-conditioned progress tracking, guidance
     darius.furniture    a procedural flat-pack library with exact geometry: ground truth

@@ -1,4 +1,11 @@
-"""The HTTP API: the web app's live mode, and anything else that wants the copilot's perception.
+"""LEGO assembly intelligence API, with the historical furniture perception endpoints.
+
+    GET  /lego/library                    original LEGO build summaries
+    GET  /lego/builds/{id}                compiled graph, source/target poses and nominal primitives
+    POST /lego/compile                    validate and compile a custom source assembly
+    GET  /lego/instructions/{set_number}  official instruction metadata and PDF links
+    POST /lego/manual-drafts              page images -> unapproved vision-language candidate
+    GET  /lego/builds/{id}/training       bounded, seeded synthetic Cartesian episodes
 
     GET  /health               version, model, whether an access code is required
     GET  /library              the furniture library (plan summaries)
@@ -26,7 +33,7 @@ import re
 import tempfile
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image, UnidentifiedImageError
 from pydantic import ValidationError
@@ -35,6 +42,9 @@ from .. import __version__
 from ..assembly.graph import validate
 from ..assembly.schema import AssemblyPlan, Observation
 from ..core.errors import InputError
+from ..lego import CompiledPlan, LegoAssembly, compile_assembly, get_assembly
+from ..lego import library_index as lego_library_index
+from ..lego.instructions import InstructionLookupError, InstructionResult, lookup_instructions
 from ..perception.frames import Frame, FrameReading, to_observation, verify_frames
 from ..perception.manual import ManualResult, read_manual
 from ..perception.video import VideoAnalysis, analyze
@@ -86,7 +96,7 @@ class Library:
 
 
 def create_app(library_root: Path) -> FastAPI:
-    app = FastAPI(title="Darius API", version=__version__)
+    app = FastAPI(title="Darius LEGO Assembly Intelligence API", version=__version__)
     library = Library(library_root)
     access_code = os.environ.get("DARIUS_ACCESS_CODE", "")
 
@@ -120,6 +130,8 @@ def create_app(library_root: Path) -> FastAPI:
             "model": MUSE_SPARK_MODEL,
             "access_code_required": bool(access_code),
             "library": [p["id"] for p in library.index()],
+            "lego_library": [p["id"] for p in lego_library_index()],
+            "robot_execution": "simulation_only",
         }
 
     @app.get("/library")
@@ -129,6 +141,72 @@ def create_app(library_root: Path) -> FastAPI:
     @app.get("/library/{plan_id}")
     def library_plan(plan_id: str) -> AssemblyPlan:
         return library.plan(plan_id)
+
+    @app.get("/lego/library")
+    def lego_library() -> list[dict]:
+        """Original LEGO-compatible curriculum, compiled locally without model credits."""
+        return lego_library_index()
+
+    def lego_plan(build_id: str) -> CompiledPlan:
+        try:
+            return compile_assembly(get_assembly(build_id))
+        except KeyError as error:
+            raise HTTPException(404, str(error)) from error
+
+    @app.get("/lego/builds/{build_id}")
+    def lego_build(build_id: str) -> CompiledPlan:
+        return lego_plan(build_id)
+
+    @app.post("/lego/compile")
+    def lego_compile(assembly: LegoAssembly) -> CompiledPlan:
+        """Validate and compile an original/reviewed task into guarded reference primitives."""
+        return compile_assembly(assembly)
+
+    @app.get("/lego/instructions/{set_number}")
+    def lego_instructions(set_number: str, refresh: bool = False) -> InstructionResult:
+        """Official public instruction metadata; does not semantically reconstruct the PDF."""
+        try:
+            return lookup_instructions(set_number, refresh=refresh)
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from error
+        except InstructionLookupError as error:
+            raise HTTPException(502, str(error)) from error
+
+    @app.get("/lego/builds/{build_id}/training")
+    def lego_training(
+        build_id: str,
+        episodes: int = Query(4, ge=2, le=64),
+        seed: int = Query(7, ge=0, le=2**32 - 1),
+        fps: int = Query(10, ge=1, le=30),
+    ) -> dict:
+        from ..robotics.dataset import training_bundle
+
+        try:
+            return training_bundle(lego_plan(build_id), episodes=episodes, seed=seed, fps=fps)
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from error
+
+    @app.post("/lego/manual-drafts", dependencies=[Depends(require_access)])
+    def lego_manual_drafts(
+        pages: list[UploadFile] = File(...),
+        build_id: str = Form("manual-draft"),
+        source_url: str = Form(""),
+    ) -> dict:
+        """Optional model inference into an uncertain candidate; always requires manual review."""
+        from ..lego.manual import read_manual_draft
+
+        if not 1 <= len(pages) <= 30:
+            raise HTTPException(422, "send between 1 and 30 ordered page images")
+        if not PLAN_ID.fullmatch(build_id):
+            raise HTTPException(422, "build_id: lowercase letters, digits and dashes")
+        try:
+            return read_manual_draft(
+                [_image(page) for page in pages], build_id, source_url=source_url or None
+            ).model_dump(mode="json")
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from error
+        except RuntimeError as error:
+            raise HTTPException(503, str(error)) from error
 
     @app.post("/manuals", dependencies=[Depends(require_access)])
     def manuals(pages: list[UploadFile] = File(...), plan_id: str = Form("manual")) -> ManualResult:

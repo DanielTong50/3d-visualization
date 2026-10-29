@@ -1,0 +1,97 @@
+{
+  "set_number": "10698",
+  "title": "Large Creative Brick Box",
+  "official_url": "https://www.lego.com/en-us/service/building-instructions/10698",
+  "year": "2015",
+  "piece_count": 790,
+  "theme": "LEGO® Classic",
+  "image_url": "https://www.lego.com/cdn/product-assets/product.img.pri/10698_Prod.jpg",
+  "booklets": [
+    {
+      "title": "Large Creative Brick Box · booklet 1/2",
+      "pdf_url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6517265.pdf",
+      "cover_url": "https://www.lego.com/cdn/product-assets/product.bi.core.img/6517265.png",
+      "size_bytes": 15395148,
+      "sequence": 1,
+      "total": 2,
+      "additional": false
+    },
+    {
+      "title": "Large Creative Brick Box · booklet 2/2",
+      "pdf_url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6517267.pdf",
+      "cover_url": "https://www.lego.com/cdn/product-assets/product.bi.core.img/6517267.png",
+      "size_bytes": 9978190,
+      "sequence": 2,
+      "total": 2,
+      "additional": false
+    },
+    {
+      "title": "Large Creative Brick Box · booklet 1/1",
+      "pdf_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.pdf/10698_X_Apartment.pdf",
+      "cover_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.img/10698_X_Apartment.png",
+      "size_bytes": 1907957,
+      "sequence": 1,
+      "total": 1,
+      "additional": true
+    },
+    {
+      "title": "Large Creative Brick Box · booklet 1/1",
+      "pdf_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.pdf/10698_X_Camera.pdf",
+      "cover_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.img/10698_X_Camera.png",
+      "size_bytes": 1355398,
+      "sequence": 1,
+      "total": 1,
+      "additional": true
+    },
+    {
+      "title": "Large Creative Brick Box · booklet 1/1",
+      "pdf_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.pdf/10698_X_Castle.pdf",
+      "cover_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.img/10698_X_Castle.png",
+      "size_bytes": 2023176,
+      "sequence": 1,
+      "total": 1,
+      "additional": true
+    },
+    {
+      "title": "Large Creative Brick Box · booklet 1/1",
+      "pdf_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.pdf/10698_X_Digger.pdf",
+      "cover_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.img/10698_X_Digger.png",
+      "size_bytes": 1894295,
+      "sequence": 1,
+      "total": 1,
+      "additional": true
+    },
+    {
+      "title": "Large Creative Brick Box · booklet 1/1",
+      "pdf_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.pdf/10698_X_Frog.pdf",
+      "cover_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.img/10698_X_Frog.png",
+      "size_bytes": 1257211,
+      "sequence": 1,
+      "total": 1,
+      "additional": true
+    },
+    {
+      "title": "Large Creative Brick Box · booklet 1/1",
+      "pdf_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.pdf/10698_X_Palm Tree.pdf",
+      "cover_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.img/10698_X_Palm Tree.png",
+      "size_bytes": 948588,
+      "sequence": 1,
+      "total": 1,
+      "additional": true
+    },
+    {
+      "title": "Large Creative Brick Box · booklet 1/1",
+      "pdf_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.pdf/10698_X_Teddybear.pdf",
+      "cover_url": "https://www.lego.com/cdn/product-assets/product.bi.additional.extra.img/10698_X_Teddybear.png",
+      "size_bytes": 1679136,
+      "sequence": 1,
+      "total": 1,
+      "additional": true
+    }
+  ],
+  "retrieved_at": "2026-10-29T07:35:34.385301+00:00",
+  "retrieval": "live",
+  "semantic_status": "not_parsed",
+  "training_rights": "permission-required",
+  "notice": "Official LEGO instruction links. Availability varies by set. Public viewing is separate from permission to redistribute or train on manuals. This response has not parsed the PDF; the optional manual-draft adapter requires review."
+}
