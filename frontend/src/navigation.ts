@@ -1,6 +1,7 @@
 /** Which screen to show. The URL holds it, so every screen can be reloaded and shared. */
 export type Route =
   | { page: 'home' }
+  | { page: 'legacy' }
   | { page: 'ar'; furniture: string }
   | { page: 'manual'; furniture: string }
   | { page: 'video'; furniture: string }
@@ -18,6 +19,7 @@ export function routeFromUrl(): Route {
   const id = furniture && SAFE_ID.test(furniture) ? furniture : DEFAULT_FURNITURE;
   if (view === 'ar' || view === 'manual' || view === 'video') return { page: view, furniture: id };
   if (view === 'live') return { page: 'live' };
+  if (view === 'legacy') return { page: 'legacy' };
   if (view === 'render') {
     const index = Number(params.get('page') ?? 0);
     return { page: 'render', furniture: id, target: index > 0 ? 'page' : 'session', index: Number.isInteger(index) ? index : 0 };
