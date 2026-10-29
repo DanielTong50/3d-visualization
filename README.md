@@ -1,256 +1,335 @@
-<h1 align="center">Darius</h1>
+<div align="center">
 
-<p align="center">
-  Flat-pack manuals parsed into assembly graphs · every part tracked through build video with SAM 3.1 · progress decoded against the graph with an HMM · AR guidance, down to every dowel and screw, rendered from the plan's geometry
-</p>
+# DARIUS
 
-<p align="center">
-  <a href="https://github.com/DanielTong50/3d-visualization/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/DanielTong50/3d-visualization/actions/workflows/ci.yml/badge.svg"></a>
-  <a href="https://danieltong50.github.io/3d-visualization/"><img alt="Live demo" src="https://img.shields.io/badge/demo-live-0058a3"></a>
-  <img alt="Python 3.11" src="https://img.shields.io/badge/python-3.11-3776ab">
-  <img alt="TypeScript" src="https://img.shields.io/badge/typescript-6-3178c6">
-  <img alt="three.js" src="https://img.shields.io/badge/three.js-0.186-000000">
-  <img alt="Muse Spark 1.3" src="https://img.shields.io/badge/model-Muse%20Spark%201.3-ffdb00">
-  <img alt="SAM 3.1" src="https://img.shields.io/badge/model-SAM%203.1-0058a3">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-86%20passing-2ea44f">
-</p>
+### From instructions to intelligence.
 
-<p align="center"><img src="docs/media/copilot-fasten.jpg" alt="The copilot fastening step 1 of a bookcase: dowels flying from the tray into their holes, a close-up of the one going in, the hardware left in the tray, the assembly graph and the tracker's belief"></p>
-<p align="center"><sub>Step 1 of a bookcase, mid-fastening: each fitting flies from the tray to its hole and goes in (close-up, right), the hardware panel counts what is left, the assembly graph fills in, and the tracker's belief over "steps done" comes from per-frame step verification.</sub></p>
+**A LEGO assembly compiler, an interactive robot lab, and a reproducible path from a build graph to training data.**
 
-**Abstract.** Darius treats a furniture manual as a graph *G = (P, J, S)*: parts *P* are nodes, joints *J* are edges
-that carry their hardware and the pose of every fastener, and steps *S* order the edges and fix how the piece lies.
-A vision-language model (Muse Spark 1.3) reads all pages of a manual in one request under a JSON-schema constraint, and
-a deterministic resolver turns the reading into a validated plan: repeated letters become part instances, parts drawn
-without an arrow are brought in, every connection resolves to a pair of instances. Build progress is the hidden state
-*k ∈ {0..|S|}* of a hidden Markov model whose emissions are per-frame step verifications, made with the manual's own
-step drawings as visual references; Viterbi gives the build history and forward–backward its confidence. Every part
-is also tracked through the video: Muse Spark grounds each piece on the first frame and finds lost ones again from
-numbered outlines (set-of-mark prompting), SAM 3.1 propagates every piece's mask, and masks that hold contact become
-plan-conditioned evidence of which joints are made. Guidance is computed from the plan alone: every part's pose, every
-fitting's seat and every tool stroke, at every instant. On a four-product library with generated manuals and rendered
-sessions with exact part masks, the manual reader recovers **99.2%** of joints (edge F1) and **100%** of parts and
-hardware counts, the tracker finds **18/18** build steps with a **1.16 s** mean timing error, and SAM 3.1's part
-tracks reach **67.1%** mask IoU against the exact masks. Every number is a stored model run that CI re-scores on each
-commit.
+[![Compiler](https://img.shields.io/badge/compiler-deterministic-f4553b?style=flat-square)](engine/darius/lego/compiler.py)
+[![3D](https://img.shields.io/badge/lab-React_%2B_Three.js-3769cf?style=flat-square)](frontend/)
+[![Dataset](https://img.shields.io/badge/data-seeded_%2B_hashed-31aaa2?style=flat-square)](engine/darius/robotics/dataset.py)
+[![Training](https://img.shields.io/badge/baseline-runnable_CPU-ffd33d?style=flat-square)](engine/darius/robotics/train.py)
+[![Hardware](https://img.shields.io/badge/physical_robot-research_draft-30343b?style=flat-square)](docs/robot-training.md)
 
-## At a glance
+[Run the lab](#run-the-lab) · [Compile a build](#a-complete-artifact-pipeline) · [Train the baseline](#a-complete-artifact-pipeline) · [Robot research plan](docs/robot-training.md) · [Architecture](docs/lego-architecture.md)
 
-Every number below is a stored run of `darius eval` on the furniture library (Muse Spark 1.3 and SAM 3.1,
-2026-10-28), replayed by the [demos](https://danieltong50.github.io/3d-visualization/) and re-scored on every commit by
-CI.
+</div>
 
-| | Halden bookcase | Varde nightstand | Lund side table | Ostra desk |
-|---|---:|---:|---:|---:|
-| Size: parts · joints · steps | 9 · 16 · 5 | 10 · 15 · 6 | 9 · 12 · 4 | 5 · 7 · 3 |
-| **Manual → graph**: parts F1 | 100% | 100% | 100% | 100% |
-| Edges (joints) F1 | **100%** | **96.8%** | **100%** | **100%** |
-| Steps read exactly | 100% | 83.3% | 100% | 100% |
-| Hardware counts | 100% | 100% | 100% | 100% |
-| **Video → timeline**: build steps found | **5 / 5** | **6 / 6** | **4 / 4** | **3 / 3** |
-| Frames with the right progress | 88.7% | 81.2% | 93.9% | 94.7% |
-| Mean error dating each step | 1.21 s | 2.30 s | 0.63 s | 0.52 s |
-| **Video → part tracks** (SAM 3.1): mask IoU, exact masks | 56.6% | 57.1% | 68.2% | **86.4%** |
-| Part-frames held (IoU ≥ 0.5) | 56.2% | 61.4% | 75.2% | 92.1% |
-| Letters right, up to look-alikes | 5 / 9 | 4 / 10 | 5 / 9 | 5 / 5 |
-| Frames right from mask contacts alone | 27.4% | 63.8% | 61.2% | 92.1% |
-| … from the exact masks' contacts | 91.9% | 91.3% | 95.9% | 92.1% |
+![Darius assembly pipeline: intent, compilation, synthetic data and a numeric learning baseline](docs/media/lego-pipeline.png)
 
-The one joint the manual reader got wrong in four manuals: it also nailed the nightstand's back panel to the top.
-The model reads all of a manual in 35–70 s; a 60 s video takes about 30 s to decode (15 requests, 6 at a time).
-Tracking a session's parts takes 3–7 minutes: Muse Spark's looks, two SAM 3.1 passes, and the re-found prompts in
-between (51 across the four videos). Contacts from perfect tracks would get 92.8% of frames right, more than Muse
-Spark's frame readings (89.6%); SAM's tracks get 61.1%, so tracking quality is where the headroom is.
+A LEGO manual is a compact program: introduce a part, align its connectors, attach it to the structure, repeat. Darius makes that program explicit. Every brick has an identity and a discrete pose; every intended connection has stud coordinates; every placement has dependencies and a nominal pick/place program. The same compiled artifact drives the 3D lab, dataset generation, and a small offline learning baseline.
 
-## How it works
+The long-term goal is a robot that can read an assembly goal, build it, verify each connection, and recover from a mistake. This branch builds the inspectable foundation for that goal—and specifies the physical experiments needed to get there.
+
+> **Works today:** original build → validated contact graph → Cartesian primitive program → interactive 3D preview → reproducible synthetic episodes → trained numeric sanity model. Official set-number lookup discovers public instruction booklets; an optional fetch/render/VLM path produces explicitly unapproved candidate drafts. Reliable manual reconstruction, learned visual manipulation, and physical robot execution remain research work.
+
+## The demo in 90 seconds
+
+1. Open the **Assembly lab** and choose **Signal tower**, **Stud bridge**, or **Gradient stairway**.
+2. Play the build. The animated robot carries studded bricks from the indexed inventory tray to their target poses. Pause, step, scrub, orbit, and inspect the exploded assembly.
+3. Switch between **Sequence**, **Graph**, **Inventory**, and **Plan**. Trace a placement from its brick identity to its support parents and primitive program.
+4. Inspect the bridge: a single plate connects two support parents, with partial stud support explicitly reported by the compiler.
+5. Look up official set **10698** to see the instruction-booklet discovery path. Public PDFs are linked from LEGO's source. The CLI can also fetch selected pages and request an unapproved VLM draft for review.
+6. Download the compiled plan or synthetic training bundle. Use the CLI below to produce a hashed dataset and fit a real, inspectable offline baseline.
+
+The robot animation is labeled **Kinematic preview**. Generated episodes are labeled as synthetic planning trajectories. A visual press and a `verify` command represent intended operations; neither is a measured successful insertion.
+
+## Why LEGO is the right first domain
+
+LEGO provides a discrete language for studying precise assembly: standardized part families, nominal stud/plate spacing, repeated connector patterns, visual step sequences, and compositional structures. Small builds expose the same hard problems as larger assemblies—part identity, occlusion, dependency ordering, contact, uncertainty and error recovery—inside an inspectable workspace.
+
+A grid also creates strong constraints. Instead of asking a model to invent an unconstrained world, ask it for part identities and candidate poses, then check those hypotheses against known geometry. Deterministic checks can reject a floating brick or an impossible insertion before a robot moves.
+
+That does not make LEGO manipulation easy. Submillimeter alignment, clutch engagement, finger access and contact forces are separate engineering problems. Darius records that boundary in its execution status rather than hiding it behind the render.
+
+## System architecture
 
 ```mermaid
 flowchart LR
-    M[Manual pages] --> R[Read<br/>Muse Spark · schema-constrained]
-    R --> P[(Assembly plan<br/>parts · hardware ·<br/>joints · steps)]
-    C[Camera frames] --> V[Verify<br/>Muse Spark + the manual's<br/>step pages as reference]
-    P --> V
-    C --> S[Track parts<br/>Muse Spark grounds and re-finds,<br/>SAM 3.1 tracks every mask]
-    P --> S
-    S -->|contacts| T
-    V --> T[Track<br/>HMM over steps done:<br/>forward live, Viterbi on video]
-    P --> T
-    T --> G[Guide<br/>choreography → AR layer]
-    P --> G
-    G --> U[Ghosts · arcs · turns ·<br/>fastener markers · step card]
+    O[Official LEGO set number] --> D[Official booklet discovery]
+    D --> P[Source links + provenance]
+    P --> F[Optional selected PDF acquisition + rasterization]
+    F --> M["Optional VLM candidate draft<br/>unreviewed · unevaluated"]
+    M -. human correction + permission review .-> A
+    C[Original curriculum] --> A["LegoAssembly<br/>instances · grid poses · schedule"]
+    A --> V["Deterministic compiler<br/>volume · support · order · insertion"]
+    V --> G["CompiledPlan<br/>connections · dependencies · primitives"]
+    G --> U[Interactive Three.js lab]
+    G --> E[Seeded synthetic episode exporter]
+    E --> T[CPU behavior-cloning sanity baseline]
+    G --> S[MJCF scene scaffold]
+    G -. calibrated adapter .-> R[Physical demonstrations]
+    R -. proposed .-> L[ACT / diffusion / graph-conditioned policy]
+    L -. closed loop .-> H[Robot + independent verifier + recovery]
 ```
 
-A manual is a graph in disguise. **Parts** (the lettered panels, legs and shelves) are nodes; **joints** (two parts
-held by dowels, cam locks, screws, nails or a groove) are edges; **steps** put the edges in order and say how the
-piece lies while you work. Darius recovers that graph, tracks your progress through it, and turns its geometry into
-guidance.
+Solid arrows describe implemented software paths, including the optional unapproved VLM adapter. Dotted paths identify review boundaries, proposed integration and research. The VLM adapter has mocked-contract tests and one public-input smoke run; no official-manual reconstruction accuracy is claimed. The MJCF export is a primitive scene scaffold, not a complete robot-learning environment.
 
-| Stage | What happens | The idea that makes it work |
+| Layer | Concrete artifact | Current behavior |
 |---|---|---|
-| **Read** (`perception/manual.py`) | All pages go to Muse Spark in one request with a JSON schema: parts by letter with counts, hardware by article number, and for every step the parts brought in, the hardware box, the build orientation drawn and every pair of parts joined | The model only reads; `to_plan` builds the graph. Repeated letters become instances (`A1`, `A2`), each connection resolves to the piece brought in now, then one not yet paired, then the least joined, and the part a step builds on comes in even when it is drawn without an arrow. `validate` reports anything that does not add up |
-| **Verify** (`perception/frames.py`) | A few consecutive frames per request, with the plan's parts, what the build looks like after every step, **and the manual's step pages as reference images**; the model says which steps are done, how sure it is, which letters are joined and loose, and how the piece lies | Comparing the frame with the manual's own drawings: on the bookcase, scored the same way, it lifted the frames with the right progress from 81% to 91% and cut the mean timing error from 2.4 s to 0.5 s (the face-down back panel was missed without them) |
-| **Track parts** (`perception/parts.py`) | Muse Spark grounds every piece on the first frame (letter, box, a point on it) and **SAM 3.1** tracks all of them through the video in one request, forward and backward; every 4 s Muse Spark looks again for the parts SAM lost, given the first frame with every part outlined and numbered, and SAM picks them up from there. Masks that touch for a second become contacts | Box *and* point prompts, so SAM takes the thin leg and not the floor plank around it; a close second look at a crop for thin parts, and letters by majority over three looks; the second SAM pass only fills frames the first lost. Contacts are counted by pair of letters against the joints each step adds, in the manual's order (twins share a letter), and fused with the readings as a product of experts |
-| **Track** (`assembly/tracking.py`, mirrored in `engine/tracking.ts`) | A hidden Markov model over *k*, the number of steps done. Live, the forward algorithm updates the belief after every frame; for a whole video, Viterbi gives the most likely build history and forward-backward its confidence | A build follows the manual: transitions stay (.86), advance (.11), rarely skip (.02) or undo (.01). Each frame's P(step done) is capped to [.15, .85] and tempered by .7, so one misread frame cannot move the build |
-| **Guide** (`engine/choreography.ts`, `three/Stage.ts`) | Every instant of the build is computed from the plan: turn the piece to the step's orientation, locate the parts, carry them on arcs to their poses, then fasten: each dowel, cam bolt, cam lock, screw, bolt, nail and shelf pin flies from the tray to its hole and goes in, driven by the step's tool, with a close-up of the piece going in | Seats come from each joint's hole pattern: dowels straddle the joint, screws and nails sit flush with the face they enter, cam locks sit in the face of the panel the bolt reaches into; seated fittings ride with their part through every turn. Subassemblies built on the side join as one piece; detection boxes are the parts' projected geometry |
+| Source | `LegoAssembly` | Original or reviewed source, instance inventory, discrete target geometry, step schedule |
+| Compiler | `CompiledPlan` | Geometric diagnostics, explicit stud-contact graph, support parents, ten nominal primitives per placement |
+| Frontend | Assembly lab | Procedural brick geometry, articulated robot preview, target ghosts, timeline and inspectors |
+| Discovery | Instruction metadata | Official set-page lookup, multiple booklets, cached/live provenance, official PDF links |
+| Manual draft | `candidate_draft` | Optional bounded PDF/page acquisition and schema-constrained VLM reading; uncertainty and review required |
+| Data | `darius.synthetic.v1` | Seeded Cartesian references, whole-episode split, source hashes and checksums |
+| Model | `model.npz` + `report.json` | NumPy ridge behavior cloning; held-out synthetic one-step error and simple baselines |
+| Simulation | MJCF XML | Free primitive brick bodies, visual studs, goal sites and a mocap TCP marker |
+| Physical learning | Experiment drafts | Rig/calibration plan, real dataset contract, ACT/diffusion baselines, evaluation and recovery protocol |
 
-### The assembly plan
+## A complete artifact pipeline
 
-One Pydantic schema (`engine/darius/assembly/schema.py`, exported as [`docs/plan.schema.json`](docs/plan.schema.json),
-mirrored in [`frontend/src/engine/plan.ts`](frontend/src/engine/plan.ts)) is produced three ways and compared on
-equal terms: procedurally with exact geometry (the ground truth), by reading a manual, and as a timeline by watching a
-video.
+No model API key, robot, GPU, or internet connection is required for the compiler, curriculum, dataset generator, or numeric baseline.
 
-```jsonc
-// assemblies/halden-bookcase/plan.json (abridged)
+```bash
+# From the repository root
+cd engine
+uv sync --locked
+
+# Inspect and compile the original curriculum
+uv run darius lego library
+uv run darius lego compile signal-tower --out ../outputs/tower-plan.json
+
+# Generate deterministic references and an auditable train/validation split
+uv run darius lego dataset signal-tower \
+  --out ../outputs/tower-data --episodes 24 --seed 7 --fps 10
+
+# Train a small offline model and evaluate whole held-out episodes
+uv run python -m darius.robotics.train ../outputs/tower-data \
+  --out ../outputs/tower-baseline
+
+# Export a simulator scene scaffold
+uv run darius lego sim signal-tower --out ../outputs/tower-scene.xml
+```
+
+Use a new output directory for each dataset/model run; those exporters refuse nonempty destinations.
+
+```text
+outputs/
+├── tower-plan.json
+├── tower-data/
+│   ├── assembly.json             original task + source declaration
+│   ├── compiled-plan.json        exact compiler result
+│   ├── manifest.json             units, features, split, seed, provenance, limitations
+│   ├── episodes/0000.jsonl       timestamped state / goal / phase / action
+│   ├── episodes/...
+│   └── checksums.json            SHA-256 integrity record
+├── tower-baseline/
+│   ├── model.npz                 weights + training-only normalization
+│   └── report.json               per-channel error + zero/mean-action comparisons
+└── tower-scene.xml                nominal MJCF fixture
+```
+
+The baseline predicts a five-component per-frame delta: XYZ position, yaw, and gripper opening. Its inputs contain the current reference state, known primitive goal, phase, and progress. It demonstrates that the representation can pass through data generation, integrity checks, split validation, training and artifact export.
+
+**Its error is open-loop synthetic prediction error.** It does not measure vision, grasp success, physical dynamics, insertion force, closed-loop rollout, or transfer to an actual arm. Darius JSONL is an explicit project interchange format; conversion to LeRobotDataset v3 requires a separate adapter and appropriate real or rendered sensor data.
+
+## Run the lab
+
+```bash
+# Terminal 1 — frontend, from repository root
+cd frontend
+npm ci
+npm run dev
+# Open the Local URL printed by Vite.
+```
+
+The three original builds are checked-in fixtures, served locally and copied into production builds. Core scene playback and plan inspection work without the API. Each build also includes a small pre-generated `training.json` bundle (two synthetic episodes at 5 Hz, seed 7), so the default lab can export actual synthetic records offline. The API can generate a larger requested bundle.
+
+```bash
+# Terminal 2 — optional local API, from repository root
+cd engine
+uv run uvicorn darius.service.api:local_app --factory --host 127.0.0.1 --port 8787
+
+# Terminal 1 — point a restarted frontend at this API
+VITE_API_URL=http://127.0.0.1:8787 npm run dev
+```
+
+The compiler, library, metadata and synthetic-data endpoints do not call a paid model. The optional manual-draft endpoint does. The retained furniture perception demos use separate model credentials documented in [the archive](docs/furniture-archive.md).
+
+## Public manuals, without an upload
+
+Search by set number first. LEGO provides freely downloadable instructions for thousands of sets on its official service, and the lookup adapter extracts booklet metadata from that source. Coverage varies; some sets have multiple booklets, alternate builds or additional material. [LEGO's download guidance](https://www.lego.com/en-us/service/help-topics/article/how-to-download-building-instructions-online).
+
+```bash
+cd engine
+uv run darius lego instructions 10698              # checked-in metadata snapshot
+uv run darius lego instructions 10698 --refresh    # live official lookup
+uv run darius lego instructions 10698 --out ../outputs/instructions-10698.json
+```
+
+Each result exposes `retrieval`, `retrieved_at`, booklet sequencing, `semantic_status: "not_parsed"`, and `training_rights: "permission-required"`. The server accepts a validated set number, constructs a fixed official URL, caps the response size, sets a timeout, disables redirects, and returns only recognized official asset links. It does not fetch arbitrary submitted URLs or include copied manuals in the checked-in demo corpus.
+
+### Optional upload-free manual draft
+
+The acquisition CLI can download a selected official booklet, render a bounded page selection, and record the PDF/page hashes. `draft-set` then calls the configured vision-language model to propose part identities and grid poses. This path needs internet access, the optional PDF renderer, and `MODEL_API_KEY` for the paid model call.
+
+```bash
+cd engine
+uv sync --locked --extra manuals
+
+# Acquisition + rasterization only; no model call.
+uv run darius lego fetch 10698 --booklet 4 --pages 1,2,3 \
+  --out outputs/camera-manual
+
+# Optional paid model call: fetch selected pages and emit an unapproved draft.
+uv run darius lego draft-set 10698 --booklet 4 --pages 1,2,3 \
+  --out outputs/camera-draft
+```
+
+Booklet numbers are one-based positions in the lookup result; inspect them before selecting. The acquisition writes `source.pdf`, `page-NNN.png` and `acquisition.json`; `draft-set` additionally writes `draft.json`. A page subset remains labeled as a partial document. These local source artifacts belong in ignored outputs, not the distributable curriculum.
+
+The model emits evidence, source-page references, uncertainty and self-assessed confidence. Missing/unsupported part identities or poses remain unresolved. A complete candidate is compiled independently, but stays `requires_review: true` and `review_status: "pending"`; geometric validity does not approve it. Imported training material also requires a documented permission reference. Contract tests use a stubbed model; one real public-input inference run is described below. Reliable manual-to-3D reconstruction remains an experiment to evaluate. MEPNet and the recent JARVIS benchmark are directly relevant prior work; Darius' contribution here is a transparent compiler/data workflow that can support such research. [MEPNet](https://arxiv.org/abs/2207.12572), [JARVIS](https://arxiv.org/abs/2610.27618).
+
+### A real public-input smoke run
+
+The optional path was exercised against official set **10698**, alternate camera booklet **4**: a **10-page**, **1,355,398-byte** PDF, with pages **3–5** rendered and sent to Muse Spark 1.3 at high reasoning effort. The model returned **10 draft brick entries**. Unsupported part geometry and unresolved features prevented a complete candidate: **`candidate: null`, `compiled: null`, `requires_review: true`**.
+
+That run demonstrates real retrieval, page rendering, model inference and withholding an incomplete program. It does not demonstrate correct reconstruction of the booklet or a complete official set. Downloaded PDF/pages and raw draft remain ignored local outputs; copyrighted pages are not included in this repository. The source PDF SHA-256 was `3273ce0e51eb19bf463a51bd6b29147aeaa18da12f782c4542c9134ff1daceb6`.
+
+Public viewing is separate from rights to redistribute or train on source content. LEGO identifies its instructions as copyrighted. The distributable demo builds are original, and third-party training sources need their own recorded permission basis. [LEGO Fair Play](https://www.lego.com/en-us/legal/notices-and-policies/fair-play).
+
+## The compiler, precisely
+
+The source frame is right-handed, **+Y up**. X/Z are integer stud coordinates with nominal **8 mm** pitch; Y is an integer plate coordinate with nominal **3.2 mm** pitch. `position` describes the minimum footprint corner and body-bottom height above the baseplate. Quarter turns rotate the footprint. Every brick instance appears exactly once in the build schedule.
+
+```json
 {
-  "parts":    [{ "id": "A1", "label": "A", "name": "side panel", "size_mm": [18, 1060, 280], "assembled": {…}, "layout": {…} }, …],
-  "hardware": [{ "id": "116952", "name": "cam lock 15 mm", "kind": "cam_lock", "count": 12 }, …],
-  "joints":   [{ "id": "J1", "parts": ["B", "A1"], "kind": "cam_lock",
-                 "hardware": [{ "id": "101350", "count": 2 }, …],
-                 "fasteners": [{ "hardware": "118331", "position": [-382, 1051, -35], "axis": [-1, 0, 0] }, …] }, …],
-  "steps":    [{ "index": 1, "title": "Top and bottom onto the left side", "parts": ["A1", "B", "C"],
-                 "joints": ["J1", "J2"], "orientation": "on_side", "tools": ["screwdriver"], … }, …]
+  "id": "b01",
+  "part_id": "3001",
+  "color": "coral",
+  "color_hex": "#f4553b",
+  "studs": [2, 4],
+  "height_plates": 3,
+  "position": [6, 0, 4],
+  "rotation": 0
 }
 ```
 
-The algorithms, with their numbers, are in [docs/architecture.md](docs/architecture.md). Graph scores
-(`assembly/graph.py::compare`) count parts and joints **by letter**: which of two identical side panels
-is `A1` is arbitrary, so edges are compared as multisets of letter pairs.
+The compiler checks known rectangular part dimensions, bounds, occupied-volume intersections, earlier stud support, and obstructions to nominal vertical insertion. It derives exact overlapping stud cells and a dependency graph, then emits:
 
-## The furniture library: ground truth from geometry
-
-`engine/darius/furniture` is a small **flat-pack compiler**. A product is declared as boxes with millimeter sizes and
-positions; `FurnitureBuilder` finds every contact from the geometry, lays out hardware per joint kind (a cam-lock
-joint is dowel, cam bolt, cam bolt, dowel; nails every ~15 cm), assigns each part a spot on the floor, and checks the
-plan. The library has four products: a bookcase built on its side and nailed face down, a nightstand whose drawer is
-built separately and slid in, a side table made of two frames and turned upside down for its top, and a desk.
-
-From each plan, the web app **generates its manual**: hidden-line drawings in the flat-pack style
-([`three/ManualArt.ts`](frontend/src/three/ManualArt.ts)), a parts page, a hardware page and a page per step with
-letter callouts, arrows and the hardware box. Parts come off along a *free* way in: away from the part they join,
-unless parts already in place block the sweep (shelves between two sides slide in from the front, the drawer comes in
-from the front as one piece). And it **films each build** as a handheld session with frame-exact ground truth.
-Those pages and videos are what the models are tested on (`frontend/scripts/capture.mjs`).
-
-<p align="center"><img src="assemblies/halden-bookcase/manual/page-06.png" width="300" alt="A generated manual page: step 3 of the Halden bookcase"> &nbsp; <img src="assemblies/varde-nightstand/manual/page-09.png" width="300" alt="A generated manual page: the nightstand's drawer slides in"></p>
-
-## Demos
-
-| | |
-|---|---|
-| [**Copilot session**](https://danieltong50.github.io/3d-visualization/?view=ar) · a whole build guided, with tracked parts, ghosts and arcs, turns, fastener markers, the graph and the tracker's belief (simulated perception, one frame in twelve misread on purpose) | <img src="docs/media/copilot-turn.jpg" width="420" alt="The copilot asking to stand the bookcase up"> |
-| [**Manual reader**](https://danieltong50.github.io/3d-visualization/?view=manual&furniture=varde-nightstand) · a real run replayed: each page is scanned while the model's structured output fills in and the graph grows edge by edge, then it is scored against the plan | <img src="docs/media/manual-reader.jpg" width="420" alt="The manual reader on the nightstand: the recovered graph with one extra joint in red, and the scores"> |
-| [**Video analyzer**](https://danieltong50.github.io/3d-visualization/?view=video) · a filmed build with SAM 3.1's mask on every part, Muse Spark's reading of every sampled frame, the evidence heatmap, the decoded build history against the truth, and the graph the masks' contacts show | <img src="docs/media/video-analyzer.jpg" width="420" alt="The video analyzer: the session video, per-frame readings, heatmap, graph, belief and scores"> |
-| [**Live**](https://danieltong50.github.io/3d-visualization/?view=live) · your camera: pick a library product or photograph a manual (read into a plan by the API), then build; a frame is checked every few seconds and the tracker runs in the browser. A video file or a filmed build can stand in for the camera | <img src="docs/media/copilot-drawer.jpg" width="420" alt="The copilot sliding the nightstand's drawer in"> |
-
-## Repository
-
-```
-engine/                     Python 3.11 (uv): the copilot's brain
-  darius/assembly/          schema, graph ops (validate, subassemblies, compare), HMM tracker, guidance
-  darius/furniture/         the flat-pack compiler and the four-product catalog
-  darius/models/            Meta Model API clients: Muse Spark (schema-constrained JSON) and SAM 3.1 (streamed masks)
-  darius/perception/        manual pages -> plan · frames -> evidence · video -> timeline · video -> part tracks
-  darius/eval/              darius eval: run, store and score the models on the library
-  darius/service/           FastAPI: /library, /manuals, /frames, /videos
-  modal_app.py              the API on Modal (CPU, scale to zero)
-frontend/                   React 19 + three.js, TypeScript
-  src/engine/               plan types, graph ops, the tracker (TS mirror), choreography, results
-  src/three/                the workshop stage and AR layer · manual line art
-  src/pages/                Home · copilot session · manual reader · video analyzer · live
-  scripts/capture.mjs       renders manual pages, session videos, exact part masks and posters with Playwright
-assemblies/                 the library: plan.json, manual pages, session.mp4 + truth.json + ids.bin.gz (exact masks),
-                            stored model outputs (reading.json, analysis.json, tracks.json), benchmarks.json
-docs/                       architecture.md · plan.schema.json · API notes
+```text
+approach tray → descend → grasp → lift → transfer
+             → align → press → release → retract → verify
 ```
 
-## Run it
+Tray-source yaw and assembled-target yaw are explicit: pickup/lift preserve source orientation, then the elevated transfer adopts the target quarter turn. Brick-center poses, TCP references and baseplate height stay distinct across the compiler, preview and scene export.
+
+Support coverage is a geometric ratio, not a stability guarantee. A `press` primitive contains an uncalibrated placeholder force limit, not measured force. Every compiled plan remains `simulation_only` with explicit robot/calibration/IK/collision/force blockers. See [the technical architecture](docs/lego-architecture.md) and [generated JSON Schema](docs/lego.schema.json) for formulas, schema semantics and implementation boundaries. `darius lego schema` prints the source-task schema.
+
+### The original curriculum
+
+These are exact counts computed from the checked-in catalog—not learned-model accuracy or physical success metrics.
+
+| Build | Bricks | Contact edges¹ | Contact stud cells | Primitives | What it exercises |
+|---|---:|---:|---:|---:|---|
+| Signal tower | 6 | 9 | 40 | 60 | Cross-bonded courses and repeated part instances |
+| Stud bridge | 6 | 7 | 28 | 60 | Multiple support parents and partial support |
+| Gradient stairway | 6 | 6 | 48 | 60 | Height-conditioned placement and dependency chains |
+
+¹ Includes contacts to the baseplate. Each preview has an authored nominal duration of 30.6 s; this is not measured robot throughput. These builds are independent original tasks, not reconstructions of official LEGO sets.
+
+## From this prototype to a real robot
+
+The proposed first physical experiment uses one brick, an indexed source tray and a fixed baseplate. Calibrate the fixture, camera and TCP; measure grasp repeatability; implement a guarded controller; record synchronized observations and executed actions; then train an ACT baseline on real demonstrations. Extend to multiple targets and only then to complete builds.
+
+The research plan specifies:
+
+- A hardware adapter boundary for measured observations, collision-checked motion, possession checks, guarded pressing and stops.
+- A synchronized dataset contract with camera frames, actual joint state, controller actions, contact validity, independent seating labels and provenance.
+- A staged curriculum, whole-episode/session/build holdouts, and matched ACT/diffusion comparisons.
+- Graph-conditioned policy and recovery experiments, with ablations that separate perception, planning, manipulation and verification.
+- Complete-build success, structural correctness, interventions, retry budgets, measured force and confidence intervals.
+
+Read [robot-training.md](docs/robot-training.md) and the explicitly marked [ACT](training/act-real-draft.yaml) / [curriculum](training/curriculum-draft.yaml) drafts. They are engineering specifications, not claims that an ACT model or physical LEGO robot has been trained in this repository.
+
+## API
+
+All paths below are relative to the local FastAPI server. Interactive OpenAPI documentation is at `/docs`.
+
+| Method | Path | Result |
+|---|---|---|
+| `GET` | `/lego/library` | Original build summaries and compiler counts |
+| `GET` | `/lego/builds/{id}` | Full compiled task including source assembly |
+| `POST` | `/lego/compile` | Schema-validated assembly → diagnostic compiled plan |
+| `GET` | `/lego/instructions/{set_number}?refresh=false` | Official booklet metadata; no PDF reconstruction |
+| `GET` | `/lego/builds/{id}/training?episodes=4&seed=7&fps=10` | Synthetic bundle with manifest and episodes |
+| `POST` | `/lego/manual-drafts` | Ordered page images → unapproved VLM candidate; model credentials/access gate apply |
+
+A syntactically valid source can still compile to `validation.valid: false`; API consumers must inspect that field. Exporters reject geometrically invalid plans. Episode generation is bounded and deterministic. See [architecture](docs/lego-architecture.md) for the exact feature contract.
 
 ```bash
-# Engine
-cd engine && uv sync
-uv run darius library                      # the products
-uv run darius show halden-bookcase         # a plan and its graph, step by step
-uv run pytest -q                           # 38 tests, no API calls
-uv run darius eval --check                 # stored model results re-score to the published numbers
-
-# With a Meta Model API key in ../.env (see .env.example)
-uv run darius manual ../assemblies/ostra-desk/manual --truth ostra-desk   # read a manual, score it
-uv run darius track video.mp4 --plan halden-bookcase                      # decode a build video
-uv run darius parts video.mp4 --plan halden-bookcase                      # track every part (Muse Spark + SAM 3.1)
-uv run darius eval                                                        # re-run the whole benchmark
-
-# Web app
-cd frontend && npm ci && npm run dev       # http://localhost:5173
-npm test                                   # 47 tests
-node scripts/capture.mjs                   # regenerate manual pages and session videos
-
-# API (live mode)
-cd engine && uv run uvicorn darius.service.api:local_app --factory --port 8787
-cd frontend && VITE_API_URL=http://127.0.0.1:8787 npm run dev
-cd engine && uv run modal deploy modal_app.py
+curl http://127.0.0.1:8787/lego/builds/bridge
+curl http://127.0.0.1:8787/lego/instructions/10698
+curl -X POST http://127.0.0.1:8787/lego/compile \
+  -H 'Content-Type: application/json' \
+  --data-binary @assemblies/lego/signal-tower/assembly.json
 ```
 
-## Limits, honestly
+## Repository map
 
-- **The test data is generated.** Manuals are drawn from plans and sessions are rendered: real manuals are wordless
-  and denser, and real videos have hands, clutter, motion blur and hardware the size of a fingernail. The pipeline is
-  built for real input (live mode takes photographed pages and a phone camera), but the published numbers are on the
-  library.
-- **"Done" means the parts are in place.** Nothing visible happens in a rendered session while a step is fastened,
-  so a step counts as done in video once its parts sit where they belong; the copilot's verify phase is where the
-  fastening is checked with the person.
-- **The tracker's gain on these sessions is modest**: decoding raises the frames with the right progress from 87.2%
-  (each frame alone) to 89.6%, all of it on the bookcase and the nightstand; on the other two the model's readings
-  were already consistent from frame to frame. What it adds beyond that is a monotone build history with a confidence
-  for every moment, and robustness when a frame is misread, which the tests and the copilot demo exercise with
-  injected misreads.
-- **SAM 3.1 loses parts the way trackers do.** It drops a part that leaves the frame (the session camera comes in
-  close to fasten) and, without the second look, did not find it again; once panels that look alike are joined, it
-  can swap them. Masks touch in the image without the parts touching in space, so contacts carry false edges.
-- **Contacts do not yet move the decoded timeline.** Fused with Muse Spark's readings (at half weight) they leave its
-  timeline as it was on all four sessions. Contacts of the renderer's exact masks, alone, would beat the readings on
-  three of the four, so the headroom is in the tracks; the fusion weight is conservative and is not tuned on four
-  sessions. Grounding letters and tracks vary from run to run; the numbers are one run per product.
-- **Part tracking is a batch job**: minutes per video (a SAM 3.1 pass takes 60–110 s, Muse Spark's looks run in
-  parallel), so it runs in `darius eval` and the CLI, not in live mode.
-- **Live mode answers in about 5 s per check** (one Muse Spark call with the step pages as reference), fine for
-  furniture, where a step takes minutes, and too slow for anything faster.
+```text
+engine/darius/
+  lego/                 typed grid IR, compiler, official discovery/acquisition, optional VLM drafts
+  robotics/             synthetic episodes, hashing, CPU sanity training, MJCF scaffold
+  service/              FastAPI LEGO endpoints + retained perception endpoints
+  assembly/             prior furniture graph, tracker and guidance
+  perception/           prior manual/video/part perception pipeline
+frontend/src/
+  lego/                 LEGO lab types, data, rendering and interactions
+  pages/                LEGO workbench + retained furniture demos
+assemblies/lego/
+  signal-tower/         assembly.json + plan.json + training.json
+  bridge/
+  stairway/
+  instructions/         official metadata snapshot; no bundled PDF manual
+  index.json
+docs/
+  lego-architecture.md  representation, compiler, data and simulation boundaries
+  robot-training.md    actionable physical-learning experiment specification
+  research-sources.md  verified primary-source ledger
+  furniture-archive.md prior README and its historical benchmark context
+training/               explicitly marked experiment/curriculum draft YAML
+```
 
-## References
+## Verification
 
-The methods Darius implements or builds on, and where each one shows up. Darius is independent work, not affiliated with
-these authors.
+```bash
+cd engine
+uv run pytest -q
+uv run ruff check .
+uv run ruff format --check .
+uv run darius lego export --out ../outputs/lego-fixture-check
 
-| Paper | In Darius |
-|---|---|
-| L. R. Rabiner. *A Tutorial on Hidden Markov Models and Selected Applications in Speech Recognition.* Proc. IEEE, 1989 | The progress tracker: an HMM over "steps done", forward filtering live, recursions in log space |
-| A. J. Viterbi. *Error Bounds for Convolutional Codes and an Asymptotically Optimum Decoding Algorithm.* IEEE Trans. Inf. Theory, 1967 | The most likely build history of a video |
-| L. E. Baum, T. Petrie, G. Soules, N. Weiss. *A Maximization Technique Occurring in the Statistical Analysis of Probabilistic Functions of Markov Chains.* Ann. Math. Stat., 1970 | Forward–backward posteriors: the confidence of every decoded moment |
-| A. Richard, H. Kuehne, A. Iqbal, J. Gall. *NeuralNetwork-Viterbi: A Framework for Weakly Supervised Video Learning.* CVPR 2018 | Decoding a procedure video under an ordered transcript: the manual's steps constrain the path |
-| R. Wang, Y. Zhang, J. Mao, C.-Y. Cheng, J. Wu. *Translating a Visual LEGO Manual to a Machine-Executable Plan.* ECCV 2022 | Manual pages to an executable assembly plan, the manual reader's problem |
-| R. Wang, Y. Zhang, J. Mao, R. Zhang, C.-Y. Cheng, J. Wu. *IKEA-Manual: Seeing Shape Assembly Step by Step.* NeurIPS 2022 Datasets and Benchmarks | Manuals aligned with parts and assembly graphs, the representation Darius builds on |
-| Y. Ben-Shabat, X. Yu, F. Saleh, D. Campbell, C. Rodriguez-Opazo, H. Li, S. Gould. *The IKEA ASM Dataset: Understanding People Assembling Furniture through Actions, Objects and Pose.* WACV 2021 | Furniture assembly as video understanding, the video analyzer's setting |
-| F. Sener, D. Chatterjee, D. Shelepov, K. He, D. Singhania, R. Wang, A. Yao. *Assembly101: A Large-Scale Multi-View Video Dataset for Understanding Procedural Activities.* CVPR 2022 | Step recognition and progress in procedural assembly video, the tracker's task |
-| X. Wang, T. Kwon, M. Rad, B. Pan, I. Chakraborty, et al. *HoloAssist: an Egocentric Human Interaction Dataset for Interactive AI Assistants in the Real World.* ICCV 2023 | An assistant that watches a task and guides it, the copilot's interaction model |
-| A. Kirillov, E. Mintun, N. Ravi, H. Mao, C. Rolland, L. Gustafson, T. Xiao, S. Whitehead, A. C. Berg, W.-Y. Lo, P. Dollár, R. Girshick. *Segment Anything.* ICCV 2023 | Segmentation prompted by boxes and points: every part's prompt |
-| N. Ravi, V. Gabeur, Y.-T. Hu, R. Hu, C. Ryali, T. Ma, H. Khedr, R. Rädle, C. Rolland, L. Gustafson, et al. *SAM 2: Segment Anything in Images and Videos.* ICLR 2025 | Propagating prompted masks through a video, forward and backward, with prompts on several frames |
-| N. Carion, L. Gustafson, Y.-T. Hu, S. Debnath, R. Hu, D. Suris, C. Ryali, K. V. Alwala, H. Khedr, et al. *SAM 3: Segment Anything with Concepts.* arXiv, 2025 | The model family of SAM 3.1, which tracks every part |
-| J. Yang, H. Zhang, F. Li, X. Zou, C. Li, J. Gao. *Set-of-Mark Prompting Unleashes Extraordinary Visual Grounding in GPT-4V.* arXiv, 2023 | Finding lost parts again: the first frame with every part outlined and numbered |
-| G. E. Hinton. *Training Products of Experts by Minimizing Contrastive Divergence.* Neural Computation, 2002 | Fusing mask contacts with the frame readings |
-| B. T. Willard, R. Louf. *Efficient Guided Generation for Large Language Models.* arXiv, 2023 | JSON-schema-constrained decoding, used for every model reading |
-| M. Agrawala, D. Phan, J. Heiser, J. Haymaker, J. Klingner, P. Hanrahan, B. Tversky. *Designing Effective Step-by-Step Assembly Instructions.* SIGGRAPH 2003 | Instructions generated from geometry: the generated manuals |
-| W. Li, M. Agrawala, B. Curless, D. Salesin. *Automated Generation of Interactive 3D Exploded View Diagrams.* SIGGRAPH 2008 | Explosion directions from blocking constraints: how a manual drawing pulls each part out |
-| R. H. Wilson, J.-C. Latombe. *Geometric Reasoning About Mechanical Assembly.* Artificial Intelligence, 1994 | Removal directions among the parts in place: the sweep test behind the free way in |
-| R. E. Tarjan. *Efficiency of a Good But Not Linear Set Union Algorithm.* J. ACM, 1975 | Union-find: the subassemblies after every step |
-| Y. Lee, E. S. Hu, J. J. Lim. *IKEA Furniture Assembly Environment for Long-Horizon Complex Manipulation Tasks.* ICRA 2021 | Furniture as parts with connection points, the structure the flat-pack compiler produces |
+# Optional PDF/simulator dependencies and runtime tests
+uv sync --locked --extra manuals --extra simulation
+uv run pytest -q
 
-## History
+cd ../frontend
+npm run typecheck
+npm test
+npm run build
+npm run format:check
+```
 
-Darius 0.2 was a real-to-sim scene compiler for robotics (phone video to MuJoCo, OpenUSD and a browser simulator);
-it is preserved at the [`v0.2.0`](https://github.com/DanielTong50/3d-visualization/tree/v0.2.0) tag. Darius 1.0 is the
-assembly copilot: see the [changelog](CHANGELOG.md).
+The verified branch snapshot on 2026-10-29 passed **98 engine tests** and **67 frontend tests**. The engine suite exercises compiler validity/failure cases, public metadata parsing/acquisition, draft handling, API contracts, deterministic data generation, episode splits, units, hashes, baseline training and scene export. Optional MuJoCo 3.17.0 checks loaded each original scene and stepped 500 × 0.002 s (1 s) with finite state; this checks scene/runtime compatibility. Frontend tests cover the existing assembly engine and LEGO data/playback behavior. Browser checks should include playback, inspection, export, instruction lookup, and narrow-screen layout. The complete offline compile → four-episode export → integrity-checked baseline training → MJCF runtime path was exercised for all three original builds. Canonical JSON exports match the checked-in fixtures, and all four retained furniture benchmark results still re-score. A render is evidence of UI behavior, not robot capability.
 
-## License
+## Limits and next milestones
 
-MIT. See [LICENSE](LICENSE).
+- **Geometry:** only the supported upright rectangular brick/plate curriculum. No arbitrary LDraw import, hinges, Technic pins, flexible elements, nonvertical assembly or general grasp planning.
+- **Collision:** target volumes and nominal insertion checks; full robot/gripper swept-volume collision checking and IK remain hardware-adapter work.
+- **Perception:** official acquisition and an optional unapproved VLM adapter are implemented. Reconstruction quality is unevaluated; arbitrary official builds, unsupported geometry and LEGO camera tracking remain unsolved.
+- **Physics:** browser motion is kinematic; MJCF is a loadable primitive scene without a robot arm or clutch model.
+- **Learning:** the runnable model is a numeric synthetic sanity baseline. Visual ACT/diffusion training, LeRobot conversion, physical collection and measured insertion success remain proposed work.
+- **Generalization:** held-out synthetic episodes vary translation and timing within the same build. No unseen-set or physical-generalization claim is made.
+
+Next: evaluate the manual-draft adapter against reviewed ground truth; build a calibrated single-brick physical rig; add independent seating verification; record a real dataset and ACT baseline; then study graph-conditioned recovery. The evidence should grow from one real connection outward.
+
+## Research and history
+
+The design builds on manual-to-plan reconstruction, action-chunk imitation learning, visual robot assembly benchmarks and standard simulation/data tooling. The [source ledger](docs/research-sources.md) links primary references and distinguishes their findings from this project's capabilities.
+
+The prior furniture copilot, stored model runs and evaluation tooling are retained. Its README and measured results are preserved in [the furniture archive](docs/furniture-archive.md); those scores are not LEGO results. Darius' earlier real-to-sim scene compiler is preserved at the [`v0.2.0` tag](https://github.com/DanielTong50/3d-visualization/tree/v0.2.0).
+
+Code and original project materials are provided under [MIT](LICENSE). Third-party manuals, marks, models and datasets retain their respective rights. Darius is an independent project and is not affiliated with or endorsed by the LEGO Group.

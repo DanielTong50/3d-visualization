@@ -1,0 +1,40 @@
+# Proposed curriculum. Planning data, not a runnable simulator configuration.
+schema: darius.curriculum-draft/1
+status: draft
+principle: advance_on_measured_exit_gate_not_episode_count
+stages:
+  - id: C0
+    task: indexed_pick_and_free_release
+    proposed_demo_budget: [30, 50]
+    gate: observable_possession_and_calibrated_fixture_replay
+  - id: C1
+    task: one_brick_one_baseplate_target
+    proposed_demo_budget: [50, 100]
+    gate: independently_verified_seating_with_measured_contact_behavior
+  - id: C2
+    task: randomized_target_slot_and_color
+    proposed_demo_budget: [100, 200]
+    gate: held_out_resets_and_recording_session
+  - id: C3
+    task: original_tower_bridge_stairway
+    gate: correct_support_edges_and_disclosed_complete_build_success
+  - id: C4
+    task: unseen_assemblies_of_known_parts
+    gate: assembly_family_holdout_without_frame_leakage
+  - id: C5
+    task: new_parts_or_nonvertical_insertions
+    gate: updated_geometry_contacts_gripper_and_separate_hardware_qualification
+splits:
+  minimum_unit: episode
+  stronger_holdouts: [recording_session, assembly_family, part_geometry]
+  prevent_near_duplicate_manual_view_leakage: true
+failure_taxonomy:
+  - empty_grasp
+  - wrong_instance
+  - dropped_part
+  - pose_misalignment
+  - incomplete_seating
+  - fixture_moved
+  - collision_stop
+  - perception_uncertain
+  - verification_failed

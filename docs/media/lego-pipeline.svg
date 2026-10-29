@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1360" height="500" viewBox="0 0 1360 500" role="img" aria-labelledby="title desc">
+  <title id="title">Darius: a manual is a program</title>
+  <desc id="desc">Original architecture illustration showing a studded brick tower, its geometric support graph, and the progression from assembly intent through compilation and synthetic data to a learning baseline.</desc>
+  <defs>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#dcdcd4"/></pattern>
+    <symbol id="brick" viewBox="-2 -55 150 113">
+      <path d="M0 0 96-48 144-24 48 24Z" fill="currentColor" stroke="#30343b" stroke-opacity=".22"/>
+      <path d="M0 0 48 24 48 54 0 30Z" fill="currentColor" stroke="#30343b" stroke-opacity=".22"/>
+      <path d="M0 0 48 24 48 54 0 30Z" fill="#000" opacity=".12"/>
+      <path d="M48 24 144-24 144 6 48 54Z" fill="currentColor" stroke="#30343b" stroke-opacity=".22"/>
+      <path d="M48 24 144-24 144 6 48 54Z" fill="#000" opacity=".2"/>
+      <g fill="currentColor" stroke="#30343b" stroke-opacity=".2">
+        <ellipse cx="24" cy="-4" rx="10" ry="5"/><ellipse cx="48" cy="-16" rx="10" ry="5"/>
+        <ellipse cx="72" cy="-28" rx="10" ry="5"/><ellipse cx="96" cy="-40" rx="10" ry="5"/>
+        <ellipse cx="48" cy="8" rx="10" ry="5"/><ellipse cx="72" cy="-4" rx="10" ry="5"/>
+        <ellipse cx="96" cy="-16" rx="10" ry="5"/><ellipse cx="120" cy="-28" rx="10" ry="5"/>
+      </g>
+      <g fill="#fff" opacity=".2"><ellipse cx="24" cy="-5" rx="8" ry="3"/><ellipse cx="48" cy="-17" rx="8" ry="3"/><ellipse cx="72" cy="-29" rx="8" ry="3"/><ellipse cx="96" cy="-41" rx="8" ry="3"/><ellipse cx="48" cy="7" rx="8" ry="3"/><ellipse cx="72" cy="-5" rx="8" ry="3"/><ellipse cx="96" cy="-17" rx="8" ry="3"/><ellipse cx="120" cy="-29" rx="8" ry="3"/></g>
+    </symbol>
+  </defs>
+  <rect width="1360" height="500" rx="16" fill="#f7f5ef"/>
+  <rect x="660" y="0" width="700" height="390" fill="url(#grid)"/>
+  <path d="M0 390H1360" stroke="#d9d9d0"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#30343b">
+    <g font-family="monospace" font-size="12" letter-spacing="1.6"><circle cx="58" cy="53" r="4" fill="#f4553b"/><text x="74" y="57">DARIUS / ASSEMBLY INTELLIGENCE</text></g>
+    <text x="54" y="141" font-size="64" font-weight="700" letter-spacing="-3">A manual</text>
+    <text x="54" y="211" font-size="64" font-weight="700" letter-spacing="-3">is a program.</text>
+    <text x="57" y="257" font-size="18" fill="#686b66">Make every part, connection and next move explicit.</text>
+    <rect x="57" y="294" width="176" height="34" rx="5" fill="#3769cf"/>
+    <text x="73" y="316" font-family="monospace" font-size="12" fill="#fff">LEGO → ROBOT LEARNING</text>
+    <text x="57" y="360" font-family="monospace" font-size="11" fill="#7c8077">ORIGINAL CURRICULUM · DETERMINISTIC COMPILER · AUDITABLE DATA</text>
+  </g>
+  <g transform="translate(726 87)">
+    <path d="M-20 208 210 93 425 201 195 316Z" fill="#e1e4d7" stroke="#bcc2b3"/>
+    <g stroke="#c0c6b7" stroke-width="1"><path d="M27 232 257 117M74 255 304 140M121 279 351 164M168 302 398 187M26 185 241 292M72 162 287 269M118 139 333 246M164 116 379 223"/></g>
+    <ellipse cx="208" cy="230" rx="128" ry="46" fill="#30343b" opacity=".06"/>
+    <use href="#brick" x="66" y="119" width="180" height="135" color="#f4553b"/>
+    <use href="#brick" x="126" y="149" width="180" height="135" color="#f4553b"/>
+    <use href="#brick" x="66" y="81" width="180" height="135" color="#ffd33d"/>
+    <use href="#brick" x="126" y="111" width="180" height="135" color="#ffd33d"/>
+    <use href="#brick" x="96" y="57" width="180" height="135" color="#31aaa2"/>
+    <use href="#brick" x="96" y="19" width="180" height="135" color="#eee8d7"/>
+    <path d="M232 36H376V6" stroke="#3769cf" stroke-width="1.4" fill="none"/>
+    <circle cx="232" cy="36" r="4" fill="#3769cf"/>
+    <text x="292" y="-5" font-family="monospace" font-size="11" fill="#3769cf">TARGET POSE</text>
+    <path d="M96 159H-13V97" stroke="#f4553b" stroke-width="1.4" fill="none"/>
+    <circle cx="96" cy="159" r="4" fill="#f4553b"/>
+    <text x="-19" y="82" font-family="monospace" font-size="11" fill="#f4553b">SUPPORT GRAPH</text>
+    <g transform="translate(383 278)" stroke-width="2"><path d="M0 0 28 14" stroke="#f4553b"/><path d="M0 0 24-12" stroke="#3769cf"/><path d="M0 0V-30" stroke="#31aaa2"/><g font-family="monospace" font-size="10" stroke="none"><text x="32" y="19" fill="#f4553b">X</text><text x="27" y="-13" fill="#3769cf">Z</text><text x="-3" y="-36" fill="#31aaa2">Y</text></g></g>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#30343b">
+    <g transform="translate(57 425)"><text font-family="monospace" font-size="11" fill="#f4553b">01 / INTENT</text><text y="27" font-size="18" font-weight="700">Instances + grid poses</text></g>
+    <g transform="translate(379 425)"><text font-family="monospace" font-size="11" fill="#3769cf">02 / COMPILE</text><text y="27" font-size="18" font-weight="700">Contacts + primitives</text></g>
+    <g transform="translate(701 425)"><text font-family="monospace" font-size="11" fill="#20897f">03 / GENERATE</text><text y="27" font-size="18" font-weight="700">Seeded synthetic episodes</text></g>
+    <g transform="translate(1023 425)"><text font-family="monospace" font-size="11" fill="#8b742a">04 / LEARN</text><text y="27" font-size="18" font-weight="700">Inspectable CPU baseline</text></g>
+    <g font-size="23" fill="#aaa994"><text x="330" y="447">→</text><text x="652" y="447">→</text><text x="974" y="447">→</text></g>
+  </g>
+</svg>

@@ -1,31 +1,47 @@
-# Frontend (web app)
+# Darius LEGO workbench
 
-The Darius web app (React 19 + Vite + TypeScript): the home page with a live, rotating 3D hero, the interactive
-pipeline replay and the 3D scene graph; upload and the live processing screen; and the simulator (three.js,
-Spark for Gaussian splats, Rapier for physics). The scene format it reads is in
-[`docs/scene-format.md`](../docs/scene-format.md).
+A React 19 + TypeScript + Three.js interface for inspecting the LEGO assembly compiler, playing kinematic pick-and-place previews, discovering official instructions by set number, and exporting plans and synthetic training handoffs.
 
 ```bash
-npm ci               # once
-npm run dev          # development server (also reachable from a phone on the same Wi-Fi)
-npm test             # Vitest: physics on the reference scene and real scans, robotics math, replay parsing
-npm run typecheck
-npm run build        # type-check and build into dist/
+npm ci
+npm run dev       # http://localhost:5173
+npm run build     # TypeScript + production build
+npm test          # deterministic tests, no model requests
 ```
 
-- `?scene=<id>` opens `/scenes/<id>/scene.json`; add `&view=robot` (or `debug`, `physics`) to open in that view.
-  Scene folders come from the repo's `/scenes` directory, served in development and copied into the build.
-- `?job=<id>` follows a processing job on the API (`VITE_API_URL`, default: the deployed Modal app).
-- `?debug` exposes `window.__darius` (object positions, tilt, screen points, `sway(on)` for frame-rate tests).
+The default page is the LEGO lab. `?build=bridge` and `?build=stairway` deep-link the curriculum. `?view=legacy` retains the earlier furniture research interface, including its manual/video demos.
 
-| Module | What it does |
-|---|---|
-| `src/sim/Simulator.ts` | the 3D view: splats and meshes, on-demand rendering, adaptive resolution, view modes, pointer input |
-| `src/sim/physics.ts` | the Rapier world: table slab from the scanned outline, mass-scaled grab spring, carry, throw, "what if" actions |
-| `src/sim/robotics.ts` | robot-view marks: centers of mass, equivalent inertia ellipsoids (Jacobi eigen-solver), grasp glyphs |
-| `src/sim/scene.ts` | scene types (mirror of `pipeline/darius/scene/schema.py`), loading and validation |
-| `src/sim/splatCleanup.ts` | client-side cleanup for scenes packaged before the pipeline did it |
-| `src/Pipeline.tsx`, `src/replay.ts` | the stage graph with each stage's real output (finished scenes or live jobs) |
-| `src/SceneGraphView.tsx` | the interactive 3D scene graph (`robotics/scene_graph.json`) |
-| `src/PointCloudView.tsx` | VGGT's point cloud with the camera path |
-| `src/Home.tsx`, `src/Processing.tsx`, `src/SimulatorView.tsx`, `src/Inspector.tsx` | pages and panels |
+## Real data, explicit boundaries
+
+`src/pages/LegoLab.tsx` fetches the engine-generated `assemblies/lego/<id>/plan.json` files. Vite serves the repository's assemblies folder in development and copies it into production builds. The three default assemblies are original Darius fixtures, not reconstructions of official LEGO sets.
+
+`src/lego/LegoStage.ts` renders stud-grid bricks, exact source tray positions, target ghosts and a kinematic robot. Playback uses a 5.1-second presentation cycle per brick. It illustrates grasp, transfer, alignment, pressing and verification; it does not simulate clutch force, solve robot IK, execute hardware or run a learned robot policy. The graph, inventory and JSON panels inspect actual compiler artifacts.
+
+Instruction discovery links directly to LEGO's official set pages. Set **10698** also has bundled, dated official booklet metadata. Other sets use the API when configured, with an official-page fallback. Public availability does not establish a license for model training. Automatic image interpretation and geometric reconstruction require the engine's separate draft/review pipeline.
+
+The training export downloads an engine synthetic bundle when available; otherwise it downloads an explicitly labelled planning draft. It is not native LeRobot v3 data or evidence of successful robot learning.
+
+## Connect the local API
+
+```bash
+# Terminal one, repository root
+cd engine
+uv run uvicorn darius.service.api:local_app --factory --port 8787
+
+# Terminal two, frontend/
+VITE_API_URL=http://127.0.0.1:8787 npm run dev
+```
+
+The LEGO interface uses `/lego/instructions/{set_number}` and `/lego/builds/{id}/training`. No model credentials are shipped to the browser. Model-assisted manual drafting is an engine workflow documented in the root README.
+
+## Controls
+
+- Select an original build in the library.
+- Play/pause, jump to the next brick, restart, or drag the timeline.
+- Drag the scene to orbit and scroll to zoom; reset the camera or enter fullscreen.
+- Toggle exploded geometry and the robot preview.
+- Select a sequence step or graph node to seek to that brick.
+- Inspect the physical inventory or the raw compiled plan, then download JSON.
+- Import a compiler-generated `plan.json` to preview your own build (desktop library panel). The browser checks bounded geometry and shape; support semantics are validated by the engine compiler.
+
+The interface is responsive and keyboard accessible; WebGL failures leave compiler inspection and downloads available. The legacy furniture renderer remains independent from the LEGO stage.

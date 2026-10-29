@@ -1,0 +1,46 @@
+# Project experiment specification. DRAFT; not a LeRobot CLI configuration.
+schema: darius.experiment-draft/1
+status: draft_requires_real_demonstrations_and_calibrated_adapter
+name: lego-single-brick-act-v1
+baseline: act
+dependency:
+  framework: lerobot
+  pin: choose_and_record_exact_release_or_commit_before_execution
+  docs: https://huggingface.co/docs/lerobot/v0.6.1/il_robots
+task:
+  source: project_original
+  initial_scope: one_2x4_brick_one_indexed_slot_one_fixed_target
+  goal_conditioning: calibrated_target_pose_and_part_identity
+hardware:
+  robot: select_after_fixture_repeatability_measurement
+  tool: calibrated_parallel_jaw_gripper
+  calibration_id: null
+  force_limits_n: null # Must be measured for the actual rig; no universal safe value.
+  execution_enabled: false
+observations:
+  camera_front: {width: 640, height: 480, fps: 30, status: proposed}
+  camera_wrist: {status: optional_requires_synchronization}
+  joint_state: {units: record_robot_specific, joint_order: null}
+  contact: {status: measured_sensor_or_explicitly_missing}
+actions:
+  representation: must_match_recorded_controller_interface
+  units: must_be_declared_by_adapter
+data:
+  format: LeRobotDataset_v3_via_official_API
+  source: real_teleoperation
+  dataset_id: null
+  initial_successful_demo_budget: 100
+  retain_labeled_failures: true
+  split_unit: whole_episode
+  holdout_recording_session: true
+  normalization: training_split_only
+training:
+  proposed_steps: 20000
+  seed: 7
+  device: choose_available_accelerator
+  push_to_hub: false
+evaluation:
+  fixed_trial_manifest: required
+  independent_seating_labels: required
+  report: [placement_success, full_build_success, pose_error, interventions, peak_measured_force, recovery]
+  real_robot_result_available: false
