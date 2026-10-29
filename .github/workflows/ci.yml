@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   engine:
-    name: Engine (lint, tests, library, stored results)
+    name: Engine (LEGO compiler, data, model, simulation)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -20,10 +20,19 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - run: uv sync --locked
+      - run: uv sync --locked --extra manuals --extra simulation
       - run: uv run ruff format --check .
       - run: uv run ruff check .
       - run: uv run pytest -q
+      - name: LEGO source, plans and training bundles match the compiler
+        run: |
+          uv run darius lego export
+          git diff --exit-code -- ../assemblies/lego
+      - name: Synthetic reference data trains the CPU sanity baseline
+        run: |
+          uv run darius lego dataset signal-tower --out outputs/ci-data --episodes 4 --seed 7
+          uv run python -m darius.robotics.train outputs/ci-data --out outputs/ci-baseline
+          uv run darius lego sim bridge --out outputs/ci-bridge.xml
       - name: Every library plan is valid
         run: uv run darius validate ../assemblies/*/plan.json
       - name: The exported library matches the catalog
